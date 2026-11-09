@@ -255,11 +255,10 @@ input[type=range]::-moz-range-thumb { width: 14px; height: 14px; border-radius: 
 :root.dark .win-title { background: linear-gradient(180deg, #0e0d0b, #161411); border-bottom-color: rgba(212,168,90,.26); }
 :root.dark .win:not(.focused) .win-title { border-bottom-color: rgba(212,168,90,.1); }
 :root.dark .win.focused .win-title .tt { color: color-mix(in srgb, var(--gold) 78%, var(--ink)); text-shadow: 0 1px 3px rgba(0,0,0,.5); }
-.win-title .seal { --sz: 22px; font-size: 13px; border-radius: calc(5px * var(--rk)); }
 .win-title .tt { min-width: 0; max-width: calc(50% - 90px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; letter-spacing: .05em; color: var(--ink2); transition: color var(--t); }
 .win.focused .win-title .tt { color: var(--ink); }
 .win-title .ta { margin-left: auto; display: flex; align-items: center; gap: 2px; min-width: 0; }
-.win:not(.focused) .win-title > .seal, .win:not(.focused) .win-title .tt { opacity: .7; }
+.win:not(.focused) .win-title .tt { opacity: .7; }
 .win-body { position: relative; flex: 1; min-height: 0; overflow: hidden; border-radius: 0 0 var(--r) var(--r); display: flex; flex-direction: column; }
 .win.max .win-body { border-radius: 0; }
 .win .rz { position: absolute; z-index: 6; touch-action: none; }
@@ -273,68 +272,23 @@ input[type=range]::-moz-range-thumb { width: 14px; height: 14px; border-radius: 
 body.dragging-win, body.dragging-win * { cursor: grabbing !important; }
 
 /* ---------- 三卷轴：收 · 开 · 合 ---------- */
-.scrolls { position: absolute; left: 50%; top: 0; height: 100%; transform: translateX(-50%); display: flex; align-items: center; gap: 6px; z-index: 2; }
-.scroll { --c: var(--ink2); --c1: #1a1814; --c2: #4a443a; position: relative; display: flex; align-items: center; height: 100%; padding: 0 5px; border: 0; background: none; outline: none;
-  filter: drop-shadow(0 1px 1.5px rgba(28,26,23,.32)); transition: transform .25s var(--spring), filter .25s; }
-.scroll:hover { filter: drop-shadow(0 2px 4px rgba(28,26,23,.38)); }
-.scroll:active { transform: scale(.94); }
-.scroll[data-act=min] { --c: #3a3530; --c1: #1a1814; --c2: #5a5246; }      /* 玄墨 */
-.scroll[data-act=max] { --c: var(--gold); --c1: #5a4420; --c2: #c09a58; }  /* 泥金 */
-.scroll[data-act=close] { --c: var(--accent); --c1: #5c1414; --c2: #b23a32; } /* 朱砂 */
-/* 轴：髹漆木杆，两头一对圆轴头 */
-.scroll .rod { position: relative; width: 5px; height: 19px; border-radius: 2.5px; z-index: 1; transition: transform .3s var(--ease-ink);
-  background: linear-gradient(90deg, var(--c1), var(--c2) 42%, color-mix(in srgb, var(--c2) 70%, #fff) 52%, var(--c2) 62%, var(--c1)); }
-.scroll .rod::before, .scroll .rod::after { content: ''; position: absolute; left: 50%; width: 8px; height: 8px; margin-left: -4px; border-radius: 50%;
-  background: radial-gradient(circle at 35% 32%, color-mix(in srgb, var(--c2) 55%, #fff) 0, var(--c2) 38%, var(--c1) 100%); box-shadow: 0 1px 1.5px rgba(0,0,0,.3); }
-.scroll .rod::before { top: -5px; } .scroll .rod::after { bottom: -5px; }
-/* 纸：生宣，带极淡的帘纹 */
-.scroll .paper {
-  position: relative; width: 3px; height: 17px; overflow: hidden; display: grid; place-items: center;
-  background: repeating-linear-gradient(0deg, transparent 0 2px, rgba(28,26,23,.035) 2px 3px), linear-gradient(180deg, #ece2cc, #e2d6bc 50%, #ece2cc);
-  box-shadow: inset 2px 0 3px -2px rgba(0,0,0,.35), inset -2px 0 3px -2px rgba(0,0,0,.35);
-  transition: width .34s var(--ease-ink), height .34s var(--ease-ink);
-}
-:root.dark .scroll .paper { background: repeating-linear-gradient(0deg, transparent 0 2px, rgba(28,26,23,.05) 2px 3px), linear-gradient(180deg, #e6dcc6, #d8ccb0 50%, #e6dcc6); }
-.scroll .paper svg { width: 14px; height: 14px; color: color-mix(in srgb, var(--c) 85%, #1c1a17); opacity: 0; transition: opacity .2s; flex: none; }
-.scrolls:hover .scroll .paper { width: 12px; }
-.scrolls:hover .scroll .paper svg { opacity: .55; }
-.scroll:hover .paper, .scroll:focus-visible .paper { width: 24px !important; }
-.scroll:hover .paper svg, .scroll:focus-visible .paper svg { opacity: 1 !important; }
-.scroll:focus-visible .rod { box-shadow: 0 0 0 2px color-mix(in srgb, var(--willow) 60%, transparent); }
-.win:not(.focused) .scroll { filter: saturate(.35) opacity(.75); }
-.scrolls[data-labels=always] .scroll .paper { width: 24px; } .scrolls[data-labels=always] .scroll .paper svg { opacity: 1; }
-.scrolls[data-labels=never] .scroll:hover .paper { width: 10px !important; } .scrolls[data-labels=never] .scroll .paper svg { display: none; }
-/* 竖展（旧版）：轴横卧，纸上下展开 */
-.scrolls[data-orient=v] { gap: 10px; }
-.scrolls[data-orient=v] .scroll { flex-direction: column; justify-content: center; padding: 0 3px; }
-.scrolls[data-orient=v] .scroll .rod { width: 22px; height: 5px; background: linear-gradient(180deg, var(--c1), var(--c2) 42%, color-mix(in srgb, var(--c2) 70%, #fff) 52%, var(--c2) 62%, var(--c1)); }
-.scrolls[data-orient=v] .scroll .rod::before, .scrolls[data-orient=v] .scroll .rod::after { top: 50%; left: auto; margin: -4px 0 0; }
-.scrolls[data-orient=v] .scroll .rod::before { left: -5px; } .scrolls[data-orient=v] .scroll .rod::after { right: -5px; bottom: auto; }
-.scrolls[data-orient=v] .scroll .paper { width: 19px !important; height: 2px; box-shadow: inset 0 2px 3px -2px rgba(0,0,0,.35), inset 0 -2px 3px -2px rgba(0,0,0,.35); }
-.scrolls[data-orient=v]:hover .scroll .paper { height: 9px; }
-.scrolls[data-orient=v] .scroll:hover .paper, .scrolls[data-orient=v] .scroll:focus-visible .paper { height: 17px !important; }
-.scrolls[data-orient=v][data-labels=always] .scroll .paper { height: 17px; }
-.scrolls[data-orient=v][data-labels=never] .scroll:hover .paper { height: 8px !important; }
-.scrolls[data-orient=v] .scroll.do-min .paper, .scrolls[data-orient=v] .scroll.do-close .paper { height: 0 !important; }
-.scrolls[data-orient=v] .scroll.do-max .paper { height: 24px !important; }
-.scrolls[data-orient=v] .scroll.do-close .rod.l { transform: translateY(2px) rotate(-6deg); } .scrolls[data-orient=v] .scroll.do-close .rod.r { transform: translateY(-2px) rotate(6deg); }
-/* 按下：各自做自己的事 */
-.scroll.do-min .paper { width: 0 !important; transition-duration: .22s; }
-.scroll.do-min .rod.r { transform: translateX(-2px); }
-.scroll.do-max .paper { width: 34px !important; }
-.scroll.do-close .paper { width: 0 !important; transition-duration: .18s; }
-.scroll.do-close .rod.l { transform: translateX(2px) rotate(-8deg); } .scroll.do-close .rod.r { transform: translateX(-2px) rotate(8deg); }
+.scrolls { position: absolute; left: 50%; top: 0; height: 100%; transform: translateX(-50%); display: flex; align-items: stretch; gap: 3px; z-index: 2; }
+/* 每只卷子是一张逐像素画出的小画布（见 22c-scrollart.js）：按钮本身只是透明的托 */
+.scroll { position: relative; flex: none; height: 100%; width: 18px; padding: 0; border: 0; background: none; outline: none; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: filter .25s; }
+.scroll .sc-cv { position: absolute; left: 0; pointer-events: none; }
+.scroll .sc-ink { position: absolute; display: flex; align-items: center; justify-content: flex-end; overflow: hidden; pointer-events: none; transition: opacity .2s; color: #1c1a17; }
+.scroll .sc-ink[data-o=v] { flex-direction: column; justify-content: flex-end; }
+.scroll .sc-ink[data-o=v] .sc-g { margin: 0 auto 0; }
+.scroll .sc-g { flex: none; display: block; margin-right: 1px; }
+.scroll .sc-g svg { width: 100%; height: 100%; display: block; }
+.scroll[data-act=close] .sc-ink { color: #2a1210; }
+:root.dark .scroll .sc-ink { color: #1a1612; }
+.scroll:active .sc-cv { transform: translateY(.5px); }
+.scroll:focus-visible { box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--willow) 70%, transparent); border-radius: 6px; }
+.win:not(.focused) .scroll { filter: saturate(.45) brightness(1.02) opacity(.78); }
 /* 未保存：合轴上悬一滴墨 */
-.win.dirty .scroll[data-act=close]::after { content: ''; position: absolute; top: 5px; right: 1px; width: 6px; height: 6px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: var(--accent); animation: qs-ink-pulse 2.4s ease-in-out infinite; }
-@media (pointer: coarse) {
-  .scrolls { gap: 2px; }
-  .scroll { padding: 0 8px; }
-  .scroll .rod { height: 24px; }
-  .scroll .paper { width: 22px; height: 20px; }
-  .scrolls[data-orient=v] .scroll .rod { width: 24px; height: 5px; }
-  .scrolls[data-orient=v] .scroll .paper { width: 21px !important; height: 16px; }
-  .scroll .paper svg { opacity: 1; width: 16px; height: 16px; }
-}
+.win.dirty .scroll[data-act=close]::after { content: ''; position: absolute; top: 3px; right: -1px; width: 6px; height: 6px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: var(--accent); animation: qs-ink-pulse 2.4s ease-in-out infinite; }
+@media (pointer: coarse) { .scrolls { gap: 4px; } }
 
 /* 卷轴动效层：窗口开合时出现的两根轴 */
 .rollfx { position: absolute; z-index: 9; pointer-events: none; }
@@ -567,7 +521,7 @@ body.dragging-win, body.dragging-win * { cursor: grabbing !important; }
 .fm-th { position: relative; display: flex; align-items: center; height: 100%; user-select: none; }
 .fm-th span { overflow: hidden; text-overflow: ellipsis; }
 .fm-th.r { justify-content: flex-end; padding-right: 12px; }
-.fm-th.moving { z-index: 3; background: var(--paper2); box-shadow: var(--shadow-sm); opacity: .92; }
+.fm-head { touch-action: none; cursor: col-resize; } .fm-head .fm-th { cursor: pointer; } .fm-head.rz, .fm-head.rz .fm-th { cursor: col-resize; }
 .fm-grip { position: absolute; right: -4px; top: 5px; bottom: 5px; width: 9px; cursor: col-resize; z-index: 2; }
 .fm-grip::after { content: ''; position: absolute; left: 4px; top: 0; bottom: 0; width: 1px; background: color-mix(in srgb, var(--line) 90%, transparent); }
 .fm-grip:hover::after { background: var(--willow); width: 2px; left: 3.5px; }
@@ -1045,6 +999,9 @@ body.fm-dragging, body.fm-dragging * { cursor: grabbing !important; }
 .cl-meter i { position: absolute; inset: 0 auto 0 0; background: var(--ck-a); }
 .cl-meter span { position: relative; display: block; padding: 0 9px; line-height: 18px; font-size: 11px; color: var(--ink); }
 
+.cl-big { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 6px 0 8px; padding: 8px 10px; font-size: 12.5px; color: var(--rust); border-left: 2px solid var(--rust); background: color-mix(in srgb, var(--rust) 7%, transparent); }
+.cl-ying b { font: 500 15px var(--font-ink); color: var(--ink); letter-spacing: .06em; }
+
 /* ── 36-shijian.css ── */
 /* ================= 诗笺 ================= */
 .sj { display: flex; flex-direction: column; height: 100%; min-height: 0; }
@@ -1177,6 +1134,14 @@ body.fm-dragging, body.fm-dragging * { cursor: grabbing !important; }
   .sg-row { padding: 12px 4px; gap: 10px; } .sg-range { width: 120px; }
 }
 }
+.sg-cols { display: flex; flex-wrap: wrap; gap: 6px; }
+.sg-col { display: inline-flex; align-items: center; height: 30px; border: 1px solid var(--line); border-radius: calc(8px * var(--rk)); background: var(--paper3); overflow: hidden; }
+.sg-col b { font-weight: 500; font-size: 13px; color: var(--ink); padding: 0 6px; }
+.sg-mv { width: 26px; height: 100%; border: 0; background: none; color: var(--ink3); font-size: 16px; cursor: pointer; }
+.sg-mv:hover:not(:disabled) { color: var(--willow); background: color-mix(in srgb, var(--willow) 10%, transparent); }
+.sg-mv:disabled { opacity: .25; cursor: default; }
+@media (pointer: coarse) { .sg-col { height: 36px; } .sg-mv { width: 34px; } }
+@media (max-width: 600px) { .sg-cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; width: 100%; } .sg-col { justify-content: space-between; } .sg-mv { width: 24px; } .sg-col b { padding: 0; font-size: 12px; } }
 
 /* ── 38-biaoge.css ── */
 /* ================= 表阁 ================= */
@@ -1227,6 +1192,7 @@ body.fm-dragging, body.fm-dragging * { cursor: grabbing !important; }
 .jt-av { color: var(--gold); }
 .jt-stage .empty { background: var(--paper); position: absolute; inset: 0; }
 @media (max-width: 640px) { .jt-bar .ib-l { display: none; } }
+.jt-cut { color: var(--rust); font-size: 12px; }
 
 /* ── 3a-nangxia.css ── */
 /* ================= 囊匣 ================= */
@@ -1694,6 +1660,7 @@ class IDBMeta {
   async kvGet(k) { const t = this.db.transaction(['kv']); const r = await idbReq(t.objectStore('kv').get(k)); return r ? r.v : undefined; }
   kvSet(k, v) { return this.tx(['kv'], 'readwrite', t => { t.objectStore('kv').put({ k, v }); }); }
   kvDel(k) { return this.tx(['kv'], 'readwrite', t => { t.objectStore('kv').delete(k); }); }
+  async kvKeys() { const t = this.db.transaction(['kv']); return idbReq(t.objectStore('kv').getAllKeys()); }   // 只取键，不碰值
   async destroy() { this.db.close(); await new Promise(r => { const q = indexedDB.deleteDatabase(this.name); q.onsuccess = q.onerror = q.onblocked = () => r(); }); }
 }
 class MemMeta {
@@ -1712,6 +1679,7 @@ class MemMeta {
   async kvGet(k) { return this.kv.get(k); }
   async kvSet(k, v) { this.kv.set(k, v); }
   async kvDel(k) { this.kv.delete(k); }
+  async kvKeys() { return [...this.kv.keys()]; }
   async destroy() { this.n.clear(); this.b.clear(); this.kv.clear(); }
 }
 
@@ -2813,7 +2781,7 @@ const FS = (() => {
     descendants, childIds,
     MROOT, isMount: isM, mounts: mRoots, mount, mountSnapshot, unmount, reauth, mountInfo, refresh, ensure, scanDeep,
     get canMount() { return typeof window.showDirectoryPicker === 'function'; },
-    kvGet: k => meta.kvGet(k), kvSet: (k, v) => meta.kvSet(k, v), kvDel: k => meta.kvDel(k),
+    kvGet: k => meta.kvGet(k), kvSet: (k, v) => meta.kvSet(k, v), kvDel: k => meta.kvDel(k), kvKeys: () => meta.kvKeys(),
     get ready() { return ready; }, get count() { return N.size; }, get busy() { return busy > 0; },
     _debug: { N, K, get meta() { return meta; }, get opfs() { return opfs; } }
   };
@@ -3197,7 +3165,7 @@ const Brush = (() => {
       可选可搜，滚动不耗电；写好的字形存进 IndexedDB，下次开机直接用。
    偏好 glyphStyle：'ink' 全部花字（默认）/ 'display' 正文不加（只有标题、印、菜单等用花字）/ 'font' 不用花字。 */
 const Ink = (() => {
-  const FAMILY = 'QS Huazi', VER = 3, UPEM = 1000, ASC = 880, DESC = 120;
+  const FAMILY = 'QS Huazi', VER = 4, UPEM = 1000, ASC = 880, DESC = 120;
   const R = 144;                       // 一个字在画布上的大小（像素 = 1em）
   const KAI = ['Kaiti SC', 'STKaiti', 'KaiTi', '楷体', 'BiauKai', 'DFKai-SB', 'TW-Kai', 'AR PL UKai CN', 'AR PL UKai TW', 'AR PL KaitiM GB', 'Kaiti TC'];
   const SONG = ['Songti SC', 'STSong', 'Noto Serif CJK SC', 'Noto Serif SC', 'Source Han Serif SC', 'Source Han Serif CN', 'SimSun', '宋体', 'AR PL UMing CN', 'Noto Serif CJK TC', 'Noto Serif CJK JP'];
@@ -3514,7 +3482,8 @@ const Ink = (() => {
   const queue = new Set(), faces = [];
   let pending = [], cacheKey = '', saveT = 0, running = false, started = false, ready = null;
   const want = ch => { const c = ch.codePointAt(0); return c > 0x20 && c <= 0xffff && ((c >= 0x21 && c <= 0x7e) || (c >= 0x3000 && c <= 0x303f) || (c >= 0x3400 && c <= 0x9fff) || (c >= 0xf900 && c <= 0xfaff) || (c >= 0xff01 && c <= 0xff5e) || c === 0x2014 || c === 0x2026 || c === 0x00b7 || (c >= 0x2018 && c <= 0x201d)); };
-  function collect(text) { if (!started || !text) return; for (const ch of text) if (!done.has(ch) && !queue.has(ch) && want(ch)) queue.add(ch); if (queue.size && !running) schedule(); }
+  function collect(text) { if (!started || !text) return; if (text.length > 200000) text = text.slice(0, 200000);   /* 一次只看前 20 万字：巨文不拖慢页面 */
+    for (const ch of text) if (!done.has(ch) && !queue.has(ch) && want(ch)) queue.add(ch); if (queue.size && !running) schedule(); }
   const idle = cb => (window.requestIdleCallback ? requestIdleCallback(cb, { timeout: 300 }) : setTimeout(() => cb({ timeRemaining: () => 12 }), 16));
   function schedule() { running = true; idle(work); }
   function work(dl) {
@@ -3537,16 +3506,46 @@ const Ink = (() => {
     } catch (e) { console.warn('花字装载失败', e); }
   }
   function flush() {
-    const chars = pending; pending = []; install(chars);
+    const chars = pending; pending = []; install(chars); volChars.push(...chars.filter(ch => done.get(ch)));
     clearTimeout(saveT); saveT = setTimeout(save, 1500);
   }
-  /* 缓存：只存轮廓，按字底分开（楷底与宋底不混） */
-  const pack = g => g ? [g.adv, g.c.map(ct => ct.flat())] : null;
-  const unpack = a => a ? { adv: a[0], c: a[1].map(f => { const ct = []; for (let i = 0; i < f.length; i += 3) ct.push([f[i], f[i + 1], f[i + 2]]); return ct; }) } : null;
-  async function save() { if (typeof FS === 'undefined' || !FS.kvSet) return; const o = {}; for (const [ch, g] of done) if (g) o[ch] = pack(g); try { await FS.kvSet(cacheKey, o); } catch { } }
+  /* 缓存：直接存装订好的字体（TrueType 二进制，int16 坐标，比数组小数倍），一卷一条记录。
+     · 每次开机只写“本次新写的字”那一卷，存盘时只重写这一卷——不再把全部字形整包反复重写；
+     · 一卷满 600 字另起一卷，单条记录始终只有几百 KB；
+     · 开机读回时字体二进制原样交给 FontFace，不做任何解包；
+     · 卷数过多（碎了）就整套作废、慢慢重写；旧版本的花字缓存在开机空闲时清掉。 */
+  const VOL_MAX = 600, VOL_LIMIT = 64;
+  let volSeq = -1, volChars = [];
+  const idxKey = () => cacheKey, volKey = n => `${cacheKey}#${n}`;
+  async function save() {
+    if (typeof FS === 'undefined' || !FS.kvSet || !volChars.length) return;
+    try {
+      const list = volChars.map(ch => { const g = done.get(ch); return g && g.c && g.c.length ? { code: ch.codePointAt(0), adv: g.adv, c: g.c } : null; }).filter(Boolean);
+      if (!list.length) return;
+      await FS.kvSet(volKey(volSeq), { chars: volChars.join(''), ttf: buildFont(list), at: Date.now() });
+      await FS.kvSet(idxKey(), { n: volSeq + 1, at: Date.now() });
+      if (volChars.length >= VOL_MAX) { volSeq++; volChars = []; }
+    } catch { }
+  }
   async function load() {
     if (typeof FS === 'undefined' || !FS.kvGet) return;
-    try { const o = await FS.kvGet(cacheKey); if (!o) return; const chars = []; for (const ch in o) { done.set(ch, unpack(o[ch])); chars.push(ch); } for (let i = 0; i < chars.length; i += 800) await install(chars.slice(i, i + 800)); } catch { }
+    let n = 0;
+    try { const ix = await FS.kvGet(idxKey()); n = ix && ix.n || 0; } catch { }
+    if (n > VOL_LIMIT) { for (let i = 0; i < n; i++) try { await FS.kvDel(volKey(i)); } catch { } n = 0; try { await FS.kvSet(idxKey(), { n: 0, at: Date.now() }); } catch { } }
+    for (let i = 0; i < n; i++) {
+      try {
+        const v = await FS.kvGet(volKey(i)); if (!v || !v.ttf || !v.chars) continue;
+        const chars = [...v.chars]; chars.forEach(ch => done.set(ch, 0));   // 0：字已在字体里，内存不留轮廓
+        const face = new FontFace(FAMILY, v.ttf, { unicodeRange: chars.map(ch => 'U+' + ch.codePointAt(0).toString(16)).join(','), display: 'swap' });
+        await face.load(); document.fonts.add(face); faces.push(face);
+      } catch (e) { console.warn('花字缓存一卷读不出，跳过', i, e); }
+    }
+    volSeq = n;
+  }
+  /* 清掉别的版本留下的花字缓存（只看键，不读值）；同版本另一种字底的保留，换回去还能用 */
+  async function sweep() {
+    if (typeof FS === 'undefined' || !FS.kvKeys) return;
+    try { const keep = `huazi:v${VER}:`; for (const k of await FS.kvKeys()) if (typeof k === 'string' && k.startsWith('huazi:') && !k.startsWith(keep)) await FS.kvDel(k); } catch { }
   }
   /** 开机后调用：先装缓存，再盯着页面写新字 */
   function start() {
@@ -3554,6 +3553,7 @@ const Ink = (() => {
     const B = pickBase(); cacheKey = `huazi:v${VER}:${B.name}`;
     ready = (async () => {
       await load();
+      idle(() => sweep());
       collect(document.body.innerText || '');
       new MutationObserver(ms => { for (const m of ms) { if (m.type === 'characterData') collect(m.target.data); else for (const n of m.addedNodes) collect(n.nodeType === 3 ? n.data : (n.textContent || '')); } }).observe(document.body, { childList: true, subtree: true, characterData: true });
       document.addEventListener('input', e => { const t = e.target; if (t && typeof t.value === 'string') collect(t.value.slice(-40)); }, true);
@@ -3677,65 +3677,163 @@ const InkArt = (() => {
 
   /* ---------- 墨缸：一口水墨画成的缸，立体的；墨面高低 = 本站用量占浏览器配额 ----------
      缸身用淡墨层层渲出明暗，轮廓是起收有致的笔线；墨位以下的缸身像被墨沁透一样更深一层，一眼看出满到哪里。 */
-  function jar(c, W, H, d, P, r) {
-    const cx = W / 2, top = 38, RX = 50, RY = 13, SH = 82, SX = 80, BY = H - 20, BX = 46;
-    const p = clamp(d.quota ? d.usage / d.quota : 0, 0, 1), L = 0.1 + 0.9 * Math.sqrt(p);   /* 用量常常不到 1%，开方后才看得见 */
-    const INK = P.INK, paper = P.sheet;
-    const ink = a => rgba(INK, a);
-    shadow(c, cx + 6, BY + 3, BX + 22, 7, P.shadowA * 1.2);
-    const bz = (p0, p1, p2, p3, t) => { const u = 1 - t; return [u * u * u * p0[0] + 3 * u * u * t * p1[0] + 3 * u * t * t * p2[0] + t * t * t * p3[0], u * u * u * p0[1] + 3 * u * u * t * p1[1] + 3 * u * t * t * p2[1] + t * t * t * p3[1]]; };
-    /* 轮廓沿着缸身同样的两段曲线取点，笔线贴着缸身走 */
-    const side = s => { const X = v => cx + s * v, out = [];
-      for (let k = 0; k <= 8; k++) out.push(bz([X(RX), top], [X(RX + 14), top + 18], [X(SX + 4), SH - 22], [X(SX), SH], k / 8));
-      for (let k = 1; k <= 8; k++) out.push(bz([X(SX), SH], [X(SX - 4), SH + 34], [X(BX + 10), BY - 26], [X(BX), BY], k / 8));
-      return out; };
-    const body = () => { c.beginPath(); c.moveTo(cx - RX, top); c.bezierCurveTo(cx - RX - 14, top + 18, cx - SX - 4, SH - 22, cx - SX, SH); c.bezierCurveTo(cx - SX + 4, SH + 34, cx - BX - 10, BY - 26, cx - BX, BY);
-      c.ellipse(cx, BY, BX, 9, 0, Math.PI, 0, true); c.bezierCurveTo(cx + BX + 10, BY - 26, cx + SX - 4, SH + 34, cx + SX, SH); c.bezierCurveTo(cx + SX + 4, SH - 22, cx + RX + 14, top + 18, cx + RX, top); c.ellipse(cx, top, RX, RY, 0, 0, Math.PI, false); c.closePath(); };
-    /* 缸身：纸色打底，淡墨从两侧向中间渲，左上留一道亮 */
-    body(); c.fillStyle = paper; c.fill();
-    c.save(); body(); c.clip();
-    let g = c.createLinearGradient(cx - SX, 0, cx + SX, 0);
-    g.addColorStop(0, ink(.62)); g.addColorStop(.16, ink(.34)); g.addColorStop(.36, ink(.08)); g.addColorStop(.5, ink(.14)); g.addColorStop(.78, ink(.4)); g.addColorStop(1, ink(.7));
-    c.fillStyle = g; c.fillRect(0, 0, W, H);
-    g = c.createLinearGradient(0, top, 0, BY + 10); g.addColorStop(0, ink(0)); g.addColorStop(.55, ink(.06)); g.addColorStop(1, ink(.4)); c.fillStyle = g; c.fillRect(0, 0, W, H);
-    /* 洇开的墨团：几处浓淡不一的水渍 */
-    for (let i = 0; i < 7; i++) { const x = cx + (r() - .5) * SX * 1.6, y = top + 20 + r() * (BY - top - 30), rx = 10 + r() * 22; blurred(c, 6 + r() * 6, () => { c.fillStyle = ink(.05 + r() * .08); c.beginPath(); c.ellipse(x, y, rx, rx * (.5 + r() * .5), r() * 3, 0, 7); c.fill(); }); }
-    /* 墨位：以下更深，像墨沁透了陶胎；墨线是一道椭圆弧 */
-    const ly = BY - (BY - top - 10) * L, lrx = ly < SH ? RX + (SX - RX) * ((ly - top) / (SH - top)) : SX - (SX - BX) * ((ly - SH) / (BY - SH));
-    c.save(); c.beginPath(); c.moveTo(0, ly); c.ellipse(cx, ly, lrx + 2, 7, 0, Math.PI, 0, true); c.lineTo(W, H); c.lineTo(0, H); c.closePath(); c.clip();
-    g = c.createLinearGradient(0, ly, 0, BY); g.addColorStop(0, ink(.28)); g.addColorStop(1, ink(.5)); c.fillStyle = g; c.fillRect(0, ly - 10, W, H);
-    c.restore();
-    stroke(c, wob(Array.from({ length: 13 }, (_, k) => { const a = Math.PI - k / 12 * Math.PI; return [cx + Math.cos(a) * lrx, ly + Math.sin(a) * 7]; }), .6, r, 6), 1.6, .8, ink(.55), r, { rough: .3 });
-    /* 高光：左上一抹飞白 */
-    blurred(c, 3, () => { c.fillStyle = 'rgba(255,255,255,.34)'; c.beginPath(); c.ellipse(cx - SX * .5, SH - 6, 5, 30, .12, 0, 7); c.fill(); });
-    dry(c, wob([[cx - SX * .58, top + 30], [cx - SX * .62, SH + 10], [cx - SX * .5, SH + 40]], .8, r, 5), 4, 'rgba(255,255,255,.35)', r, 3);
-    /* 肩上一道弦纹 */
-    for (const dy of [0, 5]) stroke(c, wob(Array.from({ length: 17 }, (_, k) => { const a = Math.PI - k / 16 * Math.PI, y = SH - 24 + dy; const rx = RX + (SX - RX) * ((y - top) / (SH - top)) - 2; return [cx + Math.cos(a) * rx, y + Math.sin(a) * 9]; }), .5, r, 6), 1.1, .7, ink(.45), r, { rough: .35 });
-    c.restore();
-    /* 轮廓：左右两笔，起笔重收笔轻；底下一笔托住 */
-    for (const s of [-1, 1]) { const pts = wob(side(s), .7, r, 5); stroke(c, pts, 3.4, 1.6, ink(.88), r, { rough: .25 }); dry(c, pts, 3, ink(.35), r, 2); }
-    stroke(c, wob(Array.from({ length: 11 }, (_, k) => { const a = Math.PI - k / 10 * Math.PI; return [cx + Math.cos(a) * BX, BY + Math.sin(a) * 9]; }), .8, r, 6), 2.2, 1.4, ink(.8), r);
-    /* 缸口：望进去是墨，墨面随用量升降 */
-    const IRX = RX - 5, IRY = RY - 3;
-    c.save(); c.beginPath(); c.ellipse(cx, top, IRX, IRY, 0, 0, 7); c.clip();
-    g = c.createLinearGradient(0, top - IRY, 0, top + IRY); g.addColorStop(0, ink(.9)); g.addColorStop(1, ink(.55)); c.fillStyle = g; c.fillRect(cx - RX, top - RY, RX * 2, RY * 2);
-    const sy = top - IRY * .2 + (1 - L) * IRY * 1.2;
-    g = c.createLinearGradient(0, sy - IRY, 0, sy + IRY); g.addColorStop(0, '#2a2620'); g.addColorStop(1, '#050504'); c.fillStyle = g; c.beginPath(); c.ellipse(cx, sy, IRX * .96, IRY * .9, 0, 0, 7); c.fill();
-    c.strokeStyle = 'rgba(255,255,255,.28)'; c.lineWidth = .8; c.beginPath(); c.ellipse(cx - 10, sy - IRY * .25, IRX * .42, IRY * .16, 0, Math.PI, Math.PI * 2); c.stroke();   /* 墨面一线天光 */
-    c.restore();
-    /* 缸沿：厚唇两笔 */
-    stroke(c, wob(Array.from({ length: 25 }, (_, k) => { const a = k / 24 * Math.PI * 2; return [cx + Math.cos(a) * RX, top + Math.sin(a) * RY]; }), .7, r, 6), 2.8, 2.2, ink(.85), r, { rough: .22, taper: false });
-    stroke(c, wob(Array.from({ length: 13 }, (_, k) => { const a = Math.PI * 1.1 + k / 12 * Math.PI * .8; return [cx + Math.cos(a) * (RX - 4), top + Math.sin(a) * (RY - 3)]; }), .5, r, 6), 1, .5, 'rgba(255,255,255,.4)', r);
-    /* 贴在缸上的签：百分比 */
-    c.save(); c.translate(cx + 30, SH + 22); c.rotate(.05);
-    c.fillStyle = paper; c.fillRect(-17, -23, 34, 46); c.strokeStyle = rgba(P.cin, .55); c.lineWidth = .6; c.strokeRect(-14.5, -20.5, 29, 41);
-    glyph(c, '盈', 0, -8, 16, INK, P);   /* 缸里墨盈几分 */
-    txt(c, p < 0.0001 ? '<0.01%' : (p * 100).toFixed(p < 0.01 ? 2 : 1) + '%', 0, 10, 7.6, INK, P, 'center');
-    c.restore();
+  /* 仓储之缸：一只拉坯成形的瓷罐，逐像素“车”出来（旋转体按列光栅化 + 深度缓冲）。
+     · 罐身上半施月白釉，带细开片；下半蘸墨釉——墨釉蘸到多高，就是存储用了多少；
+       釉线不是一刀切，墨像渗进宣纸一样往上洇出细毛边，釉薄处泛出柿褐，釉面有兔毫细丝；
+     · 圈足露胎；口沿是圆唇，往口里看得见一汪墨，映着窗光；
+     · 光：左上一面柔光箱的倒影 + 菲涅尔环境反射 + 右侧轮廓光，地上一团软影。
+     · 不贴纸签——“盈 x%”写在缸旁的说明里。 */
+  const JAR_PROF = [[0, .25], [.016, .266], [.034, .262], [.06, .232], [.1, .248], [.17, .33], [.26, .392], [.36, .41], [.47, .397], [.6, .356], [.73, .3], [.84, .255], [.895, .236], [.905, .222], [.915, .226], [.985, .222], [1, .205]];
+  const JN = 420, JR = new Float32Array(JN + 1), JD = new Float32Array(JN + 1);
+  (() => {   // Catmull-Rom 插值出轮廓表与斜率
+    const P = JAR_PROF, at = y => { let i = 0; while (i < P.length - 2 && P[i + 1][0] < y) i++; const p0 = P[Math.max(0, i - 1)], p1 = P[i], p2 = P[i + 1], p3 = P[Math.min(P.length - 1, i + 2)], t = (y - p1[0]) / (p2[0] - p1[0]), t2 = t * t, t3 = t2 * t;
+      return .5 * (2 * p1[1] + (-p0[1] + p2[1]) * t + (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1]) * t2 + (-p0[1] + 3 * p1[1] - 3 * p2[1] + p3[1]) * t3); };
+    for (let i = 0; i <= JN; i++) JR[i] = at(i / JN);
+    for (let i = 0; i <= JN; i++) JD[i] = (JR[Math.min(JN, i + 1)] - JR[Math.max(0, i - 1)]) * JN / ((i > 0 && i < JN) ? 2 : 1);
+  })();
+  const jh = (x, y) => { let h = (x * 374761393 + y * 668265263) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
+  const jn = (x, y) => { const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi, u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf), a = jh(xi, yi), b = jh(xi + 1, yi), c = jh(xi, yi + 1), d = jh(xi + 1, yi + 1); return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v; };
+  const jf = (x, y) => .5 * jn(x, y) + .25 * jn(x * 2.1 + 3, y * 2.1) + .125 * jn(x * 4.3, y * 4.3 + 7);
+  const jss = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+  /* 竹简上随手写的小字：取《兰亭集序》开篇 */
+  const LETTER = '永和九年岁在癸丑暮春之初会于会稽山阴之兰亭修禊事也群贤毕至少长咸集此地有崇山峻岭茂林修竹又有清流激湍映带左右';
+  /* 逐像素要算二三十万点：放进生成器里分片做（每片 10ms），算好之前先摆着上一只缸，算完自动换上——打开仓廪绝不卡顿 */
+  let jarCache = null, jarJob = null;
+  function jarImage(W, H, L, dark, k) {
+    const key = [W, H, Math.round(L * 400), dark, k].join('|'); if (jarCache && jarCache.key === key) return jarCache.cv;
+    if (!jarJob || jarJob.key !== key) {
+      const gen = jarGen(W, H, L, dark, k, key), job = jarJob = { key };
+      const mc = new MessageChannel(), next = () => mc.port2.postMessage(0);   /* 比 setTimeout 少了 4ms 的钳制，又照样让出主线程 */
+      const step = () => { if (jarJob !== job) return; const t0 = performance.now(); let r; do r = gen.next(); while (!r.done && performance.now() - t0 < 10);
+        if (!r.done) return next();
+        mc.port1.close(); jarCache = { key, cv: r.value }; jarJob = null; document.querySelectorAll('canvas.ia').forEach(c => c._ia && c._ia.name === 'jar' && draw(c)); };
+      mc.port1.onmessage = step; next();
+    }
+    return jarCache ? jarCache.cv : null;
   }
-
-  const LETTER = [...'碧玉妆成一树高万条垂下绿丝绦不知细叶谁裁出二月春风似剪刀'];   /* 竹简上写的字：贺知章《咏柳》 */
-  /* ---------- 竹简：一类文件一根简，写得越满占得越多 ---------- */
+  function* jarGen(W, H, L, dark, k, key) {
+    const Hj = H * .8, S = Hj * k, top = H * .07;
+    const bw = Math.ceil(.9 * Hj * k), iw = bw, ih = Math.ceil(H * k), ox = iw / 2, oy = top * k;
+    const SN = .26, CS = Math.sqrt(1 - SN * SN);
+    const N = iw * ih, zb = new Float32Array(N).fill(1e9), ty = new Uint8Array(N), fY = new Float32Array(N), fX = new Float32Array(N), fZ = new Float32Array(N);
+    const put = (px, py, dep, t, X, Y, Z) => { if (py < 0 || py >= ih) return; const o = py * iw + px; if (dep < zb[o]) { zb[o] = dep; ty[o] = t; fX[o] = X; fY[o] = Y; fZ[o] = Z; } };
+    const Ri = y => JR[Math.round(Math.min(1, y) * JN)] - .024, YINK = .085;
+    for (let px = 0; px < iw; px++) {
+      if (px % 6 === 0) yield;
+      const x = (px + .5 - ox) / S;
+      // 外壁（正面）：相邻两个轮廓样本之间按行填
+      let ps = null, pY = 0, pZ = 0;
+      for (let i = 0; i <= JN; i++) {
+        const Y = i / JN, R = JR[i]; if (Math.abs(x) >= R) { ps = null; continue; }
+        const Z = Math.sqrt(R * R - x * x), sy = (Y * CS + Z * SN) * S + oy;
+        if (ps !== null) { const a = Math.min(ps, sy), b = Math.max(ps, sy); for (let py = Math.ceil(a - .5); py + .5 <= b; py++) { const f = b > a ? (py + .5 - ps) / (sy - ps) : 0, YY = pY + (Y - pY) * f, ZZ = pZ + (Z - pZ) * f; put(px, py, YY * SN - ZZ * CS, 1, x, YY, ZZ); } }
+        ps = sy; pY = Y; pZ = Z;
+      }
+      // 内壁（背面，口沿到墨面）
+      ps = null;
+      for (let Y = 0; Y <= YINK + .001; Y += 1 / JN) {
+        const R = Ri(Y); if (Math.abs(x) >= R) { ps = null; continue; }
+        const Z = -Math.sqrt(R * R - x * x), sy = (Y * CS + Z * SN) * S + oy;
+        if (ps !== null) { const a = Math.min(ps, sy), b = Math.max(ps, sy); for (let py = Math.ceil(a - .5); py + .5 <= b; py++) { const f = b > a ? (py + .5 - ps) / (sy - ps) : 0, YY = pY + (Y - pY) * f, ZZ = pZ + (Z - pZ) * f; put(px, py, YY * SN - ZZ * CS, 2, x, YY, ZZ); } }
+        ps = sy; pY = Y; pZ = Z;
+      }
+      // 口沿顶面（圆唇）与墨面
+      const R0 = JR[0] + .012, ri0 = Ri(0), rk = Ri(YINK);
+      for (let py = 0; py < ih; py++) {
+        const syu = (py + .5 - oy) / S;
+        let Z = syu / SN, rho = Math.hypot(x, Z);   // Y = 0 平面
+        if (rho <= R0 && rho >= ri0) put(px, py, -Z * CS - .004, 3, x, 0, Z);
+        Z = (syu - YINK * CS) / SN; rho = Math.hypot(x, Z);
+        if (rho <= rk) put(px, py, YINK * SN - Z * CS, 4, x, YINK, Z);
+      }
+    }
+    // 上色
+    const img = new ImageData(iw, ih), D = img.data;
+    const L0 = [-.52, -.62, .58], ln = Math.hypot(...L0); L0[0] /= ln; L0[1] /= ln; L0[2] /= ln;
+    const V = [0, -SN, CS];
+    const gTop = .9 - L * (.9 - .14);   // 墨釉的上沿
+    const env = (rx, ry, rz) => {   // 环境：上暖白（纸窗），下深褐（案面），左上一面柔光箱，右侧一条窄光
+      const up = Math.min(1, Math.max(0, -ry * 1.6 + .25));
+      let e = dark ? [38 + 40 * up, 34 + 34 * up, 30 + 26 * up] : [70 + 170 * up, 60 + 166 * up, 50 + 158 * up];
+      const az = Math.atan2(rx, rz), el = -ry;
+      const box = jss(-1.12, -1.02, az) * (1 - jss(-.6, -.5, az)) * jss(.02, .12, el) * (1 - jss(.78, .9, el));
+      const rim = jss(.95, 1.05, az) * (1 - jss(1.3, 1.4, az)) * jss(-.25, -.1, el) * (1 - jss(.5, .6, el));
+      const bi = dark ? 300 : 520, ri = dark ? 170 : 200;
+      return [e[0] + box * bi + rim * ri * (dark ? 1.1 : 1), e[1] + box * bi * .98 + rim * ri * (dark ? .85 : 1), e[2] + box * bi * .92 + rim * ri * (dark ? .55 : 1)];
+    };
+    for (let o = 0, p = 0; o < N; o++, p += 4) {
+      if ((o & 4095) === 0) yield;
+      const t = ty[o]; if (!t) continue;
+      const X = fX[o], Y = fY[o], Z = fZ[o];
+      let nx, ny, nz, base, F0 = .045, rough = 0, amb = .34, dif = .62, ao = 1;
+      if (t === 1) {
+        const i = Math.round(Y * JN), R = JR[i], dR = JD[i]; nx = X / R; ny = -dR; nz = Z / R; const n = Math.hypot(nx, ny, nz); nx /= n; ny /= n; nz /= n;
+        const th = Math.atan2(X, Z), u = th / (Math.PI * 2) + .5;
+        if (Y > .905) {   // 圈足露胎：灰褐胎土，细砂点，哑光
+          const g = jn(u * 160, Y * 220), g2 = jn(u * 40, Y * 60);
+          base = [150 + 26 * g2 - 30 * (g > .86 ? 1 : 0), 124 + 22 * g2 - 28 * (g > .86 ? 1 : 0), 98 + 16 * g2 - 24 * (g > .86 ? 1 : 0)]; F0 = 0; rough = 1;
+          ao = .78 + .22 * jss(1, .93, Y);
+        } else {
+          // 釉线：缓起伏 + 洇开的细毛
+          const fu = u * 9, edge = gTop + .014 * Math.sin(th * 3 + 1.3) + .02 * (jf(fu, 1.7) - .5);
+          // 墨往上洇：几缕细而软的墨丝，不是锯齿
+          const wisp = Math.pow(Math.max(0, jn(u * 46, 3.1) - .45) / .55, 2.2) * .03 * (.5 + jn(u * 7, 8.2));
+          const e2 = edge - wisp, fibre = jn(u * 260, Y * 90), inInk = jss(e2 - .009 - .006 * fibre, e2 + .008, Y);
+          // 月白釉：象牙白偏青，细开片（噪声脊线）
+          const cr = Math.abs(jf(u * 34, Y * 26) - .5), cr2 = Math.abs(jn(u * 90 + 9, Y * 64) - .5);   // 开片：细而淡，大小两层
+          let ivory = dark ? [178, 178, 168] : [232, 230, 216];
+          const crk = jss(.007, .002, cr) * 18 + jss(.006, .002, cr2) * 8;
+          ivory = ivory.map((v, j) => v - crk * [1, 1.06, 1.25][j] - [6, 3, 0][j] * jn(u * 6, Y * 5));
+          // 墨釉：近黑，兔毫细丝（沿竖向拉长的噪声），釉薄处（上沿）泛柿褐
+          const hare = jn(u * 300, Y * 7) * .7 + jn(u * 700, Y * 14) * .3, hs = jss(.62, .9, hare);
+          let ink = [15 + 40 * hs, 13 + 27 * hs, 12 + 16 * hs];
+          const thin = jss(.05, 0, Y - e2);   // 离釉线越近釉越薄
+          ink = ink.map((v, j) => v + thin * [96, 58, 30][j] * (.6 + .4 * jn(u * 80, Y * 30)));
+          const pool = jss(.72, .9, Y); ink = ink.map(v => v * (1 - .35 * pool));   // 近足处釉厚而沉
+          base = ivory.map((v, j) => v + (ink[j] - v) * inInk);
+          // 洇在釉线上方的极淡墨晕
+          const halo = jss(.05, 0, e2 - Y) * (1 - inInk) * (.1 + .22 * jn(u * 120, Y * 70)); base = base.map((v, j) => v - halo * (v - ink[j]));
+          F0 = .04 + .02 * inInk; amb = .3 + .06 * (1 - inInk);
+          ao = 1 - .18 * jss(.86, .905, Y) - .2 * jss(.08, .03, Y);
+        }
+      } else if (t === 2) {   // 内壁：月白釉，向里越暗
+        const R = Ri(Y); nx = -X / R; ny = 0; nz = -Z / R; base = dark ? [170, 170, 160] : [214, 212, 198]; ao = .42 + .4 * (1 - Y / .085); F0 = .03;
+      } else if (t === 3) {   // 口沿：圆唇
+        const rho = Math.hypot(X, Z), ri0 = Ri(0), R0 = JR[0] + .012, q = (rho - ri0) / (R0 - ri0) * 2 - 1;
+        nx = X / rho * q * .8; nz = Z / rho * q * .8; ny = -Math.sqrt(Math.max(.05, 1 - q * q * .64)); base = dark ? [200, 198, 186] : [236, 233, 220]; F0 = .05;
+      } else {   // 墨面：几乎全黑，只映出窗光
+        nx = 0; ny = -1; nz = 0; base = [6, 6, 7]; F0 = .06; amb = .1; dif = .05;
+        const rho = Math.hypot(X, Z), rk = Ri(YINK); ao = .55 + .45 * jss(rk, rk * .6, rho);
+      }
+      const nl = Math.max(0, nx * L0[0] + ny * L0[1] + nz * L0[2]), nv = Math.max(.001, nx * V[0] + ny * V[1] + nz * V[2]);
+      const hemi = amb + .12 * (-ny);
+      let r = base[0] * (hemi + dif * nl) * ao, g = base[1] * (hemi + dif * nl) * ao, b = base[2] * (hemi + dif * nl) * ao;
+      if (!rough) {
+        const Fr = F0 + (1 - F0) * Math.pow(1 - nv, 5), rx = 2 * nv * nx - V[0], ry = 2 * nv * ny - V[1], rz = 2 * nv * nz - V[2];
+        const e = env(rx, ry, rz), kk = Fr * (t === 4 ? .9 : 1) * (t === 2 ? .5 : 1) * ao;
+        r += e[0] * kk; g += e[1] * kk; b += e[2] * kk;
+      }
+      D[p] = Math.min(255, r); D[p + 1] = Math.min(255, g); D[p + 2] = Math.min(255, b); D[p + 3] = 255;
+    }
+    // 边缘抗锯齿：只在轮廓上取 3×3 覆盖率
+    for (let py = 1; py < ih - 1; py++) for (let px = 1; px < iw - 1; px++) {
+      const o = py * iw + px; if (!ty[o]) continue;
+      let c = 0; for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) if (ty[o + dy * iw + dx]) c++;
+      if (c < 9) D[o * 4 + 3] = Math.round(255 * Math.min(1, (c + 1) / 9 * 1.1));
+    }
+    const cv = document.createElement('canvas'); cv.width = iw; cv.height = ih; cv.getContext('2d').putImageData(img, 0, 0);
+    return cv;
+  }
+  function jar(c, W, H, d, P, r) {
+    const p = clamp(d.quota ? d.usage / d.quota : 0, 0, 1), L = .04 + .96 * Math.sqrt(p);   /* 用量常常不到 1%，开方后才看得见 */
+    const k = Math.min(2.6, (devicePixelRatio || 1) * 1.3), img = jarImage(W, H, L, !!P.dark, k);
+    const w = img ? img.width / k : 0, x = (W - w) / 2, H8 = H * .8, top = H * .07, footY = top + (H8 * (1 * Math.sqrt(1 - .26 * .26))) + H8 * .22 * .26;
+    // 地上的软影：落在右下（光从左上来）
+    c.save(); const sg = c.createRadialGradient(W / 2 + 8, footY - 2, 2, W / 2 + 8, footY - 2, H8 * .34);
+    sg.addColorStop(0, `rgba(20,14,8,${P.dark ? .55 : .34})`); sg.addColorStop(.55, `rgba(20,14,8,${P.dark ? .22 : .12})`); sg.addColorStop(1, 'rgba(20,14,8,0)');
+    c.translate(0, footY - 2); c.scale(1, .22); c.fillStyle = sg; c.translate(0, -(footY - 2)); c.beginPath(); c.arc(W / 2 + 8, footY - 2, H8 * .36, 0, 7); c.fill(); c.restore();
+    if (img) { c.imageSmoothingQuality = 'high'; c.drawImage(img, x, 0, w, img.height / k); }
+  }
   function slips(c, W, H, d, P, r) {
     const ks = d.kinds || [], n = ks.length, sw = 24, gp = 4, x0 = W / 2 + (n * (sw + gp) - gp) / 2, top = 10, bot = H - 12;
     const max = Math.max(1, ...ks.map(k => k[1]));
@@ -3780,7 +3878,7 @@ const InkArt = (() => {
     cv._ia = { name, data, w, h: hh }; cv.style.aspectRatio = `${w} / ${hh}`; if (natural) cv.style.width = w + 'px'; draw(cv); return cv;
   }
   if (typeof BUS !== 'undefined') BUS.on('theme', () => requestAnimationFrame(() => document.querySelectorAll('canvas.ia').forEach(draw)));
-  return { make, draw, pal, glyph, seal, stroke, LETTER };
+  return { make, draw, pal, glyph, seal, stroke, LETTER, get busy() { return !!jarJob; } };
 })();
 
 /* ── 20-theme.js ── */
@@ -4959,6 +5057,11 @@ const UI = (() => {
   const btns = (list, finish) => h('div.dlg-b', {}, ...list.map(b => h('button.btn' + (b.cls ? '.' + b.cls : ''), { text: b.label, dataset: b.primary ? { primary: '1' } : {}, on: { click: () => finish(b.value) } })));
   const head = (title, glyph, danger) => h('div.dlg-t', {}, glyph ? h('span.seal-chip', { text: glyph, style: danger ? {} : { background: 'var(--willow-deep)' } }) : null, h('span', { text: title }));
 
+  /** 大文件闸门：超过 lim 字节先问一声（多大、会怎样），用户点头才往下做 */
+  async function bigOK(n, lim, what = '打开') {
+    if (!n || !(n.size > lim)) return true;
+    return confirm({ title: '此卷甚巨', glyph: '巨', msg: `「${n.name}」有 ${fmtSize(n.size)}。整卷读进来要占不少内存，手机上可能卡上一阵。仍要${what}吗？`, ok: what });
+  }
   function confirm({ title = '确认', msg = '', html = '', ok = '确定', cancel = '作罢', danger = false, glyph, check } = {}) {
     return scrollDialog(finish => {
       const box = h('div.dlg', {}, head(title, glyph || (danger ? '慎' : '问'), danger), h('div.dlg-m', html ? { html } : { text: msg }));
@@ -5009,7 +5112,7 @@ const UI = (() => {
     return { action: r };
   }
 
-  return { initTips, menu, menuAt, closeMenu, toast, job, scrollDialog, confirm, alert, prompt, choose, conflict, get menuOpen() { return !!openMenu; } };
+  return { initTips, menu, menuAt, closeMenu, toast, job, scrollDialog, confirm, bigOK, alert, prompt, choose, conflict, get menuOpen() { return !!openMenu; } };
 })();
 
 /** 工具栏按钮：一个墨字 + 一两个字的说明（取代看不懂的小图标） */
@@ -5156,6 +5259,292 @@ const Pick = {
   }
 };
 
+/* ── 22c-scrollart.js ── */
+/* =====================================================================
+   三轴 · 标题栏正中的三只小手卷（收 · 开 · 合）
+   不是图标，是三件“器物”：每只都按真实手卷的构造逐像素求光线交点画出——
+     轴头（实木，顶面看得见年轮）· 卷身（外裹包首绫，贴一条签条，系带上别一枚白玉别子）
+     · 展开的画心（宣纸，上下镶绫边）· 天杆（半圆木条）。
+   三种木：收＝乌木（玄黑见细丝）· 开＝金丝楠（金丝随光流动）· 合＝紫檀（牛毛纹）。
+   静止时卷起系好；手指移近，带子松开、卷子展开，宣纸露出来，墨字一笔一笔写上去。
+   开轴在窗口铺满时保持半展——它同时就是“现在是展开的”这件事本身。
+   横展（手卷，默认）与竖展（立轴）是同一套几何转置而来，光照始终来自左上。
+   ===================================================================== */
+const ScrollArt = (() => {
+  const fxOn = () => Prefs.get('motion') >= 2 && Prefs.get('winAnim') && !REDUCED_MOTION.matches;
+  const idle = cb => (window.requestIdleCallback ? requestIdleCallback(cb, { timeout: 600 }) : setTimeout(() => cb({ timeRemaining: () => 12 }), 30));
+  /* ---------- 噪声 ---------- */
+  const hash = (x, y) => { let h = (x * 374761393 + y * 668265263) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
+  const vn = (x, y) => { const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi, u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf); const a = hash(xi, yi), b = hash(xi + 1, yi), c = hash(xi, yi + 1), d = hash(xi + 1, yi + 1); return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v; };
+  const fbm = (x, y, o = 4) => { let s = 0, a = .5, f = 1; for (let i = 0; i < o; i++) { s += a * vn(x * f + i * 17.3, y * f - i * 9.1); f *= 2.03; a *= .5; } return s; };
+  const sstep = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+  const mix3 = (p, q, t) => [p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t, p[2] + (q[2] - p[2]) * t];
+
+  /* ---------- 材质 ---------- */
+  const ROLE = {
+    min: { wood: 'ebony', silk: [50, 68, 76], tie: [176, 146, 88] },     // 乌木 · 黛青锦 · 缃色带
+    max: { wood: 'nan', silk: [190, 156, 92], tie: [58, 66, 74] },      // 金丝楠 · 缃色锦 · 黛色带
+    close: { wood: 'zitan', silk: [168, 50, 38], tie: [226, 210, 172] }  // 紫檀 · 朱锦 · 米色带
+  };
+  // 木纹预先烘成贴图：沿轴 a（每单位 4 像素，32 单位）× 绕周 θ（64 份）
+  const TA = 128, TT = 64, texCache = {};
+  function woodTex(kind) {
+    if (texCache[kind]) return texCache[kind];
+    const T = new Float32Array(TA * TT * 4);
+    for (let j = 0; j < TT; j++) for (let i = 0; i < TA; i++) {
+      const a = i / 4, th = j / TT * Math.PI * 2, tu = Math.cos(th) * 1.6, tv = Math.sin(th) * 1.6;   // 绕周无缝
+      let c, g = .5, f = 0;
+      if (kind === 'ebony') {
+        const st = fbm(a * .22 + tu, tv + a * .05, 4), fine = vn(a * 2.4 + tu * 3, tv * 3);
+        c = mix3([20, 15, 13], [62, 46, 36], sstep(.52, .78, st) * .8);
+        c = mix3(c, [10, 8, 7], sstep(.6, .9, fine) * .35); g = .95;
+      } else if (kind === 'nan') {
+        const w = fbm(a * .12 + tu * .7, tv * .7, 3), ln = Math.sin((th * 3 + w * 9 + a * .05) * 2.2);
+        c = mix3([118, 78, 32], [196, 146, 70], .5 + .5 * ln * .7);
+        c = mix3(c, [88, 56, 22], sstep(.7, .95, vn(a * 1.8 + tu * 2, tv * 2)) * .3);
+        f = Math.pow(Math.max(0, Math.sin(a * .55 + w * 7 + th)), 5);   // 金丝：之后随光相位流动
+        g = .62;
+      } else {
+        const n = fbm(a * 1.5 + tu * 4, tv * 4, 3), wv = fbm(a * .25 + tu, tv, 3);
+        c = mix3([62, 20, 22], [100, 38, 42], sstep(.45, .75, wv) * .6);
+        c = mix3(c, [26, 7, 9], sstep(.6, .7, n) * .7); g = .78;
+      }
+      const o = (j * TA + i) * 4; T[o] = c[0]; T[o + 1] = c[1]; T[o + 2] = c[2]; T[o + 3] = f;
+      T.gloss = g;
+    }
+    return (texCache[kind] = T);
+  }
+  let paperN = null;
+  function paperTex() {   // 宣纸纤维 + 绫的云纹，一张 64×64 的标量图两用
+    if (paperN) return paperN;
+    paperN = { fib: new Float32Array(4096), cloud: new Float32Array(4096) };
+    for (let y = 0; y < 64; y++) for (let x = 0; x < 64; x++) {
+      const tu = Math.cos(x / 64 * Math.PI * 2), tv = Math.sin(x / 64 * Math.PI * 2), su = Math.cos(y / 64 * Math.PI * 2), sv = Math.sin(y / 64 * Math.PI * 2);
+      paperN.fib[y * 64 + x] = fbm(tu * 3 + su * .4, tv * 3 + sv * .4, 3) + .35 * vn(tu * 14 + su * 2, tv * 14);
+      paperN.cloud[y * 64 + x] = fbm(tu * 1.2 + su * 1.2, tv * 1.2 + sv * 1.2, 3);
+    }
+    return paperN;
+  }
+  const pt = (arr, x, y) => arr[((Math.floor(y * 4) & 63) << 6) | (Math.floor(x * 4) & 63)];
+
+  /* ---------- 几何（单位：CSS 像素 / S） ---------- */
+  const SIN = .3, COS = Math.sqrt(1 - SIN * SIN), Z0 = 30;
+  function geom(t, orient) {
+    const v = orient === 'v', Wmax = v ? 17 : 24, tMax = v ? 1 : 1.3;
+    const kh = 3.2, ph = v ? 16.5 : 17.6, Rr = 1.4, Rp0 = 4.3, Rk = 3.05, Rt = 1.15;
+    const tt = Math.min(Math.max(t, 0), tMax), Wp = Wmax * tt;
+    const Rp = Math.sqrt(Rr * Rr + (Rp0 * Rp0 - Rr * Rr) * (1 - .58 * Math.min(1, tt)));
+    const cx = 1.6 + Rp0, xe = cx + Rp + Wp;
+    const LW = cx + Rp0 + Wmax * tMax + 2 * Rt + 2.2;
+    const oy = Rp0 * SIN + .9, LH = oy + (2 * kh + ph) * COS + 2.6;
+    return { v, t: tt, Wp, Wmax, kh, ph, Rr, Rp0, Rp, Rk, Rt, cx, xe, LW, LH, oy, mid: kh + ph / 2 };
+  }
+
+  /* ---------- 逐像素求交上色 ---------- */
+  const cache = new Map();
+  const dark = () => document.documentElement.classList.contains('dark');
+  function frame(role, t, orient, S) {
+    const dpr = Math.min(3, Math.max(1, devicePixelRatio || 1)), dk = dark();
+    const tq = Math.round(t * 40) / 40, key = `${role}|${orient}|${dk ? 1 : 0}|${dpr}|${S}|${tq}`;
+    let c = cache.get(key); if (c) return c;
+    c = render(role, tq, orient, S, dpr, dk);
+    if (cache.size > 360) cache.delete(cache.keys().next().value);
+    cache.set(key, c); return c;
+  }
+  function render(role, t, orient, S, dpr, dk) {
+    const G = geom(t, orient), R = ROLE[role], W = woodTex(R.wood), PT = paperTex();
+    const ss = dpr >= 2 ? 1.5 : 2, k = S * dpr * ss;
+    const iw = Math.ceil(G.LW * k), ih = Math.ceil(G.LH * k);
+    const cv = document.createElement('canvas'); cv.width = iw; cv.height = ih;
+    const g = cv.getContext('2d'), img = g.createImageData(iw, ih), D = img.data;
+    const L = [-.5, -.66, .56], Ln = Math.hypot(...L); L[0] /= Ln; L[1] /= Ln; L[2] /= Ln;
+    const V = [0, -SIN, COS], H = [L[0] + V[0], L[1] + V[1], L[2] + V[2]], Hn = Math.hypot(...H); H[0] /= Hn; H[1] /= Hn; H[2] /= Hn;
+    const amb = dk ? .34 : .42, dif = dk ? .7 : .72, expo = dk ? .9 : 1;
+    const paperC = dk ? [214, 204, 182] : [240, 233, 214];
+    const silkMix = Math.min(1, Math.max(0, (3.4 - G.Wp) / 1.6));   // 包首还裹在外面的程度
+    const tieA = Math.min(1, Math.max(0, 1 - G.t / .16));           // 系带
+    const sheetOn = G.Wp > .05, rodOn = G.Wp > .5, ZS = -.3;
+    const y1 = G.kh, y2 = G.kh + G.ph, y3 = 2 * G.kh + G.ph;
+    const pinX = G.cx + G.Rp * .22, slipX = G.cx - G.Rp * .32;
+    const shimmer = t * 5.5;
+    const woodAt = (a, th) => { const i = Math.floor(a * 4) & (TA - 1), j = Math.floor((th / (Math.PI * 2) + 1) * TT) & (TT - 1), o = (j * TA + i) * 4; return [W[o], W[o + 1], W[o + 2], W[o + 3]]; };
+    const silkAt = (x, y, base) => { const cl = pt(PT.cloud, x * .55, y * .55), wv = .94 + .06 * Math.sin(x * 9) * Math.sin(y * 9), lat = Math.abs(((x * .8 + y * .8) % 2 + 2) % 2 - 1) < .08 || Math.abs(((x * .8 - y * .8) % 2 + 2) % 2 - 1) < .08; let c = mix3(base, base.map(v => Math.min(255, v * 1.32 + 14)), sstep(.55, .6, cl) * .7); if (lat) c = c.map(v => v * .9); return c.map(v => v * wv); };
+    const endGrain = (rho, ang, kind) => {   // 轴头顶面：年轮 + 髓心 + 细放射纹
+      const wob = vn(Math.cos(ang) * 2 + 5, Math.sin(ang) * 2) * .55, ring = (rho * 2.3 + wob) % 1;
+      const base = kind === 'ebony' ? [52, 40, 33] : kind === 'nan' ? [150, 104, 50] : [74, 24, 26];
+      const line = kind === 'ebony' ? [16, 12, 10] : kind === 'nan' ? [104, 68, 28] : [40, 10, 12];
+      let c = mix3(base, line, sstep(.72, .95, ring) * .8);
+      c = mix3(c, line, sstep(.86, .96, vn(ang * 9, rho * .5)) * .25);
+      if (rho < .45) c = mix3(c, line, .6);
+      return c;
+    };
+    let p = 0;
+    for (let py = 0; py < ih; py++) {
+      const sy = (py + .5) / k - G.oy, Y0 = (sy - Z0 * SIN) / COS;
+      for (let px = 0; px < iw; px++, p += 4) {
+        const sx = (px + .5) / k;
+        let best = Infinity, typ = 0, nx = 0, ny = 0, nz = 1, hy = 0, hz = 0, hx = sx;
+        // 圆柱求交（竖轴，顶面朝上）：side=1 侧面, cap=2 顶面
+        const cyl = (cxx, cz, r, ya, yb, id) => {
+          const dx = sx - cxx;
+          if (dx * dx < r * r) { const zf = cz + Math.sqrt(r * r - dx * dx), kk = (Z0 - zf) / COS, Y = Y0 + SIN * kk; if (Y >= ya && Y <= yb && kk < best) { best = kk; typ = id; nx = dx / r; ny = 0; nz = (zf - cz) / r; hy = Y; hz = zf; } }
+          const kc = (ya - Y0) / SIN, Z = Z0 - COS * kc, dz = Z - cz;
+          if (dx * dx + dz * dz <= r * r && kc < best) { best = kc; typ = id + 1; nx = 0; ny = -1; nz = 0; hy = ya; hz = Z; }
+        };
+        cyl(G.cx, 0, G.Rk, 0, y1, 10);          // 上轴头
+        cyl(G.cx, 0, G.Rp, y1, y2, 20);         // 卷身
+        cyl(G.cx, 0, G.Rk, y2, y3, 30);         // 下轴头
+        if (rodOn) cyl(G.xe, ZS, G.Rt, y1 - .55, y2 + .55, 40);   // 天杆
+        if (sheetOn && sx > G.cx && sx < G.xe) {   // 画心：Z=ZS 的平面
+          const kk = (Z0 - ZS) / COS, Y = Y0 + SIN * kk;
+          if (Y >= y1 + .25 && Y <= y2 - .25 && kk < best) { best = kk; typ = 50; hy = Y; hz = ZS; const w = .07 * Math.sin((sx - G.xe) * .85); nx = w; ny = 0; nz = Math.sqrt(1 - w * w); }
+        }
+        if (best === Infinity) { D[p + 3] = 0; continue; }
+        let col, gloss = .1, shin = 10, sheen = 0, glow = 0;
+        if (typ === 10 || typ === 30 || typ === 40 || typ === 41) {   // 木：侧面
+          const r = typ >= 40 ? G.Rt : G.Rk, th = Math.atan2(nx, nz), a = typ >= 40 ? hy * .9 + 7 : hy + (typ === 30 ? 9 : 0);
+          if (typ === 41) { col = endGrain(Math.hypot(sx - G.xe, hz - ZS) * 3, Math.atan2(hz - ZS, sx - G.xe), R.wood); }
+          else {
+            const w = woodAt(a, th); col = [w[0], w[1], w[2]];
+            if (R.wood === 'nan') glow = w[3] * Math.pow(Math.max(0, Math.sin(th * 2 + shimmer + a * .3)), 2) * .9;
+            // 轴头两端的圆角倒棱：法线往外翻，留一道细亮边
+            if (typ !== 40) { const e0 = hy - (typ === 10 ? 0 : y2), e1 = (typ === 10 ? y1 : y3) - hy, bev = .75; if (e0 < bev) { const q = 1 - e0 / bev; ny = -q * .8; } else if (e1 < bev) { const q = 1 - e1 / bev; ny = q * .8; } const n = Math.hypot(nx, ny, nz); nx /= n; ny /= n; nz /= n; }
+          }
+          gloss = W.gloss; shin = R.wood === 'nan' ? 26 : 48;
+        } else if (typ === 11 || typ === 31) {   // 轴头顶面：年轮
+          const dx = sx - G.cx, rho = Math.hypot(dx, hz), ang = Math.atan2(hz, dx);
+          col = endGrain(rho * (R.wood === 'nan' ? 1.4 : 1.7), ang, R.wood);
+          { const q = Math.pow(rho / G.Rk, 2.2); nx = dx / (rho || 1) * q * .78; nz = hz / (rho || 1) * q * .78; ny = -Math.sqrt(Math.max(0, 1 - nx * nx - nz * nz)); }
+          gloss = W.gloss * .7; shin = 30;
+        } else if (typ === 21) {   // 卷身顶面：一圈圈纸层（螺旋）
+          const dx = sx - G.cx, rho = Math.hypot(dx, hz), ang = Math.atan2(hz, dx);
+          const layer = (rho - G.Rr) / .3 + ang / (Math.PI * 2), fr = layer - Math.floor(layer);
+          col = paperC.map(v => v * .93); col = mix3(col, [150, 136, 112], sstep(.72, .98, fr) * .5);
+          if (rho > G.Rp - .45 && silkMix > 0) col = mix3(col, R.silk, silkMix);
+          col = col.map(v => v * (.86 + .14 * (rho / G.Rp)));
+        } else if (typ === 20) {   // 卷身侧面：包首绫 / 画心宣纸 + 上下绫边；签条、系带、别子
+          const th = Math.atan2(nx, nz), u = th * G.Rp;
+          const fib = pt(PT.fib, u * .8, hy * .8);
+          const paper = paperC.map(v => v * (.955 + .07 * (fib - .5)));
+          const edge = hy < y1 + 1.5 || hy > y2 - 1.5;
+          col = mix3(edge ? silkAt(u, hy, R.silk) : paper, silkAt(u, hy, R.silk), silkMix);
+          sheen = silkMix * .45 + (edge ? .3 : 0); gloss = .05 + .25 * silkMix; shin = 14;
+          const slipW = .62, sTop = y1 + 1.2, sBot = G.mid - 2.2;
+          if (silkMix > .3 && Math.abs(sx - slipX) < slipW && hy > sTop && hy < sBot) {   // 签条：贴在包首上的一条窄纸笺，竖写三个小字
+            col = mix3(col, [236, 226, 200].map(v => v * (.95 + .06 * fib)), silkMix); sheen *= .15; gloss = .04;
+            const q = (hy - sTop - .7) / 1.55, fq = q - Math.floor(q);
+            if (q > 0 && q < 3 && fq < .62 && Math.abs(sx - slipX) < .34) col = mix3(col, [36, 30, 26], (.55 + .3 * vn(hy * 4, sx * 4)) * silkMix);
+            if (Math.abs(sx - slipX) > slipW - .1) col = col.map(v => v * .86);
+          }
+          if (tieA > 0) {   // 带子：细绦在卷中段绕三匝；白玉别子横插在带下
+            const dy = hy - G.mid, turn = Math.abs(dy) < 1.5 && (((dy + 1.5) / 1) % 1) < .78;
+            if (turn) { col = mix3(col, silkAt(u * 3, hy * 3, R.tie), tieA); sheen = Math.max(sheen, .7 * tieA); gloss = .32; const e = ((dy + 1.5) % 1) / .78; ny = (e - .5) * .5; nz = Math.sqrt(Math.max(.1, 1 - nx * nx - ny * ny)); }
+            const pd = sx - pinX;
+            if (Math.abs(pd) < 1.25 && Math.abs(dy) < .55) { const q = pd / 1.25, ey = dy / .55; col = mix3(col, [228, 230, 214], tieA); nx = nx * .4 + q * q * q * .5; ny = ey * .6; nz = Math.sqrt(Math.max(.05, 1 - nx * nx - ny * ny)); gloss = 1.1 * tieA; shin = 70; glow = .14 * tieA; }
+          }
+        } else if (typ === 50) {   // 画心：宣纸，上下绫边，近天杆一段是包首绫，中间一道隔水
+          const fib = pt(PT.fib, sx * .8, hy * .8);
+          col = paperC.map(v => v * (.96 + .07 * (fib - .5)));
+          const bao = sx > G.xe - 3.3, edge = hy < y1 + 1.5 || hy > y2 - 1.5;
+          if (bao || edge) { col = silkAt(sx, hy, R.silk); sheen = .35; gloss = .2; }
+          if (Math.abs(sx - (G.xe - 3.3)) < .16) col = col.map(v => v * .78);
+          const ao = Math.exp(-(sx - (G.cx + G.Rp)) / 1.5) * .42; col = col.map(v => v * (1 - ao));   // 卷身投在纸上的影
+        } else col = [255, 0, 255];
+        // 光照：半球环境 + 漫反射 + 高光 + 绫的丝光 + 轮廓光
+        const nl = Math.max(0, nx * L[0] + ny * L[1] + nz * L[2]), nh = Math.max(0, nx * H[0] + ny * H[1] + nz * H[2]), nv = Math.max(0, nx * V[0] + ny * V[1] + nz * V[2]);
+        const hemi = amb + .1 * (-ny) + .06 * nz;
+        const spec = Math.pow(nh, shin) * gloss, silkS = sheen * Math.pow(Math.max(0, 1 - Math.abs(nx * .9 + .25)), 3) * .5;
+        const rim = Math.pow(1 - nv, 3) * (dk ? .35 : .18);
+        const lum = (hemi + dif * nl) * expo;
+        const sc = 255 * (spec * .9 + silkS), gl = glow * 255;
+        D[p] = Math.min(255, col[0] * lum + sc + gl * 1.0 + rim * (dk ? 212 : 255));
+        D[p + 1] = Math.min(255, col[1] * lum + sc + gl * .82 + rim * (dk ? 168 : 246));
+        D[p + 2] = Math.min(255, col[2] * lum + sc * .92 + gl * .5 + rim * (dk ? 90 : 230));
+        D[p + 3] = 255;
+      }
+    }
+    g.putImageData(img, 0, 0);
+    // 缩到设备像素（超采样抗锯齿），落一道软影在标题栏上；竖展时整幅转置
+    const ow = Math.round(G.LW * S * dpr), oh = Math.round(G.LH * S * dpr);
+    const out = document.createElement('canvas'); out.width = G.v ? oh : ow; out.height = G.v ? ow : oh;
+    const o = out.getContext('2d'); o.imageSmoothingQuality = 'high';
+    if (G.v) o.setTransform(0, 1, 1, 0, 0, 0);
+    o.shadowColor = dk ? 'rgba(0,0,0,.55)' : 'rgba(40,28,16,.32)'; o.shadowBlur = 2.6 * dpr; o.shadowOffsetX = G.v ? 1.6 * dpr : .8 * dpr; o.shadowOffsetY = G.v ? .8 * dpr : 1.6 * dpr;
+    o.drawImage(cv, 0, 0, ow, oh);
+    out.G = G; return out;
+  }
+
+  /* ---------- 挂到按钮上：每只卷子一个小控制器 ---------- */
+  const live = new Set();
+  const coarse = () => matchMedia('(pointer: coarse)').matches;
+  const GLY = { min: '收', max: '开', close: '合' };
+  function mount(btn, role, win) {
+    const cv = h('canvas.sc-cv'), ink = h('span.sc-ink', {}, h('span.sc-g')), gEl = ink.firstChild;
+    btn.replaceChildren(cv, ink);
+    const C = { btn, role, win, t: 0, to: 0, raf: 0, hover: false, near: false, wrote: false };
+    const orient = () => btn.parentElement?.dataset.orient === 'v' ? 'v' : 'h';
+    const S = () => coarse() ? 1.12 : 1;
+    C.rest = () => {
+      const lab = Prefs.get('scrollLabels'), mob = coarse();
+      let r = lab === 'always' ? 1 : mob && lab !== 'never' ? .62 : 0;
+      if (role === 'max' && win && win.el.classList.contains('max')) r = Math.max(r, .5);
+      if (C.hover) r = lab === 'never' ? Math.max(r, .42) : 1; else if (C.near) r = Math.max(r, .2);
+      return r;
+    };
+    C.draw = () => {
+      const s = S(), o = orient(), f = frame(role, C.t, o, s), G = f.G, dpr = f.width / ((G.v ? G.LH : G.LW) * s);
+      if (cv.width !== f.width || cv.height !== f.height) { cv.width = f.width; cv.height = f.height; }
+      const ctx = cv.getContext('2d'); ctx.clearRect(0, 0, cv.width, cv.height); ctx.drawImage(f, 0, 0);
+      const cw = f.width / dpr, chh = f.height / dpr; cv.style.width = cw + 'px'; cv.style.height = chh + 'px';
+      // 按钮占位随展开的宽度走（竖展时宽度固定）
+      const used = (G.cx + G.Rp + G.Wp + 2 * G.Rt + 1.6) * s;
+      let off = chh / 2; if (G.v) { btn.style.width = cw + 'px'; off = Math.min(used / 2 + 1, chh / 2); cv.style.top = `calc(50% - ${off}px)`; cv.style.left = '0'; }
+      else { btn.style.width = Math.max(used, (G.cx + G.Rp0 + 1.4) * s) + 'px'; cv.style.left = '0'; cv.style.top = `calc(50% - ${off}px)`; }
+      // 字落在露出来的宣纸上：贴着包首那一侧，随纸一起从卷里出来
+      const vis0 = (G.cx + G.Rp) * s, vis1 = (G.xe - 3.5) * s, top = (G.oy + (G.kh + 1.6) * COS - .3 * SIN) * s, hh = (G.ph - 3.2) * COS * s;
+      const gs = Math.min(hh, G.v ? 11.5 * s : 14 * s);
+      ink.style.cssText = G.v ? `left:calc(${top}px);top:calc(50% - ${off}px + ${vis0}px);width:${hh}px;height:${Math.max(0, vis1 - vis0)}px`
+        : `left:${vis0}px;top:calc(50% - ${off}px + ${top}px);width:${Math.max(0, vis1 - vis0)}px;height:${hh}px`;
+      gEl.style.width = gEl.style.height = gs + 'px';
+      ink.dataset.o = G.v ? 'v' : 'h';
+      const show = Prefs.get('scrollLabels') !== 'never' && C.t > .38;
+      ink.style.opacity = show ? Math.min(1, (C.t - .38) / .18) : 0;
+      if (show && !C.wrote) { C.wrote = true; gEl.innerHTML = Brush.glyphSVG(GLY[role], { animate: fxOn() && C.hover, dur: .16, gap: .03 }); }
+      if (C.t < .3) C.wrote = false;
+    };
+    C.step = () => {
+      C.raf = 0; const d = C.to - C.t;
+      if (Math.abs(d) < .012 || !fxOn()) C.t = C.to; else C.t += d * (C.fast ? .34 : .2);
+      C.draw(); if (C.t !== C.to) C.raf = requestAnimationFrame(C.step);
+    };
+    C.go = (to, fast) => { C.to = to; C.fast = !!fast; if (!C.raf) C.raf = requestAnimationFrame(C.step); };
+    C.sync = () => { const r = C.rest(); if (r !== C.to) C.go(r); };
+    C.t = C.to = C.rest(); live.add(C);
+    requestAnimationFrame(() => C.draw());
+    return C;
+  }
+  function bind(box, win) {
+    const ctl = [...box.querySelectorAll('.scroll')].map(b => mount(b, b.dataset.act, win));
+    box.addEventListener('pointerover', e => { const b = e.target.closest('.scroll'); for (const c of ctl) { c.near = e.pointerType !== 'touch'; c.hover = c.btn === b && e.pointerType !== 'touch'; c.sync(); } });
+    box.addEventListener('pointerleave', () => { for (const c of ctl) { c.near = c.hover = false; c.sync(); } });
+    box.addEventListener('focusin', e => { const c = ctl.find(c => c.btn === e.target); if (c && e.target.matches(':focus-visible')) { c.hover = true; c.sync(); } });
+    box.addEventListener('focusout', e => { const c = ctl.find(c => c.btn === e.target); if (c) { c.hover = false; c.sync(); } });
+    if (win && win.el) new MutationObserver(() => ctl.forEach(c => c.sync())).observe(win.el, { attributes: true, attributeFilter: ['class'] });
+    return {
+      ctl,
+      act(act) { const c = ctl.find(c => c.role === act); if (!c) return; c.go(act === 'max' ? (c.btn.parentElement.dataset.orient === 'v' ? 1 : 1.3) : 0, true); },
+      sync() { ctl.forEach(c => c.sync()); },
+      redraw() { ctl.forEach(c => c.draw()); }
+    };
+  }
+  function refreshAll() { for (const c of live) { if (!c.btn.isConnected) { live.delete(c); continue; } c.t = c.to = c.rest(); c.draw(); } }
+  // 主题明暗、方向、题字设置一变，全部重画
+  if (typeof BUS !== 'undefined') BUS.on('pref', k => { if (['theme', 'scrollOrient', 'scrollLabels', '*'].includes(k)) requestAnimationFrame(refreshAll); });
+  // 空闲时把三只卷静止与展开的几帧先烘好
+  function warm() { const s = coarse() ? 1.12 : 1, o = Prefs.get('scrollOrient') === 'v' ? 'v' : 'h', jobs = []; for (const r of ['min', 'max', 'close']) for (let t = 0; t <= 1.001; t += .025) jobs.push([r, t]); const run = dl => { while (jobs.length && (!dl || dl.timeRemaining() > 6)) { const [r, t] = jobs.shift(); frame(r, t, o, s); } if (jobs.length) idle(run); }; idle(run); }
+  return { mount, bind, refreshAll, frame, warm, geom };
+})();
+
 /* ── 23-wm.js ── */
 /* ================= 窗管：一卷一窗 =================
    收：立轴自下而上卷起，卷成一束飞回程序坞；点坞上那方印，又自上而下垂展开来。
@@ -5188,10 +5577,11 @@ const WM = (() => {
       this.titleText = h('span.tt', {}, Ink.word(def.name, 20));
       this.tools = h('div.ta');
       this.scrolls = h('div.scrolls', { dataset: { labels: Prefs.get('scrollLabels'), orient: Prefs.get('scrollOrient') } }, ...[['min', '收', '收起', 'Alt+M'], ['max', '开', '展开', 'Alt+↑'], ['close', '合', '合上', 'Alt+W']].map(([act, g, tip, kbd]) =>
-        h('button.scroll', { dataset: { act, tip: g + ' · ' + tip, kbd }, 'aria-label': tip, html: `<i class="rod l"></i><span class="paper">${Brush.glyphSVG(g)}</span><i class="rod r"></i>` })));
-      this.titleBar = h('div.win-title', {}, h('i.win-grab'), h('div.seal', { text: def.glyph, style: { '--c': def.color } }), this.titleText, this.scrolls, this.tools);
+        h('button.scroll', { dataset: { act, tip: g + ' · ' + tip, kbd }, 'aria-label': tip })));
+      this.titleBar = h('div.win-title', {}, h('i.win-grab'), this.titleText,   /* 窗口只写题名，不再缀程序印章——印章只在桌面与坞里认路用 */ this.scrolls, this.tools);
       this.body = h('div.win-body');
       this.el = h('div.win', { dataset: { app, id: this.id }, role: 'dialog', 'aria-label': def.name, tabindex: '-1' }, this.titleBar, this.body, h('div.shield'), ...['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw'].map(d => h('div.rz.' + d, { dataset: { d } })));
+      this.sa = ScrollArt.bind(this.scrolls, this);
       this._bind();
     }
     get def() { return APPS[this.app]; }
@@ -5210,14 +5600,9 @@ const WM = (() => {
       this.scrolls.addEventListener('click', e => {
         const b = e.target.closest('.scroll'); if (!b) return; e.stopPropagation();
         const act = b.dataset.act;
-        b.classList.add('do-' + act); setTimeout(() => b.classList.remove('do-' + act), 380);
-        setTimeout(() => { if (act === 'min') this.minimize(); else if (act === 'max') this.toggleMax(); else this.close(); }, fxOn() ? 140 : 0);
+        this.sa.act(act);   // 收：卷紧系好；开：再展一截；合：一卷到底——然后才做事
+        setTimeout(() => { if (act === 'min') this.minimize(); else if (act === 'max') this.toggleMax(); else this.close(); if (act !== 'close') setTimeout(() => this.sa.sync(), 60); }, fxOn() ? 170 : 0);
       });
-      // 悬停时笔一笔一笔写出卷上的字
-      this.scrolls.addEventListener('pointerenter', e => {
-        const b = e.target.closest?.('.scroll'); if (!b || e.target !== b || !fxOn()) return;   /* 只在进入卷轴本身时写一次：换了 innerHTML 后，新笔画也会触发 pointerenter，否则会无限重写 */
-        const p = b.querySelector('.paper'); p.innerHTML = Brush.glyphSVG({ min: '收', max: '开', close: '合' }[b.dataset.act], { animate: true, dur: 0.16, gap: 0.03 });
-      }, true);
       // 拖动标题栏
       this.titleBar.addEventListener('pointerdown', e => {
         if (e.button !== 0 || e.target.closest('button, input, select, .scrolls, .ta > *')) return;
@@ -6513,7 +6898,7 @@ class FileManager {
     win.on('args', a => { if (a.path) this.go(a.path, { select: a.select }); });
     win.appMenu = () => this.bgMenu();
     const off = FS.ev.on('change', e => this.onChange(e)); win.on('close', off);
-    const off2 = BUS.on('pref', k => { if (['fmSort', 'fmSortDir', 'fmFolderFirst', 'fmShowHidden', '*'].includes(k)) this.render(); if (['useTrash', 'trashName', '*'].includes(k)) { this.renderSide(); this.render(); } if (k === 'fmPreview') this.bPrev?.classList.toggle('on', !!Prefs.get('fmPreview')); if (k === 'fmPreview') this.renderPreview(); if ((k === 'fmSidebar' || k === '*') && !isMobile()) { this.fm.classList.toggle('noside', !Prefs.get('fmSidebar')); this.bSide.classList.toggle('on', !!Prefs.get('fmSidebar')); } }); win.on('close', off2);
+    const off2 = BUS.on('pref', k => { if (['fmSort', 'fmSortDir', 'fmFolderFirst', 'fmShowHidden', 'fmColOrder', '*'].includes(k) || (/^fmCols/.test(k) && !Prefs.get(k))) this.render(); if (['useTrash', 'trashName', '*'].includes(k)) { this.renderSide(); this.render(); } if (k === 'fmPreview') this.bPrev?.classList.toggle('on', !!Prefs.get('fmPreview')); if (k === 'fmPreview') this.renderPreview(); if ((k === 'fmSidebar' || k === '*') && !isMobile()) { this.fm.classList.toggle('noside', !Prefs.get('fmSidebar')); this.bSide.classList.toggle('on', !!Prefs.get('fmSidebar')); } }); win.on('close', off2);
     const off3 = BUS.on('clip', () => this.render()); win.on('close', off3);
   }
   /* ---------- 骨架 ---------- */
@@ -6685,7 +7070,7 @@ class FileManager {
     const cut = this.cutSet();
     this.chunked(list, n => h('div.fm-it' + (cut && cut.has(n.id) ? '.cut' : ''), { dataset: { id: n.id, drop: n.kind === 'dir' ? n.id : '' }, role: 'option', title: n.name }, Shell.fileSeal(n, 54), n.star ? h('i.fm-star', { text: '★' }) : null, h('div.fm-nm', { text: this.label(n) })));
   }
-  /** 列表：左对齐的连续列，各列宽度可拖、次序可换；行只有列那么宽，右侧留白就是框选区 */
+  /** 列表：左对齐的连续列，各列宽度可在表头横拖、次序在设阁里换；行只有列那么宽，右侧留白就是框选区 */
   listCols() {
     const all = ['name', 'mtime', 'kind', 'size'], def = { name: 280, mtime: 150, kind: 130, size: 90 };
     let order = Prefs.get('fmColOrder'); if (!Array.isArray(order) || order.length !== 4 || !all.every(k => order.includes(k))) order = all;
@@ -6719,53 +7104,50 @@ class FileManager {
     };
     this.chunked(list, n => h('div.fm-row' + (cut && cut.has(n.id) ? '.cut' : ''), { dataset: { id: n.id, drop: n.kind === 'dir' ? n.id : '' }, role: 'option' }, ...order.map(k => cell[k](n))));
   }
-  /** 表头：点一下排序；拖边缘改宽；拖表头换位 */
+  /** 表头只做两件事：点一下＝排序；横着拖＝改宽。
+      拖的是离手指落点最近的那道列缝，列缝跟着手指走（一条柳色竖线指明是哪一道）；
+      窄处整表一屏宽，缝两边的两列互让宽度；宽处只改缝左那一列，后面的列顺移。
+      列不会被拖走——列序在 设阁 › 书阁 里调。 */
   bindHead(head, order, w, fit) {
+    const mins = fit ? { name: 110, mtime: 52, kind: 44, size: 50 } : { name: 120, mtime: 56, kind: 56, size: 56 };
+    const apply = () => this.main.style.setProperty('--fm-cols', order.map(c => w[c] + 'px').join(' '));
     head.addEventListener('pointerdown', e => {
       const th = e.target.closest('.fm-th'); if (!th || e.button !== 0) return;
       e.preventDefault(); e.stopPropagation();
-      const k = th.dataset.k, x0 = e.clientX, grip = e.target.classList.contains('fm-grip');
-      const ths = $$('.fm-th', head), mobile = isMobile();
-      let moved = false;
-      if (grip) {
-        const apply = () => this.main.style.setProperty('--fm-cols', order.map(c => w[c] + 'px').join(' '));
-        th.classList.add('rz');
-        if (fit) {
-          /* 一屏宽不变：拖哪列，就和名称列互让；拖名称列，就和它右邻互让 */
-          const mins = { name: 110, mtime: 52, kind: 44, size: 50 };
-          const pair = k === 'name' ? order[order.indexOf('name') + 1] || order[order.indexOf('name') - 1] : 'name';
-          const a0 = w[k], b0 = w[pair], tot = a0 + b0;
-          Pick.follow(e, {
-            move: x => { const d = (k === 'name' && order.indexOf(pair) < order.indexOf(k)) ? x0 - x : x - x0; w[k] = Math.round(clamp(a0 + d, mins[k], tot - mins[pair])); w[pair] = tot - w[k]; apply(); },
-            end: () => { th.classList.remove('rz'); const cur = {}; for (const c of ['mtime', 'kind', 'size']) cur[c] = w[c]; Prefs.set('fmColsM', cur); }
-          });
-          return;
-        }
-        const w0 = w[k], min = k === 'name' ? 120 : 56;
-        Pick.follow(e, {
-          move: x => { w[k] = Math.round(clamp(w0 + x - x0, min, 900)); apply(); },
-          end: () => { th.classList.remove('rz'); const cur = Object.assign({}, Prefs.get('fmCols') || {}); cur[k] = w[k]; Prefs.set('fmCols', cur); }
-        });
-        return;
-      }
-      const rects = ths.map(t => t.getBoundingClientRect());
+      const x0 = e.clientX, ths = $$('.fm-th', head);
+      // 列缝 i 在第 i 列右边；窄处最右那道缝是表的边，不能动
+      const edges = ths.map(t => t.getBoundingClientRect().right), nEdge = fit ? edges.length - 1 : edges.length;
+      let gi = 0; for (let i = 1; i < nEdge; i++) if (Math.abs(edges[i] - x0) < Math.abs(edges[gi] - x0)) gi = i;
+      const a = order[gi], b = order[gi + 1], a0 = w[a], w0 = { ...w };
+      let moving = false;
       Pick.follow(e, {
         move: x => {
-          if (!moved && Math.abs(x - x0) < 6) return;
-          if (mobile) return;
-          moved = true; th.classList.add('moving'); th.style.transform = `translateX(${x - x0}px)`;
+          const d = x - x0;
+          if (!moving) { if (Math.abs(d) < 5) return; moving = true; head.classList.add('rz'); ths[gi].classList.add('rz'); }
+          if (fit) {   // 推着走：缝右移时从右边各列依次借宽，左移时从左边各列依次让宽；总宽不变
+            Object.assign(w, w0); let need = Math.abs(d);
+            const take = d > 0 ? order.slice(gi + 1) : order.slice(0, gi + 1).reverse(), give = d > 0 ? a : b;
+            for (const c of take) { const g = Math.min(need, w[c] - mins[c]); if (g > 0) { w[c] -= g; need -= g; } if (!need) break; }
+            w[give] += Math.abs(d) - need; for (const c of order) w[c] = Math.round(w[c]);
+          }
+          else w[a] = Math.round(clamp(a0 + d, mins[a], 900));
+          apply();
         },
-        end: x => {
-          th.classList.remove('moving'); th.style.transform = '';
-          if (!moved) { const key = Prefs.get('fmSort'), dir = Prefs.get('fmSortDir'); if (key === k) Prefs.set('fmSortDir', -dir); else { Prefs.set('fmSort', k); Prefs.set('fmSortDir', 1); } return; }
-          const from = order.indexOf(k); let to = rects.findIndex(r => x < r.left + r.width / 2); if (to < 0) to = order.length; if (to > from) to--;
-          if (to === from) return;
-          const next = order.slice(); next.splice(from, 1); next.splice(to, 0, k); Prefs.set('fmColOrder', next); this.render();
+        end: () => {
+          head.classList.remove('rz'); ths[gi].classList.remove('rz');
+          if (!moving) {   // 没拖动：就是点了一下，排序
+            const k = th.dataset.k, key = Prefs.get('fmSort'), dir = Prefs.get('fmSortDir');
+            if (key === k) Prefs.set('fmSortDir', -dir); else { Prefs.set('fmSort', k); Prefs.set('fmSortDir', 1); }
+            return;
+          }
+          if (fit) { const cur = {}; for (const c of ['mtime', 'kind', 'size']) cur[c] = w[c]; Prefs.set('fmColsM', cur); }
+          else { const cur = Object.assign({}, Prefs.get('fmCols') || {}); cur[a] = w[a]; Prefs.set('fmCols', cur); }
+          if (order.includes('mtime') && (a === 'mtime' || b === 'mtime')) this.render();   // 时间列宽窄会换长短两种写法
         }
       });
     });
-    head.addEventListener('dblclick', e => {   // 双击缝隙：恢复该列默认宽度
-      const g = e.target.closest('.fm-grip'); if (!g) return; if (this.main.classList.contains('fit')) { Prefs.set('fmColsM', null); this.render(); return; } const k = g.parentElement.dataset.k, cur = Object.assign({}, Prefs.get('fmCols') || {}); delete cur[k]; Prefs.set('fmCols', Object.keys(cur).length ? cur : null); this.render();
+    head.addEventListener('dblclick', e => {   // 双击列缝：恢复默认宽度
+      const g = e.target.closest('.fm-grip'); if (!g) return; if (this.main.classList.contains('fit')) { Prefs.set('fmColsM', null); return; } const k = g.parentElement.dataset.k, cur = Object.assign({}, Prefs.get('fmCols') || {}); delete cur[k]; Prefs.set('fmCols', Object.keys(cur).length ? cur : null); this.render();
     });
   }
   /** 书架：书脊高矮按类别、厚薄按大小；文件夹是函套 */
@@ -7129,7 +7511,7 @@ const QuickLook = (() => {
     el.replaceChildren(h('div.ql-card', {}, h('div.ql-head', {}, h('b', { text: n.name }), h('span.muted', { text: `${fmtSize(n.size)} · ${fmtRel(n.mtime)}　${idx + 1}/${list.length}` }), h('div.spacer'), h('button.btn.sm', { text: '打开', on: { click: () => { close(); WM.openFile(n); } } }), h('button.ibtn', { html: icon('x'), on: { click: close } })), body));
     try {
       if (['image', 'audio', 'video', 'pdf'].includes(k)) { url = URL.createObjectURL(await FS.read(n)); body.append(k === 'image' ? h('img', { src: url }) : k === 'pdf' ? h('iframe', { src: url, title: n.name }) : h(k, { src: url, controls: true, autoplay: true })); }
-      else if (isTextKind(k) || n.size < 512 * 1024) { const t = await FS.read(n, 'text'); body.append(h('pre.selectable', { text: t.slice(0, 200000) })); }
+      else if (isTextKind(k) || n.size < 512 * 1024) { const t = await (await FS.read(n)).slice(0, 600000).text(); body.append(h('pre.selectable', { text: t.slice(0, 200000) + (n.size > 600000 ? '\n…' : '') })); }   /* 只读开头一段，不把整卷读进内存 */
       else body.append(h('div.empty', {}, Shell.fileSeal(n, 96), h('div', { text: '这种文件没法速览' })));
     } catch (e) { body.append(h('div.empty', { text: e.message })); }
   }
@@ -8428,7 +8810,7 @@ class Terminal {
       } },
       tree: { d: 'tree [目录]  树状展开（最多 300 项）', run([p]) { const r = T.need(p || '.'); let c = 0; const walk = (id, pre) => { const ks = FS.list(id).sort((x, y) => (y.kind === 'dir') - (x.kind === 'dir') || x.name.localeCompare(y.name, 'zh')); ks.forEach((k, i) => { if (++c > 300) return; const last = i === ks.length - 1; T.o(`<span class="tm-dim">${pre}${last ? '└─ ' : '├─ '}</span>${k.kind === 'dir' ? `<span class="tm-dir">${esc(k.name)}/</span>` : esc(k.name)}`, true); if (k.kind === 'dir') walk(k.id, pre + (last ? '   ' : '│  ')); }); }; T.o(`<span class="tm-dir">${esc(r.name || '/')}</span>`, true); walk(r.id, ''); if (c > 300) T.o('…（只显示前 300 项）', false, 'tm-dim'); } },
       cat: { d: 'cat <文件…>  显示文本', async run(a) { if (!a.length) throw new Error('cat 要给文件'); for (const p of a) { const n = T.need(p); if (n.kind === 'dir') throw new Error(p + ' 是目录'); if (n.size > 2 * 1024 * 1024) throw new Error(p + ' 太大了（>2MB），用 open 打开吧'); T.o(await FS.read(n, 'text'), false, 'tm-pre'); } } },
-      head: { d: 'head [-n 数] <文件>  前几行', async run(a) { const i = a.indexOf('-n'), k = i >= 0 ? +a[i + 1] || 10 : 10, p = a.filter((x, j) => i < 0 || (j !== i && j !== i + 1)).pop(); const t = await FS.read(T.need(p), 'text'); T.o(t.split('\n').slice(0, k).join('\n'), false, 'tm-pre'); } },
+      head: { d: 'head [-n 数] <文件>  前几行', async run(a) { const i = a.indexOf('-n'), k = i >= 0 ? +a[i + 1] || 10 : 10, p = a.filter((x, j) => i < 0 || (j !== i && j !== i + 1)).pop(); const t = await (await FS.read(T.need(p))).slice(0, 1 << 20).text(); T.o(t.split('\n').slice(0, k).join('\n'), false, 'tm-pre'); } },
       echo: { d: 'echo <文字>  （配合 > 写文件）', run(a) { T.o(a.join(' ')); } },
       touch: { d: 'touch <文件…>  新建空文件（已存在则更新时间）', async run(a) { for (const p of a) { const ap = T.abs(p), n = FS.resolve(ap); if (n) { if (n.kind === 'file') await FS.update(n.id, await FS.read(n), { version: false }); } else await FS.writeFile(ap, ''); } } },
       mkdir: { d: 'mkdir <目录…>  新建目录（自动建上级）', async run(a) { if (!a.length) throw new Error('mkdir 要给名字'); for (const p of a.filter(x => x !== '-p')) await FS.mkdir(T.abs(p)); } },
@@ -8558,15 +8940,32 @@ const Lens = {
     return { ok: true, name: db.name, version: db.version, stores };
   },
   async idbPage(store, { offset = 0, limit = 50, index = null, key } = {}) {
-    const db = await this.db(), s = db.transaction([store]).objectStore(store), src = index ? s.index(index) : s;
-    const range = key !== undefined ? IDBKeyRange.only(key) : null;
-    const total = await idbReq(src.count(range));
-    const rows = await new Promise((res, rej) => {
-      const out = []; let skipped = !offset; const r = src.openCursor(range);
-      r.onsuccess = () => { const c = r.result; if (!c) return res(out); if (!skipped) { skipped = true; c.advance(offset); return; } out.push({ key: c.primaryKey, value: c.value }); if (out.length >= limit) return res(out); c.continue(); };
+    return IDBW.run({ op: 'page', store, index, key, hasKey: key !== undefined, offset, limit }, () => this.idbPageMain(store, { offset, limit, index, key }));
+  },
+  /* 退路：主线程版——先只取键，再一条条取值，每条之间让出主线程 */
+  async idbPageMain(store, { offset, limit, index, key }) {
+    const db = await this.db(), range = key !== undefined ? IDBKeyRange.only(key) : null;
+    const src0 = () => { const s = db.transaction([store]).objectStore(store); return index ? s.index(index) : s; };
+    const total = await idbReq(src0().count(range));
+    const keys = await new Promise((res, rej) => {
+      const out = []; let skipped = !offset; const r = src0().openKeyCursor(range);
+      r.onsuccess = () => { const c = r.result; if (!c) return res(out); if (!skipped) { skipped = true; c.advance(offset); return; } out.push(c.primaryKey); if (out.length >= limit) return res(out); c.continue(); };
       r.onerror = () => rej(r.error);
     });
+    const rows = [];
+    for (const k of keys) {
+      const v = await idbReq(db.transaction([store]).objectStore(store).get(k)); await new Promise(r => setTimeout(r, 0));
+      const lite = !v ? null : store === 'nodes' ? { id: v.id, kind: v.kind, name: v.name, parent: v.parent } : store === 'blobs' ? { id: v.id, blob: v.data instanceof Blob ? v.data : null, type: v.type || '' } : null;
+      rows.push({ key: k, lite, sum: store === 'kv' && v ? (typeof v.v === 'string' ? v.v.slice(0, 60) : clPreview(v.v ?? v, 60, 0).text) : '', size: clBytes(v), approx: !!clBytes.approx });
+    }
     return { rows, total };
+  },
+  async idbRec(store, key) {
+    return IDBW.run({ op: 'rec', store, key }, async () => { const db = await this.db(), v = await idbReq(db.transaction([store]).objectStore(store).get(key)), pv = clPreview(v, 20000); return { text: pv.text, cut: pv.cut, size: clBytes(v), approx: !!clBytes.approx, lite: v && store === 'blobs' ? { id: v.id, blob: v.data instanceof Blob ? v.data : null } : v && store === 'nodes' ? { id: v.id } : null }; });
+  },
+  async idbExport(store, key, onProgress) {
+    const r = await IDBW.run({ op: 'export', store, key }, async () => { const db = await this.db(), v = await idbReq(db.transaction([store]).objectStore(store).get(key)); return { blob: await clExport(v, onProgress) }; });
+    return r.blob;
   },
   async idbIndexKeys(store, index, limit = 300) {
     const db = await this.db(), ix = db.transaction([store]).objectStore(store).index(index);
@@ -8591,12 +8990,119 @@ const Lens = {
   }
 };
 
-/* 记录摘要：Blob / 二进制不展开，写成 ‹Blob 12 KB image/png› */
-function clJson(v, depth = 0) {
-  const rep = (k, x) => x instanceof Blob ? `‹Blob ${fmtSize(x.size)}${x.type ? ' ' + x.type : ''}›` : x instanceof ArrayBuffer ? `‹二进制 ${fmtSize(x.byteLength)}›` : ArrayBuffer.isView(x) ? `‹二进制 ${fmtSize(x.byteLength)}›` : x;
-  try { return JSON.stringify(v, rep, 2); } catch (e) { return String(v); }
+/* 记录的文字形态 —— 一律“有界”：
+   IndexedDB 里可能躺着几十 MB 的记录（花字缓存、大草稿）。整条 JSON.stringify 再塞进 <pre>，
+   会把整个渲染进程卡死，同域名的其他页面跟着一起停。所以：
+   · clPreview 边走边写，写满 max 个字立刻停手，绝不先造出整串；
+   · clBytes 只走有限个节点，走不完就按已走的比例估算；
+   · 完整导出用 clExport：分段生成、每段之间让出主线程，只在用户点“下载”时才做。 */
+const clLeaf = x => x instanceof Blob ? `‹Blob ${fmtSize(x.size)}${x.type ? ' ' + x.type : ''}›` : (x instanceof ArrayBuffer || ArrayBuffer.isView(x)) ? `‹二进制 ${fmtSize(x.byteLength)}›` : null;
+function* clWalk(v, indent) {
+  // 迭代式 JSON 写出（不递归、不爆栈），每次 yield 一小段
+  const stack = [{ v, d: 0, st: 0 }], nl = d => indent ? '\n' + ' '.repeat(indent * d) : '';
+  const prim = x => { const l = clLeaf(x); if (l) return JSON.stringify(l); if (x === undefined || typeof x === 'function') return 'null'; if (typeof x === 'number' && !isFinite(x)) return 'null'; if (typeof x === 'bigint') return String(x); return JSON.stringify(x); };
+  while (stack.length) {
+    const f = stack[stack.length - 1];
+    if (f.st === 0) {
+      const x = f.v;
+      if (x === null || typeof x !== 'object' || clLeaf(x)) { stack.pop(); yield prim(x); continue; }
+      if (x instanceof Date) { stack.pop(); yield JSON.stringify(x.toISOString()); continue; }
+      f.arr = Array.isArray(x); f.keys = f.arr ? null : Object.keys(x); f.n = f.arr ? x.length : f.keys.length; f.i = 0; f.st = 1;
+      if (!f.n) { stack.pop(); yield f.arr ? '[]' : '{}'; continue; }
+      yield f.arr ? '[' : '{';
+    }
+    if (f.i >= f.n) { stack.pop(); yield nl(f.d) + (f.arr ? ']' : '}'); continue; }
+    const k = f.i++, pre = (k ? ',' : '') + nl(f.d + 1);
+    if (f.arr) { yield pre; stack.push({ v: f.v[k], d: f.d + 1, st: 0 }); }
+    else { const key = f.keys[k]; yield pre + JSON.stringify(key) + (indent ? ': ' : ':'); stack.push({ v: f.v[key], d: f.d + 1, st: 0 }); }
+  }
 }
-function clBytes(v) { if (v == null) return 0; if (v instanceof Blob) return v.size; if (v instanceof ArrayBuffer || ArrayBuffer.isView(v)) return v.byteLength; if (typeof v === 'string') return v.length * 2; if (typeof v === 'object') { let s = 0; for (const k in v) s += k.length * 2 + clBytes(v[k]); return s; } return 8; }
+function clPreview(v, max = 20000, indent = 2) {
+  let out = '', cut = false;
+  for (const piece of clWalk(v, indent)) { out += piece; if (out.length > max) { cut = true; break; } }
+  return { text: cut ? out.slice(0, max) : out, cut };
+}
+function clJson(v, max = 20000) { const r = clPreview(v, max); return r.text + (r.cut ? '\n…' : ''); }
+function clBytes(v, budget = 60000) {
+  // 有界估算：最多看 budget 个节点；长数组只抽样前 256 项再乘回去
+  let seen = 0, approx = false;
+  const go = (x, w) => {
+    if (x == null) return 0;
+    if (x instanceof Blob) return x.size; if (x instanceof ArrayBuffer || ArrayBuffer.isView(x)) return x.byteLength;
+    if (typeof x === 'string') return x.length * 2; if (typeof x !== 'object') return 8;
+    if (++seen > budget) { approx = true; return 64; }
+    if (Array.isArray(x)) { const n = x.length, m = Math.min(n, 256); let s = 0; for (let i = 0; i < m; i++) s += go(x[i]); if (n > m) approx = true; return m ? s * (n / m) : 0; }
+    let s = 0; for (const k in x) s += k.length * 2 + go(x[k]); return s;
+  };
+  const n = go(v); clBytes.approx = approx; return n;
+}
+/** 完整导出：分段写出，每 ~12ms 让一次主线程；返回 Blob */
+async function clExport(v, onProgress) {
+  const parts = []; let buf = '', t0 = performance.now(), total = 0;
+  for (const piece of clWalk(v, 1)) {
+    buf += piece;
+    if (buf.length > 65536) { parts.push(buf); total += buf.length; buf = ''; }
+    if (performance.now() - t0 > 12) { onProgress && onProgress(total); await new Promise(r => setTimeout(r, 0)); t0 = performance.now(); }
+  }
+  parts.push(buf);
+  return new Blob(parts, { type: 'application/json' });
+}
+
+/* 读库的小工：仓廪翻看 IndexedDB 一律交给一个后台 Worker。
+   记录在 Worker 里反序列化、估大小、写摘要与预览、拼整条导出；页面只收到短字符串和 Blob 句柄。
+   哪怕库里有一条几十 MB 的记录，页面也不会停顿一下。Worker 起不来时退回主线程（同样有界、分段）。 */
+const IDBW = {
+  w: null, seq: 0, wait: new Map(), broken: false,
+  src() {
+    return `${fmtSize.toString()}
+const clLeaf = ${clLeaf.toString()};
+${clWalk.toString()}
+${clPreview.toString()}
+${clBytes.toString()}
+const dbs = {};
+const openDb = name => dbs[name] || (dbs[name] = new Promise((res, rej) => { const r = indexedDB.open(name); r.onsuccess = () => { const d = r.result; d.onversionchange = () => { d.close(); delete dbs[name]; }; res(d); }; r.onerror = () => { delete dbs[name]; rej(r.error); }; r.onblocked = () => { delete dbs[name]; rej(new Error('数据库被占用')); }; }));
+const req = r => new Promise((res, rej) => { r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+const lite = (store, v) => !v ? null : store === 'nodes' ? { id: v.id, kind: v.kind, name: v.name, parent: v.parent } : store === 'blobs' ? { id: v.id, blob: v.data instanceof Blob ? v.data : null, type: v.type || (v.data && v.data.type) || '' } : null;
+const summ = (store, v) => store !== 'kv' || !v ? '' : typeof v.v === 'string' ? v.v.slice(0, 60) : clPreview(v.v === undefined ? v : v.v, 60, 0).text;
+onmessage = async e => {
+  const { id, op, db, store, index, key, hasKey, offset = 0, limit = 50 } = e.data;
+  try {
+    const d = await openDb(db), os = () => d.transaction([store]).objectStore(store), src = () => index ? os().index(index) : os();
+    const range = hasKey ? IDBKeyRange.only(key) : null;
+    if (op === 'page') {
+      const total = await req(src().count(range));
+      const rows = await new Promise((res, rej) => { const out = []; let skipped = !offset; const r = src().openCursor(range);
+        r.onsuccess = () => { const c = r.result; if (!c) return res(out); if (!skipped) { skipped = true; c.advance(offset); return; } const v = c.value, size = clBytes(v); out.push({ key: c.primaryKey, lite: lite(store, v), sum: summ(store, v), size, approx: !!clBytes.approx }); if (out.length >= limit) return res(out); c.continue(); };
+        r.onerror = () => rej(r.error); });
+      postMessage({ id, ok: true, res: { rows, total } });
+    } else if (op === 'rec') {
+      const v = await req(os().get(key)), pv = clPreview(v, 20000), size = clBytes(v);
+      postMessage({ id, ok: true, res: { text: pv.text, cut: pv.cut, size, approx: !!clBytes.approx, lite: lite(store, v) } });
+    } else if (op === 'export') {
+      const v = await req(os().get(key)), parts = []; let buf = '';
+      for (const p of clWalk(v, 1)) { buf += p; if (buf.length > 65536) { parts.push(buf); buf = ''; } }
+      parts.push(buf); postMessage({ id, ok: true, res: { blob: new Blob(parts, { type: 'application/json' }) } });
+    }
+  } catch (err) { postMessage({ id, ok: false, err: String(err && err.message || err) }); }
+};`;
+  },
+  get() {
+    if (this.w || this.broken) return this.w;
+    try {
+      const u = URL.createObjectURL(new Blob([this.src()], { type: 'text/javascript' }));
+      this.w = new Worker(u); setTimeout(() => URL.revokeObjectURL(u), 5000);
+      this.w.onmessage = e => { const p = this.wait.get(e.data.id); if (!p) return; this.wait.delete(e.data.id); clearTimeout(p.t); e.data.ok ? p.res(e.data.res) : p.rej(new Error(e.data.err)); };
+      this.w.onerror = e => { e.preventDefault && e.preventDefault(); this.fail(new Error('读库小工出错')); };
+    } catch (e) { this.broken = true; this.w = null; }
+    return this.w;
+  },
+  fail(err) { this.broken = true; try { this.w && this.w.terminate(); } catch { } this.w = null; for (const p of this.wait.values()) { clearTimeout(p.t); p.rej(err); } this.wait.clear(); },
+  call(msg, ms = 120000) {
+    const w = this.get(); if (!w) return Promise.reject(new Error('no-worker'));
+    return new Promise((res, rej) => { const id = ++this.seq; const t = setTimeout(() => { if (this.wait.delete(id)) rej(new Error('读库超时')); }, ms); this.wait.set(id, { res, rej, t }); w.postMessage({ id, db: FS.info.dbName, ...msg }); });
+  },
+  async run(msg, fallback) { if (!this.broken) try { return await this.call(msg); } catch (e) { if (!this.broken) throw e; } return fallback(); }
+};
 
 class Granary {
   constructor(win, args) {
@@ -8641,7 +9147,7 @@ class Granary {
     const usage = this.card('仓储', '储',
       h('div.cl-store', {},
         q.quota ? h('div.cl-vatbox', {}, InkArt.make('jar', { usage: q.usage, quota: q.quota }, { w: 210, h: 196, cls: 'cl-vatart' }),
-          h('div.cl-vatcap', {}, h('div', {}, `青丝文件 ${fmtSize(st.bytes + (st.trashBytes || 0) + (st.verBytes || 0))}`), h('div', {}, `本站共用 ${fmtSize(q.usage)}`), h('div.muted', { text: `缸容约 ${fmtSize(q.quota)}` }))) : null,
+          h('div.cl-vatcap', {}, h('div.cl-ying', {}, h('b', { text: '盈 ' + (q.usage / q.quota < .001 ? '不足 0.1%' : (q.usage / q.quota * 100).toFixed(q.usage / q.quota < .1 ? 1 : 0) + '%') })), h('div', {}, `青丝文件 ${fmtSize(st.bytes + (st.trashBytes || 0) + (st.verBytes || 0))}`), h('div', {}, `本站共用 ${fmtSize(q.usage)}`), h('div.muted', { text: `缸容约 ${fmtSize(q.quota)}` }))) : null,
         h('div.cl-slipbox', {}, h('div.cl-big', {}, h('b', { text: fmtSize(st.bytes) }), h('span', { text: `${st.files} 个文件 · ${st.dirs} 个书册` })),
           kinds.length ? (() => { const cv = InkArt.make('slips', { kinds }, { w: Math.max(150, kinds.length * 28 + 36), h: 186, cls: 'cl-slipart', natural: true }); cv.dataset.tip = kinds.map(([k, b]) => `${KIND_LABEL[k]} ${fmtSize(b)}`).join(' · '); cv.setAttribute('aria-label', cv.dataset.tip); return cv; })() : h('p.cl-p', { text: '还没有文件。' }))));
     usage.classList.add('wide');
@@ -8825,17 +9331,25 @@ class Granary {
       h('span', { text: '主键' }), h('code', { text: JSON.stringify(store.keyPath) + (store.auto ? ' · 自增' : '') }),
       h('span', { text: '索引' }), store.indexes.length ? h('span.cl-ixs', {}, ...store.indexes.map(ix => h('button.btn.sm' + (S.index === ix.name ? '.primary' : '.ghost'), { text: `${ix.name}（${JSON.stringify(ix.keyPath)}${ix.unique ? ' · 唯一' : ''}${ix.multi ? ' · 多值' : ''}）`, on: { click: () => { Object.assign(S, { index: S.index === ix.name ? null : ix.name, key: undefined, offset: 0 }); this.idbView(); } } }))) : h('span.muted', { text: '无' }));
     const view = h('div', {}, this.empty('点一条记录，看它的全部字段'));
-    const showRec = r => {
-      const v = r.value, kids = [h('div.cl-vh', {}, h('b', { text: String(r.key) }), h('span.muted', { text: '约 ' + fmtSize(clBytes(v)) }))];
+    const showRec = async r => {
+      const tok = this._recTok = Symbol(); view.replaceChildren(this.empty('翻检中…'));
+      let rec; try { rec = await Lens.idbRec(S.store, r.key); } catch (e) { if (tok === this._recTok) view.replaceChildren(this.empty('读不出：' + e.message)); return; }
+      if (tok !== this._recTok) return;
+      const lite = rec.lite || r.lite || {}, sz = (rec.approx ? '约 ' : '') + fmtSize(rec.size);
+      const kids = [h('div.cl-vh', {}, h('b', { text: String(r.key) }), h('span.muted', { text: sz }))];
       const act = h('div.cl-row');
-      if (S.store === 'nodes' && FS.get(v.id)) act.append(h('button.btn.sm', { text: '在书阁中显示', on: { click: () => { const n = FS.get(v.id); n.kind === 'dir' ? WM.open('shuge', { path: FS.pathOf(n.id) }) : WM.open('shuge', { path: FS.pathOf(n.parent), select: n.id }); } } }));
-      if (S.store === 'blobs') { const ow = owners.get(v.id); kids.push(h('div.cl-kvs', {}, h('span', { text: '归属' }), h('span', { text: Lens.ownerText(ow) }))); const data = v.data; if (data instanceof Blob && /^image\//.test(data.type || ow?.n.mime || '')) { const u = URL.createObjectURL(data); const im = h('img', { src: u, alt: '' }); im.onload = () => setTimeout(() => URL.revokeObjectURL(u), 1000); kids.push(h('div.cl-prev', {}, im)); } }
+      if (S.store === 'nodes' && FS.get(lite.id)) act.append(h('button.btn.sm', { text: '在书阁中显示', on: { click: () => { const n = FS.get(lite.id); n.kind === 'dir' ? WM.open('shuge', { path: FS.pathOf(n.id) }) : WM.open('shuge', { path: FS.pathOf(n.parent), select: n.id }); } } }));
+      if (S.store === 'blobs') { const ow = owners.get(lite.id); kids.push(h('div.cl-kvs', {}, h('span', { text: '归属' }), h('span', { text: Lens.ownerText(ow) }))); const data = lite.blob; if (data instanceof Blob && data.size < 30e6 && /^image\//.test(data.type || ow?.n.mime || '')) { const u = URL.createObjectURL(data); const im = h('img', { src: u, alt: '' }); im.onload = im.onerror = () => setTimeout(() => URL.revokeObjectURL(u), 1000); kids.push(h('div.cl-prev', {}, im)); } }
       if (act.childNodes.length) kids.push(act);
-      kids.push(h('pre.cl-json', { text: clJson(v) }));
+      // 只摆出开头一段；整条要看就下载（在后台小工里拼，不卡页面）
+      if (rec.cut) kids.push(h('div.cl-big', {}, h('span', { text: `这条记录${sz}，此处只展开头两万字。` }),
+        h('button.btn.sm', { text: '下载整条（JSON）', on: { click: async e => { const b = e.currentTarget; b.disabled = true; const t0 = b.textContent; b.textContent = '誊写中…'; try { const blob = await Lens.idbExport(S.store, r.key, n => { b.textContent = '誊写中 ' + fmtSize(n * 2); }); downloadBlob(blob, `${S.store}-${String(r.key).replace(/[\\/:*?"<>|]/g, '_').slice(0, 60)}.json`); } catch (er) { UI.toast('未成 · ' + (er.message || er), { type: 'err' }); } b.textContent = t0; b.disabled = false; } } })));
+      kids.push(h('pre.cl-json', { text: rec.text + (rec.cut ? '\n…' : '') }));
       view.replaceChildren(...kids); this.reveal();
     };
-    const sumOf = r => { const v = r.value; if (S.store === 'nodes') return `${v.kind === 'dir' ? '▸ ' : ''}${v.name || '（根）'}`; if (S.store === 'blobs') { const ow = owners.get(v.id); return ow ? ow.n.name + (ow.role === 'ver' ? '（旧稿）' : '') : '孤块'; } return typeof v.v === 'string' ? v.v.slice(0, 60) : clJson(v.v ?? v).replace(/\s+/g, ' ').slice(0, 60); };
-    const cols = [{ label: '主键', w: 'minmax(90px, 1.2fr)', get: r => String(r.key) }, { label: '摘要', w: 'minmax(100px, 2fr)', get: sumOf }, { label: '大小', w: '72px', r: true, get: r => fmtSize(clBytes(r.value)) }];
+    const sumOf = r => { const v = r.lite || {}; if (S.store === 'nodes') return `${v.kind === 'dir' ? '▸ ' : ''}${v.name || '（根）'}`; if (S.store === 'blobs') { const ow = owners.get(v.id); return ow ? ow.n.name + (ow.role === 'ver' ? '（旧稿）' : '') : '孤块'; } return r.sum || ''; };
+    const cols = [{ label: '主键', w: 'minmax(90px, 1.2fr)', get: r => String(r.key) }, { label: '摘要', w: 'minmax(100px, 2fr)', get: sumOf }, { label: '大小', w: '72px', r: true, get: r => (r.approx ? '≈' : '') + fmtSize(r.size) }];
+
     let listEl;
     if (S.index && S.key === undefined) {
       const keys = await Lens.idbIndexKeys(S.store, S.index);
@@ -8856,7 +9370,7 @@ class Granary {
   async lsView() {
     const rows = Lens.ls(), total = rows.reduce((a, r) => a + r.bytes, 0);
     const view = h('div', {}, this.empty('点一个键，看它存了什么'));
-    const show = r => { let v = r.value; try { v = JSON.stringify(JSON.parse(v), null, 2); } catch { } view.replaceChildren(h('div.cl-vh', {}, h('b', { text: r.key }), h('span.muted', { text: fmtSize(r.bytes) })), h('div.cl-kvs', {}, h('span', { text: '分类' }), h('span', { text: CL_LSG.find(g => g[0] === r.group)[1] })), h('pre.cl-json', { text: v.length > 60000 ? v.slice(0, 60000) + '\n…' : v })); this.reveal(); };
+    const show = r => { let v = r.value; if (v.length <= 200000) try { v = clPreview(JSON.parse(v), 60000).text; } catch { }   /* 大值不解析、不美化，只截一段原文 */ view.replaceChildren(h('div.cl-vh', {}, h('b', { text: r.key }), h('span.muted', { text: fmtSize(r.bytes) })), h('div.cl-kvs', {}, h('span', { text: '分类' }), h('span', { text: CL_LSG.find(g => g[0] === r.group)[1] })), h('pre.cl-json', { text: v.length > 60000 ? v.slice(0, 60000) + '\n…' : v })); this.reveal(); };
     const tb = this.table([{ label: '键', w: 'minmax(120px, 2fr)', get: r => r.key }, { label: '分类', w: '96px', get: r => CL_LSG.find(g => g[0] === r.group)[1] }, { label: '大小', w: '72px', r: true, get: r => fmtSize(r.bytes) }], rows, show);
     this.body.replaceChildren(h('div.cl-sec', {}, h('div.cl-sum', {}, h('b', { text: `${rows.length} 个键 · ${fmtSize(total)}` }), h('span.muted', { text: ` · 约占 5 MB 的 ${(total / 5242880 * 100).toFixed(2)}%（UTF-16，每字两字节）` })), this.lsViz(rows, total)),
       this.pane(rows.length ? tb : this.empty('还是空的'), view));
@@ -9120,6 +9634,8 @@ const SETTINGS = [
     { k: 'fmSort', label: '排序', type: 'seg', opts: [['name', '名称'], ['mtime', '时间'], ['size', '大小'], ['kind', '类别']], kw: '排序 sort' },
     { k: 'fmSortDir', label: '次序', type: 'seg', opts: [[1, '顺'], [-1, '逆']], kw: '升序 降序' },
     { k: 'fmFolderFirst', label: '书册排在前面', type: 'switch', kw: '文件夹 排序' },
+    { k: 'fmColOrder', label: '列表的列序', desc: '点箭头把一列往前、往后挪；表头上横拖只改宽，不会挪列', type: 'colorder', kw: '列 顺序 列序 表头 列表 columns' },
+    { k: 'fmCols', label: '列表的列宽', desc: '在表头上横着拖即可改宽，双击列缝复原一列', type: 'colw', kw: '列宽 宽度 表头 列表' },
     { k: 'fmShowHidden', label: '显示隐藏文件', desc: '以「.」开头的文件', type: 'switch', kw: '隐藏 点文件' },
     { k: 'fmPreview', label: '预览栏', type: 'switch', kw: '预览' },
     { k: 'fmSidebar', label: '侧栏', type: 'switch', kw: '侧边栏' },
@@ -9241,6 +9757,17 @@ class SettingsPavilion {
         ctl = h('div.sg-apps', {}, ...Object.values(APPS).filter(a => !a.hidden).map(a => { const i = list.indexOf(a.id); return h('button.sg-app' + (i >= 0 ? '.on' : ''), { 'aria-pressed': String(i >= 0), dataset: { tip: a.name }, on: { click: () => set(i >= 0 ? list.filter(x => x !== a.id) : [...list, a.id]) } }, h('span.sg-ag', { text: a.glyph, style: { background: a.color } }), h('span', { text: a.name }), i >= 0 ? h('i.sg-ai', { text: cnNum(i + 1) }) : null); }));
         break;
       }
+      case 'colorder': {
+        const all = ['name', 'mtime', 'kind', 'size'], L = { name: '名称', mtime: '修改', kind: '类别', size: '大小' };
+        const cur = Array.isArray(v) && v.length === 4 && all.every(x => v.includes(x)) ? v : all;
+        const mv = (i, d) => { const n = cur.slice(); [n[i], n[i + d]] = [n[i + d], n[i]]; set(n.join() === all.join() ? null : n); };
+        ctl = h('div.sg-cols', {}, ...cur.map((c, i) => h('span.sg-col', {},
+          h('button.sg-mv', { text: '‹', disabled: i === 0, 'aria-label': L[c] + ' 前移', on: { click: () => mv(i, -1) } }),
+          h('b', { text: L[c] }),
+          h('button.sg-mv', { text: '›', disabled: i === 3, 'aria-label': L[c] + ' 后移', on: { click: () => mv(i, 1) } }))));
+        break;
+      }
+      case 'colw': ctl = h('button.btn.sm', { text: '复原列宽', disabled: !Prefs.get('fmCols') && !Prefs.get('fmColsM'), on: { click: () => { this.editing = true; Prefs.set('fmColsM', null); Prefs.set('fmCols', null); this.editing = false; this.render(true); UI.toast('列宽 · 已复原'); } } }); break;
       case 'link': ctl = h('button.btn.sm', { text: '打开', on: { click: it.act } }); break;
       case 'theme': ctl = null; break;
       case 'accent': {
@@ -9255,7 +9782,7 @@ class SettingsPavilion {
         break;
       }
     }
-    const reset = this.changed(k) && it.type !== 'link' ? h('button.sg-reset', { html: icon('restore'), dataset: { tip: '复原为默认' }, 'aria-label': '复原', on: { click: () => set(PREF_DEFAULTS[k]) } }) : null;
+    const reset = this.changed(k) && it.type !== 'link' && it.type !== 'colw' ? h('button.sg-reset', { html: icon('restore'), dataset: { tip: '复原为默认' }, 'aria-label': '复原', on: { click: () => set(PREF_DEFAULTS[k]) } }) : null;
     const row = h('div.sg-row' + (it.type === 'theme' || it.type === 'apps' ? '.wide' : '') + (it.small ? '.small' : '') + (this.changed(k) ? '.mod' : ''), { dataset: { key: k || it.type } },
       h('div.sg-l', {}, h('div.sg-lab', {}, h('span', { text: it.label }), reset), it.desc ? h('div.sg-desc', { text: it.desc }) : null, it.note ? h('div.sg-note', { html: it.note }) : null),
       ctl ? h('div.sg-c', {}, ctl) : null);
@@ -9432,6 +9959,7 @@ class SheetView {
     if (!n || n.kind !== 'file') { UI.toast('无此表 · 这张表不在了', { type: 'warn' }); return this.empty(); }
     this.node = n; this.win.args = { path: FS.pathOf(n.id) }; Recent.add(n.id); this.win.setTitle(n.name);
     $('.bg-empty', this.scroller)?.remove();
+    if (!(await UI.bigOK(n, 24 << 20, '展表'))) { this.node = null; return this.empty(); }
     await this.load();
   }
   async load(keepEnc) {
@@ -9676,12 +10204,15 @@ class WebView {
     const n = this.node, tok = this.tok = Symbol();
     this.addr.replaceChildren(h('span.jt-path', { text: FS.pathOf(n.id) }));
     this.bBack.disabled = !this.hist.length;
+    if (!(await UI.bigOK(n, 24 << 20, '展观'))) { this.stage.replaceChildren(h('div.empty', {}, h('div.em-poem', { text: '此页甚巨，暂不展观' }))); return; }
     let text;
     try { text = (await readTextSmart(await FS.read(n))).text; } catch (e) { this.stage.replaceChildren(h('div.empty', {}, h('div.em-poem', { text: '读不出来：' + (e.message || e) }))); return; }
     if (tok !== this.tok) return;
     if (this.mode === 'src') {
       this.frame = null;
-      this.stage.replaceChildren(h('pre.jt-src.selectable', {}, ...hlHTML(text)));
+      // 着色会给每个标记造一个节点：大源码只着色前 8 万字，其余原样；超过 40 万字只摆出前 40 万字
+      const HL = 80000, MAXT = 400000, head = text.slice(0, HL), rest = text.slice(HL, MAXT);
+      this.stage.replaceChildren(h('pre.jt-src.selectable', {}, ...hlHTML(head), rest, text.length > MAXT ? h('span.jt-cut', { text: `\n… 其余 ${fmtSize((text.length - MAXT) * 2)} 未摆出（可在墨砚中打开）` }) : ''));
       return;
     }
     const html = await this.build(text);
@@ -9749,6 +10280,7 @@ class ArchiveView {
     const n = typeof path === 'object' ? path : FS.resolve(path);
     if (!n || n.kind !== 'file') { UI.toast('无此囊 · 这个压缩包不在了', { type: 'warn' }); return this.empty(); }
     this.node = n; this.win.args = { path: FS.pathOf(n.id) }; Recent.add(n.id); this.win.setTitle(n.name);
+    if (!(await UI.bigOK(n, 300 << 20, '翻看'))) return this.empty();
     this.status.textContent = '翻看中…'; this.list.replaceChildren();
     try {
       const r = await Archive.read(await FS.read(n), n.name);
