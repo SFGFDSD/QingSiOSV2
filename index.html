@@ -126,6 +126,7 @@ input[type=range]::-moz-range-thumb { width: 14px; height: 14px; border-radius: 
 .empty { display: grid; place-items: center; align-content: center; gap: 10px; padding: 40px 20px; color: var(--ink3); text-align: center; height: 100%; }
 .empty .em-glyph { width: 64px; height: 64px; color: color-mix(in srgb, var(--ink3) 45%, transparent); }
 .empty .em-poem { font: 15px/1.9 var(--font-kai); letter-spacing: .12em; }
+.empty .em-acts { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
 
 /* ---------- 花字小件 ---------- */
 .ink { display: inline-flex; align-items: center; justify-content: center; width: 1em; height: 1em; flex: none; font-family: var(--font-display); font-style: normal; line-height: 1; vertical-align: -0.12em; }
@@ -141,11 +142,21 @@ input[type=range]::-moz-range-thumb { width: 14px; height: 14px; border-radius: 
 .fm-sh .inkw { font-size: 14px; opacity: .85; }
 .sg-h .inkw { font-size: 1.15em; }
 .cl-h .inkw { font-size: 1.1em; }
+/* 各应用工具条同一副骨架：同高、同底、同线；放不下时先收说明字（autoCompact），再横向滑 */
+.appbar { display: flex; align-items: center; gap: 3px; padding: 5px 8px; min-height: 44px; border-bottom: 1px solid color-mix(in srgb, var(--line) 65%, transparent); background: color-mix(in srgb, var(--paper3) 70%, var(--paper)); color: var(--ink); flex: none; min-width: 0; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
+.appbar::-webkit-scrollbar { display: none; }
+.appbar > * { flex-shrink: 0; }
+.appbar .ibtn { font: 600 14px/1 var(--font-kai); }
+.appbar .ed-sep { width: 1px; height: 20px; background: color-mix(in srgb, var(--line) 80%, transparent); margin: 0 4px; }
+@media (pointer: coarse) { .appbar { min-height: 50px; } }
 .inkbtn { width: auto !important; padding: 0 9px 0 7px !important; gap: 4px; display: inline-flex; align-items: center; }
 .inkbtn .ink { font-size: 17px; }
-.inkbtn .ib-l { font-size: 12.5px; letter-spacing: .04em; white-space: nowrap; }
+.inkbtn .ib-l { font-size: 12.5px; font-weight: 400; letter-spacing: .04em; white-space: nowrap; }
 .inkbtn.on { background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); }
 .compact .inkbtn .ib-l { display: none; }
+.appbar.wrapped { flex-wrap: wrap; row-gap: 4px; }
+.appbar.wrapped .ed-sep { display: none; }
+.appbar.wrapped .seg { flex-wrap: nowrap; }
 .compact .inkbtn { padding: 0 7px !important; }
 
 /* ── 10-shell.css ── */
@@ -470,7 +481,8 @@ body.dragging-win, body.dragging-win * { cursor: grabbing !important; }
 /* ── 30-shuge.css ── */
 /* ================= 书阁 ================= */
 .fm { display: flex; flex-direction: column; height: 100%; min-height: 0; }
-.fm-bar { display: flex; align-items: center; gap: 6px; padding: 6px 10px; border-bottom: 1px solid color-mix(in srgb, var(--line) 65%, transparent); background: color-mix(in srgb, var(--paper3) 70%, var(--paper)); flex: none; }
+.fm-bar { gap: 4px; overflow: visible; }
+.fm-bar > .fm-crumbs, .fm-bar > .fm-search { flex-shrink: 1; }
 .fm-crumbs { flex: 1; min-width: 60px; display: flex; align-items: center; gap: 1px; height: 32px; padding: 0 6px; margin: 0 4px; overflow-x: auto; scrollbar-width: none; border-radius: var(--r-sm); background: color-mix(in srgb, var(--paper2) 35%, transparent); border: 1px solid transparent; cursor: text; }
 .fm-crumbs::-webkit-scrollbar { display: none; }
 .fm-crumbs:hover { border-color: var(--line); }
@@ -659,11 +671,19 @@ body.fm-dragging, body.fm-dragging * { cursor: grabbing !important; }
 @keyframes qsBreath { 50% { opacity: .45; transform: scale(.96); } }
 .fm-si > span:not(.fm-sg):not(.fm-mlost):not(.fm-mro) { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .fm-mbar .ink { font-size: 20px; color: var(--gold); flex-shrink: 0; }
+/* 窄处：搜索框先收成一枚「寻」镜，点开时暂借路径的位置 */
+.fm-search { min-width: 0; }
+.fm-bar.compact .fm-search { width: 34px; padding-right: 0; cursor: pointer; }
+.fm-bar.compact .fm-search::placeholder { color: transparent; }
+.fm-bar.compact .fm-search:not(:placeholder-shown) { width: 96px; padding-right: 6px; }
+.fm-bar.compact:focus-within .fm-crumbs { display: none; }
+.fm-bar.compact .fm-search:focus { width: 150px; flex-shrink: 1; cursor: text; padding-right: 8px; }
+.fm-bar.compact .fm-search:focus::placeholder { color: inherit; opacity: .6; }
 
 /* ── 31-moyan.css ── */
 /* ================= 墨砚 ================= */
 .ed { --ed-font: var(--font-song); --ed-size: 17px; --ed-lh: 1.85; display: flex; flex-direction: column; height: 100%; min-height: 0; }
-.ed-bar { display: flex; align-items: center; gap: 2px; padding: 5px 8px; border-bottom: 1px solid color-mix(in srgb, var(--line) 65%, transparent); background: color-mix(in srgb, var(--paper3) 70%, var(--paper)); flex: none; overflow-x: auto; scrollbar-width: none; }
+.ed-bar { gap: 2px; }
 .ed-bar::-webkit-scrollbar { display: none; }
 .ed-bar .ibtn { font: 600 14px/1 var(--font-kai); min-width: 30px; }
 .ed-bar .ibtn.dim { opacity: .45; }
@@ -743,12 +763,31 @@ body.fm-dragging, body.fm-dragging * { cursor: grabbing !important; }
 
 /* ── 32-danqing.css ── */
 /* ================= 丹青 ================= */
-.dq { display: flex; flex-direction: column; height: 100%; min-height: 0; }
-.dq-bar { display: flex; align-items: center; gap: 4px; padding: 6px 8px; border-bottom: 1px solid color-mix(in srgb, var(--line) 65%, transparent); background: color-mix(in srgb, var(--paper3) 70%, var(--paper)); flex: none; overflow-x: auto; scrollbar-width: none; min-height: 48px; }
-.dq-bar::-webkit-scrollbar { display: none; }
+.dq { display: flex; flex-direction: column; height: 100%; min-height: 0; container: dq / inline-size; }
+/* 工具条：宽时一行；窄了分两行（笔具 + 存取一行，墨碟与滑杆另起一行）；再窄只留墨字。绝不叠在一起 */
+.dq-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 4px; padding: 6px 8px; border-bottom: 1px solid color-mix(in srgb, var(--line) 65%, transparent); background: color-mix(in srgb, var(--paper3) 70%, var(--paper)); flex: none; min-height: 48px; }
+.dq-acts { display: flex; align-items: center; gap: 2px; flex: none; margin-left: auto; }
+.dq-acts .inkbtn.dim { opacity: .4; }
+@container dq (max-width: 1120px) {
+  .dq-bar > .ed-sep { display: none; }
+  .dq-bar > .spacer { order: 1; }
+  .dq-bar .dq-acts { order: 2; }
+  .dq-bar .dq-opts { order: 3; flex: 1 0 100%; padding-top: 5px; border-top: 1px dashed color-mix(in srgb, var(--line) 55%, transparent); }
+  .dq-bar .dq-opt { flex: 1 1 auto; min-width: 0; }
+}
+@container dq (max-width: 560px) {
+  .dq-bar .dq-acts .ib-l { display: none; }
+  .dq-bar .dq-acts .inkbtn { padding: 0 6px !important; }
+  .dq-bar .dq-tools button { padding: 4px 8px; }
+  .dq-bar .dq-opt { flex-wrap: wrap; row-gap: 6px; column-gap: 8px; }
+  .dq-bar .dq-dishes { flex: 1 0 100%; justify-content: space-between; }
+  .dq-bar .dq-sl { flex: 1 1 130px; min-width: 0; }
+  .dq-bar .dq-sl .dq-range { flex: 1; width: auto; min-width: 50px; }
+  .dq-bar .dq-opt .field.sm { flex: 1 1 120px; min-width: 0; width: auto !important; }
+}
 .dq-tools button { font: 600 15px/1 var(--font-kai); padding: 4px 11px; min-height: 30px; }
-.dq-opts { display: flex; align-items: center; min-width: 0; }
-.dq-opt { display: flex; align-items: center; gap: 10px; flex: none; }
+.dq-opts { display: flex; align-items: center; flex: none; max-width: 100%; }
+.dq-opt { display: flex; align-items: center; gap: 10px; flex: none; max-width: 100%; }
 .dq-dishes { display: flex; gap: 3px; padding: 3px 5px; border-radius: calc(20px * var(--rk)); background: color-mix(in srgb, var(--paper2) 45%, transparent); }
 .dq-dish { position: relative; width: 26px; height: 26px; border-radius: 50%; border: 0; padding: 0; background: radial-gradient(circle at 40% 35%, #fffdf6, #e8e0cf 70%, #cfc4ad); box-shadow: inset 0 -1px 2px rgba(0,0,0,.15), 0 1px 2px rgba(0,0,0,.12); transition: transform .18s var(--spring); }
 .dq-dish i { position: absolute; inset: 5px; border-radius: 50%; background: radial-gradient(circle at 45% 40%, color-mix(in srgb, var(--ink) calc(var(--a) * 100%), transparent), color-mix(in srgb, var(--ink) calc(var(--a) * 70%), transparent) 70%, transparent 100%); }
@@ -794,7 +833,7 @@ body.fm-dragging, body.fm-dragging * { cursor: grabbing !important; }
 /* ── 33-huaxuan.css ── */
 /* ================= 画轩 ================= */
 .hx { display: flex; flex-direction: column; height: 100%; min-height: 0; background: #1e1c19; color: #e8e2d6; }
-.hx-bar { display: flex; align-items: center; gap: 3px; padding: 5px 8px; background: color-mix(in srgb, var(--paper3) 70%, var(--paper)); color: var(--ink); border-bottom: 1px solid color-mix(in srgb, var(--line) 65%, transparent); flex: none; min-width: 0; }
+.hx-bar > .hx-title { flex-shrink: 1; }
 .hx-bar .ibtn { font: 600 14px var(--font-kai); }
 .hx-title { font-size: 12.5px; color: var(--ink2); margin-left: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
 .hx-imgtools { display: flex; align-items: center; gap: 2px; flex: none; }
@@ -1001,11 +1040,24 @@ body.fm-dragging, body.fm-dragging * { cursor: grabbing !important; }
 
 .cl-big { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 6px 0 8px; padding: 8px 10px; font-size: 12.5px; color: var(--rust); border-left: 2px solid var(--rust); background: color-mix(in srgb, var(--rust) 7%, transparent); }
 .cl-ying b { font: 500 15px var(--font-ink); color: var(--ink); letter-spacing: .06em; }
+/* 青丝 / 同站其他：两边分开，一眼分得清 */
+.cl-scbar { display: flex; align-items: center; gap: 10px 14px; flex-wrap: wrap; padding: 8px 10px; border-radius: calc(8px * var(--rk)); background: color-mix(in srgb, var(--willow-mist, var(--willow)) 12%, transparent); border: 1px solid color-mix(in srgb, var(--willow) 28%, transparent); }
+.cl-scbar.other { background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--ink3) 7%, transparent) 0 6px, transparent 6px 12px), color-mix(in srgb, var(--paper2) 50%, transparent); border-color: color-mix(in srgb, var(--ink3) 30%, transparent); }
+.cl-scope button { display: inline-flex; align-items: baseline; gap: 2px; font: 13px var(--font-kai); padding: 4px 12px; }
+.cl-scope button b { font-weight: 600; letter-spacing: .06em; }
+.cl-scope button span { font-size: 12px; opacity: .75; font-variant-numeric: tabular-nums; }
+.cl-scnote { flex: 1 1 220px; min-width: 0; font-size: 12.5px; line-height: 1.6; color: var(--ink2); }
+.cl-scbar.other .cl-scnote { color: var(--ink3); }
+.cl-cx { font-size: 11.5px; color: var(--ink3); margin-top: 2px; min-height: 1em; letter-spacing: .02em; }
+.cl-cx:empty { display: none; }
+.cl-dbs .cl-store b { word-break: break-all; }
+.cl-sum .spacer { flex: 1; }
+.cl-crumbs .btn.danger { margin-left: auto; }
 
 /* ── 36-shijian.css ── */
 /* ================= 诗笺 ================= */
 .sj { display: flex; flex-direction: column; height: 100%; min-height: 0; }
-.sj-bar { display: flex; align-items: center; gap: 6px; padding: 6px 8px; border-bottom: 1px solid color-mix(in srgb, var(--line) 65%, transparent); background: color-mix(in srgb, var(--paper3) 70%, var(--paper)); flex: none; overflow-x: auto; scrollbar-width: none; }
+.sj-bar { gap: 3px; }
 .sj-bar .btn.sm { font-family: var(--font-kai); }
 .sj-body { flex: 1; min-height: 0; display: flex; position: relative; }
 .sj-side { width: 210px; flex: none; display: flex; flex-direction: column; border-right: 1px solid color-mix(in srgb, var(--line) 60%, transparent); background: color-mix(in srgb, var(--paper) 55%, var(--paper3)); min-height: 0; }
@@ -1073,8 +1125,8 @@ body.fm-dragging, body.fm-dragging * { cursor: grabbing !important; }
 .sg-lab { display: flex; align-items: center; gap: 6px; font-size: 14.5px; color: var(--ink); }
 .sg-row.mod .sg-lab > span::after { content: ''; display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: var(--gold); margin-left: 6px; vertical-align: 3px; }
 .sg-desc { font-size: 12.5px; color: var(--ink3); margin-top: 2px; line-height: 1.55; }
-.sg-reset { border: 0; background: none; color: var(--ink3); padding: 2px; border-radius: calc(4px * var(--rk)); display: grid; place-items: center; opacity: .8; }
-.sg-reset:hover { color: var(--ink); background: var(--sel); } .sg-reset svg { width: 14px; height: 14px; }
+.sg-reset { border: 0; background: none; color: var(--ink3); padding: 2px 6px 2px 4px; border-radius: calc(4px * var(--rk)); display: inline-flex; align-items: center; gap: 2px; opacity: .85; font: 12px var(--font-kai); white-space: nowrap; }
+.sg-reset:hover { color: var(--ink); background: var(--sel); }
 .sg-c { flex: none; display: flex; align-items: center; max-width: 100%; }
 .sg-seg { flex-wrap: wrap; } .sg-seg button { padding: 3px 11px; font-size: 13px; }
 .sg-rw { display: flex; align-items: center; gap: 10px; } .sg-range { width: 160px; accent-color: var(--willow-deep); } .sg-rv { min-width: 46px; text-align: right; font-size: 12.5px; color: var(--ink2); font-variant-numeric: tabular-nums; }
@@ -1146,7 +1198,7 @@ body.fm-dragging, body.fm-dragging * { cursor: grabbing !important; }
 /* ── 38-biaoge.css ── */
 /* ================= 表阁 ================= */
 .bg { display: flex; flex-direction: column; height: 100%; position: relative; background: var(--paper); }
-.bg-bar { display: flex; align-items: center; gap: 6px; padding: 6px 8px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.bg-bar { gap: 4px 6px; flex-wrap: wrap; overflow: visible; }
 .bg-bar select.field { width: auto; }
 .bg-scroll { flex: 1; overflow: auto; position: relative; outline: none; overscroll-behavior: contain; }
 .bg-head { position: sticky; top: 0; z-index: 2; display: grid; min-width: 100%; background: var(--paper2);
@@ -1173,12 +1225,13 @@ body.fm-dragging, body.fm-dragging * { cursor: grabbing !important; }
   color: var(--ink); resize: none; box-shadow: var(--shadow-2, 0 6px 20px rgba(0,0,0,.2)); outline: none; }
 .bg-status { padding: 5px 12px; font-size: 12px; color: var(--ink3); border-top: 1px solid var(--line); font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .bg-empty { position: absolute; inset: 0; }
-@media (max-width: 640px) { .bg-bar .ib-l { display: none; } .bg-bar input.field { width: 96px !important; } }
+@media (max-width: 640px) { .bg-bar input.field { width: 96px !important; } }
 
 /* ── 39-jingtai.css ── */
 /* ================= 镜台 ================= */
 .jt { display: flex; flex-direction: column; height: 100%; outline: none; background: var(--paper); }
-.jt-bar { display: flex; align-items: center; gap: 6px; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+.jt-bar { gap: 3px; }
+.jt-bar > .jt-addr { flex-shrink: 1; min-width: 0; }
 .jt-addr { flex: 0 1 auto; min-width: 0; height: 30px; display: flex; align-items: center; padding: 0 12px; border-radius: calc(var(--rk) * 15px);
   background: var(--paper2); color: var(--ink2); font: 12.5px/1 var(--font-sans); overflow: hidden; }
 .jt-path { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -1191,13 +1244,13 @@ body.fm-dragging, body.fm-dragging * { cursor: grabbing !important; }
 .jt-an { color: var(--willow-deep); }
 .jt-av { color: var(--gold); }
 .jt-stage .empty { background: var(--paper); position: absolute; inset: 0; }
-@media (max-width: 640px) { .jt-bar .ib-l { display: none; } }
 .jt-cut { color: var(--rust); font-size: 12px; }
 
 /* ── 3a-nangxia.css ── */
 /* ================= 囊匣 ================= */
 .nx { display: flex; flex-direction: column; height: 100%; background: var(--paper); }
-.nx-bar { display: flex; align-items: center; gap: 6px; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+.nx-bar { gap: 3px; }
+.nx-bar > .nx-crumb { flex-shrink: 1; min-width: 0; }
 .nx-crumb { display: flex; align-items: center; gap: 2px; min-width: 0; overflow: hidden; font-size: 13px; }
 .nx-cb { border: 0; background: none; color: var(--ink2); padding: 4px 6px; border-radius: calc(var(--rk) * 6px); cursor: pointer; white-space: nowrap; font: inherit; }
 .nx-cb:hover { background: var(--paper2); color: var(--ink); }
@@ -1211,7 +1264,7 @@ body.fm-dragging, body.fm-dragging * { cursor: grabbing !important; }
 .nx-nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink); font-size: 13.5px; }
 .nx-sz, .nx-t { color: var(--ink3); font-size: 12px; text-align: right; font-variant-numeric: tabular-nums; }
 .nx-status { padding: 5px 12px; font-size: 12px; color: var(--ink3); border-top: 1px solid var(--line); }
-@media (max-width: 640px) { .nx-row { grid-template-columns: 36px 1fr 80px; } .nx-t { display: none; } .nx-bar .ib-l { display: none; } }
+@media (max-width: 640px) { .nx-row { grid-template-columns: 36px 1fr 80px; } .nx-t { display: none; } }
 
 </style>
 </head>
@@ -1486,7 +1539,7 @@ const PREF_DEFAULTS = {
   clock24: false, showShichen: true, showJieqi: true, showSeconds: true,
   fmView: 'shelf', fmSort: 'name', fmSortDir: 1, fmShowHidden: false, fmConfirmDelete: true, fmPreview: false, fmCols: null, fmColsM: null, fmColOrder: null, fmFolderFirst: true,
   trashDays: 30, maxVersions: 10, mirrorSmall: true, mirrorMax: 2 * 1024 * 1024, useOPFS: true, hashFiles: true,
-  edFont: 'ink', edSize: 17, edVertical: false, edGrid: false, edWrap: true, edAutosave: 800, edLineNo: false, edSpell: false, edMdPreview: true,
+  edFont: 'ink', edSize: 17, edVertical: false, edGrid: false, edWrap: true, edAutosave: 800, bigOpen: 'ask', edLineNo: false, edSpell: false, edMdPreview: true,
   inkPaper: 'xuan', inkBrush: 12,
   userName: '', welcomed: false, lockOnIdle: 0, lockPoem: true
 };
@@ -2477,6 +2530,10 @@ const FS = (() => {
     if (e instanceof FSError) return e;
     const nm = e && e.name;
     if (nm === 'NotAllowedError' || nm === 'SecurityError') { const r = n && mRootOf(n.id); if (r && !r.lost) { mSet({ ...r, lost: true }); ev.emit('change', { type: 'mount', ids: [r.id], parents: [MROOT], local: true }); } return new FSError('EPERM', '本地文件夹的授权已失效，请重新授权'); }
+    if (nm === 'NotFoundError' && n && n.parent === MROOT) {   // 别馆的原文件夹本身没了：留下牌位，等你「送还」（不悄悄丢掉，下次开机也不会再冒出来）
+      if (!n.gone) { mSet({ ...N.get(n.id), lost: true, gone: true }); ev.emit('change', { type: 'mount', ids: [n.id], parents: [MROOT], local: true }); }
+      return new FSError('ENOENT', `「${n.name}」的原文件夹已经不在了，可以送还`);
+    }
     if (nm === 'NotFoundError') { if (n && N.has(n.id)) { const p = n.parent; mDrop(n.id); ev.emit('change', { type: 'remove', ids: [n.id], parents: [p], local: true }); } return new FSError('ENOENT', '本地文件已经不在了（可能在别处被删或改名）'); }
     if (nm === 'QuotaExceededError') return new FSError('EQUOTA', '磁盘空间不足');
     if (nm === 'NoModificationAllowedError' || nm === 'InvalidStateError') return new FSError('EBUSY', '文件正被别的程序占用，稍后再试');
@@ -2498,7 +2555,7 @@ const FS = (() => {
       const ent = [];
       try { for await (const [name, h] of hd.entries()) ent.push([name, h]); }
       catch (e) { mErr(e, d); return; }
-      const root = mRootOf(d.id); if (root && root.lost) mSet({ ...root, lost: false });
+      const root = mRootOf(d.id); if (root && (root.lost || root.gone)) mSet({ ...root, lost: false, gone: false });
       const cur = new Map(childIds(d.id).map(id => [N.get(id)?.name, id]));
       const seen = new Set(), ch = [];
       for (let i = 0; i < ent.length; i += 32) {
@@ -2706,18 +2763,24 @@ const FS = (() => {
     await mSaveRegistry();
     changed('unmount', [id], [ROOT, MROOT]);
   }
-  /** 重新授权：必须由用户点击触发 */
+  /** 重新授权：必须由用户点击触发。返回 true（已应允）/ false（被拒或作罢）/ 'gone'（原文件夹已不在） */
   async function reauth(id) {
     const n = N.get(id); const h = MH.get(id); if (!n || !h || !h.requestPermission) return false;
-    let ok = false; try { ok = (await h.requestPermission({ mode: 'readwrite' })) === 'granted'; } catch (e) { }
-    if (ok) { mSet({ ...N.get(id), lost: false }); mSeen.delete(id); await mScanDir(N.get(id)); changed('mount', [id], [MROOT, id]); }
-    return ok;
+    let ok = false;
+    try { ok = (await h.requestPermission({ mode: 'readwrite' })) === 'granted'; }
+    catch (e) { if (e && e.name === 'NotFoundError') { mErr(e, n); return 'gone'; } }
+    if (!ok) return false;
+    mSet({ ...N.get(id), lost: false, gone: false }); mSeen.delete(id);
+    await mScanDir(N.get(id));
+    if (N.get(id)?.gone) return 'gone';
+    changed('mount', [id], [MROOT, id]);
+    return true;
   }
   function mountInfo(id) {
     if (!isM(id)) return null;
     if (id === MROOT) return { area: true };
     const r = mRootOf(id); if (!r) return null;
-    return { root: r.id, name: r.name, lost: !!r.lost, ro: !!r.ro, scanning: mScanP.has(id), scanned: mSeen.has(id) };
+    return { root: r.id, name: r.name, lost: !!r.lost, gone: !!r.gone, ro: !!r.ro, scanning: mScanP.has(id), scanned: mSeen.has(id) };
   }
   async function refresh(id) { const n = N.get(id); if (n && isM(id)) { mSeen.delete(id); await mScanDir(n.kind === 'dir' ? n : N.get(n.parent)); } }
   async function ensure(id) { const n = N.get(id); if (n && n.kind === 'dir') await mEnsure(n); }
@@ -3878,7 +3941,10 @@ const InkArt = (() => {
     cv._ia = { name, data, w, h: hh }; cv.style.aspectRatio = `${w} / ${hh}`; if (natural) cv.style.width = w + 'px'; draw(cv); return cv;
   }
   if (typeof BUS !== 'undefined') BUS.on('theme', () => requestAnimationFrame(() => document.querySelectorAll('canvas.ia').forEach(draw)));
-  return { make, draw, pal, glyph, seal, stroke, LETTER, get busy() { return !!jarJob; } };
+  /* 后台回来画布可能已被收走：缓存作废，页面上的瓮与小画重画一遍 */
+  function flush() { gcache.clear(); if (!jarJob) jarCache = null; document.querySelectorAll('canvas.ia').forEach(c => { try { draw(c); } catch (e) { } }); }
+  if (typeof BUS !== 'undefined') BUS.on('canvas-wake', () => setTimeout(flush, 60));
+  return { make, draw, pal, glyph, seal, stroke, LETTER, flush, get busy() { return !!jarJob; } };
 })();
 
 /* ── 20-theme.js ── */
@@ -4449,7 +4515,7 @@ const Wallpaper = (() => {
   function freshStat() {
     stat = document.createElement('canvas'); stat.width = Math.round(W * DPR); stat.height = Math.round(H * DPR);
     sctx = stat.getContext('2d'); grain = null; mistSp = null; mistKey = '';
-    stat.addEventListener('contextlost', e => e.preventDefault());
+    stat.addEventListener('contextlost', () => { statDirty = true; });   // 注意：2D 画布的 contextlost 绝不能 preventDefault——那等于告诉浏览器「别还给我」
     drawStatic();
   }
   const mainLost = () => { try { return !!(ctx.isContextLost && ctx.isContextLost()); } catch (e) { return false; } };
@@ -4790,7 +4856,10 @@ const Wallpaper = (() => {
   }
   function rebuild() {
     T = Theme.id; S = THEMES[T].scene; grain = null;
-    buildTrees(); drawStatic(); buildParts(); buildMisc();
+    buildTrees();
+    if (statDirty || (sctx && sctx.isContextLost && sctx.isContextLost())) { statDirty = false; boatSpr = null; freshStat(); }
+    else drawStatic();
+    buildParts(); buildMisc();
     render((performance.now() - t0) / 1000, 0);
   }
   function setRunning() {
@@ -4802,9 +4871,27 @@ const Wallpaper = (() => {
     cv = canvas; ctx = cv.getContext('2d', { alpha: false }); stat = document.createElement('canvas'); sctx = stat.getContext('2d');
     resize();
     new ResizeObserver(debounce(resize, 120)).observe(cv.parentElement || cv);
-    for (const el of [cv, stat]) { el.addEventListener('contextlost', e => e.preventDefault()); el.addEventListener('contextrestored', () => { statDirty = true; render((performance.now() - t0) / 1000, 0); }); }
-    const wake = () => { if (document.hidden) return; statDirty = true; last = 0; if (!running) render((performance.now() - t0) / 1000, 0); };
+    /* 切到别的网页再回来：移动端浏览器常把后台标签页的画布内存收走（白屏、三卷消失的根源）。
+       旧写法在 contextlost 里 preventDefault，按规范这会阻止浏览器恢复——于是永远白着。
+       现在：不拦截、恢复时重建；回到前台时主动体检，丢了就换一块新画布，后台久了就把所有画布缓存一并重烘。 */
+    const listen = el => { el.addEventListener('contextlost', () => { statDirty = true; }); el.addEventListener('contextrestored', () => { statDirty = true; rebuild(); }); };
+    listen(cv); listen(stat);
+    let hiddenAt = document.hidden ? performance.now() : 0;
+    const swapCanvas = () => {
+      const n = cv.cloneNode(false); cv.replaceWith(n); cv = n; ctx = cv.getContext('2d', { alpha: false }); listen(cv);
+      cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+    };
+    const wake = e => {
+      if (document.hidden) { hiddenAt = performance.now(); return; }
+      const away = hiddenAt ? performance.now() - hiddenAt : 0; hiddenAt = 0;
+      const lost = mainLost() || (sctx && sctx.isContextLost && sctx.isContextLost());
+      if (mainLost()) swapCanvas();
+      statDirty = true; last = 0;
+      if (lost || away > 4000 || (e && e.persisted)) { rebuild(); BUS.emit('canvas-wake', { lost, away }); }
+      else if (!running) render((performance.now() - t0) / 1000, 0);
+    };
     document.addEventListener('visibilitychange', wake); addEventListener('pageshow', wake);
+    addEventListener('focus', () => { if (mainLost()) wake(); });
     BUS.on('theme', () => rebuild());
     BUS.on('pref', async k => {
       if (k === 'wpImage' || k === 'wpDim' || k === '*') { await loadImage(); rebuild(); }
@@ -5058,8 +5145,12 @@ const UI = (() => {
   const head = (title, glyph, danger) => h('div.dlg-t', {}, glyph ? h('span.seal-chip', { text: glyph, style: danger ? {} : { background: 'var(--willow-deep)' } }) : null, h('span', { text: title }));
 
   /** 大文件闸门：超过 lim 字节先问一声（多大、会怎样），用户点头才往下做 */
+  /** 「大卷直开」：设阁里选了一律直开，就不再问、也不再截断 */
+  const bigAll = () => Prefs.get('bigOpen') === 'all';
+  /** 大小上限：一律直开时返回无穷大（各处截断/采样的上限都走它） */
+  const cap = n => bigAll() ? Infinity : n;
   async function bigOK(n, lim, what = '打开') {
-    if (!n || !(n.size > lim)) return true;
+    if (!n || !(n.size > lim) || bigAll()) return true;
     return confirm({ title: '此卷甚巨', glyph: '巨', msg: `「${n.name}」有 ${fmtSize(n.size)}。整卷读进来要占不少内存，手机上可能卡上一阵。仍要${what}吗？`, ok: what });
   }
   function confirm({ title = '确认', msg = '', html = '', ok = '确定', cancel = '作罢', danger = false, glyph, check } = {}) {
@@ -5112,7 +5203,13 @@ const UI = (() => {
     return { action: r };
   }
 
-  return { initTips, menu, menuAt, closeMenu, toast, job, scrollDialog, confirm, bigOK, alert, prompt, choose, conflict, get menuOpen() { return !!openMenu; } };
+  /** 关窗时的「还没保存」：墨砚、丹青、表阁同一副面孔、同一套说法。返回 'yes' | 'no' | null */
+  function unsaved({ name = '无题', note = '' } = {}) {
+    return choose({ title: '还没保存', glyph: '存', html: `「<b>${esc(name)}</b>」有改动尚未保存。${note ? `<br><span class="muted">${note}</span>` : ''}`,
+      options: [{ label: '作罢', value: null, cls: 'ghost' }, { label: '不保存', value: 'no' }, { label: '保存', value: 'yes', cls: 'primary', primary: 1 }] });
+  }
+
+  return { initTips, menu, menuAt, closeMenu, toast, job, scrollDialog, confirm, bigOK, bigAll, cap, unsaved, alert, prompt, choose, conflict, get menuOpen() { return !!openMenu; } };
 })();
 
 /** 工具栏按钮：一个墨字 + 一两个字的说明（取代看不懂的小图标） */
@@ -5121,11 +5218,19 @@ function inkBtn(glyph, label, tip, fn, cls = '') {
   return h('button.ibtn.inkbtn' + extra, { dataset: { tip: tip || label }, 'aria-label': tip || label, on: { click: fn } }, Ink.glyph(glyph, 20), label ? h('span.ib-l', { text: label }) : null);
 }
 
+/** 「更多」⋯：全系统唯一保留的小图标按钮（各处同形同位，总在工具条最右） */
+function moreBtn(fn, tip = '更多') { return h('button.ibtn.more-btn', { html: icon('more'), dataset: { tip }, 'aria-label': tip, on: { click: fn } }); }
+
 /** 工具条放不下时自动收起文字标签，只留墨字（宽了再展开） */
-function autoCompact(bar) {
+function autoCompact(bar, { keep, min = 160 } = {}) {
   if (!('ResizeObserver' in window)) return bar;
   let raf = 0;
-  const fit = () => { raf = 0; bar.classList.remove('compact'); if (bar.scrollWidth > bar.clientWidth + 1) bar.classList.add('compact'); };
+  /* keep：这一格（如书阁的路径）至少要留 min 像素，不够就先收说明字 */
+  /* 收了说明字还放不下 → 折成两行（各处一律：东西都看得见，不藏在横滑里） */
+  const over = () => bar.scrollWidth > bar.clientWidth + 1;
+  const fit = () => { raf = 0; bar.classList.remove('compact', 'wrapped');
+    if (over() || (keep && keep.isConnected && keep.clientWidth < min)) bar.classList.add('compact');
+    if (over()) bar.classList.add('wrapped'); };
   new ResizeObserver(() => { if (!raf) raf = requestAnimationFrame(fit); }).observe(bar);
   return bar;
 }
@@ -5481,6 +5586,7 @@ const ScrollArt = (() => {
   function mount(btn, role, win) {
     const cv = h('canvas.sc-cv'), ink = h('span.sc-ink', {}, h('span.sc-g')), gEl = ink.firstChild;
     btn.replaceChildren(cv, ink);
+    cv.addEventListener('contextrestored', () => { cache.clear(); C.draw(); });
     const C = { btn, role, win, t: 0, to: 0, raf: 0, hover: false, near: false, wrote: false };
     const orient = () => btn.parentElement?.dataset.orient === 'v' ? 'v' : 'h';
     const S = () => coarse() ? 1.12 : 1;
@@ -5542,7 +5648,10 @@ const ScrollArt = (() => {
   if (typeof BUS !== 'undefined') BUS.on('pref', k => { if (['theme', 'scrollOrient', 'scrollLabels', '*'].includes(k)) requestAnimationFrame(refreshAll); });
   // 空闲时把三只卷静止与展开的几帧先烘好
   function warm() { const s = coarse() ? 1.12 : 1, o = Prefs.get('scrollOrient') === 'v' ? 'v' : 'h', jobs = []; for (const r of ['min', 'max', 'close']) for (let t = 0; t <= 1.001; t += .025) jobs.push([r, t]); const run = dl => { while (jobs.length && (!dl || dl.timeRemaining() > 6)) { const [r, t] = jobs.shift(); frame(r, t, o, s); } if (jobs.length) idle(run); }; idle(run); }
-  return { mount, bind, refreshAll, frame, warm, geom };
+  /* 切走再回来：浏览器可能已收走缓存帧与按钮画布的内存（表现为三卷消失）。全部作废重烘 */
+  function flush() { cache.clear(); refreshAll(); }
+  if (typeof BUS !== 'undefined') BUS.on('canvas-wake', () => requestAnimationFrame(flush));
+  return { mount, bind, refreshAll, frame, warm, geom, flush };
 })();
 
 /* ── 23-wm.js ── */
@@ -5883,10 +5992,10 @@ const WM = (() => {
     UI.menu([
       { label: '收起', glyph: '收', kbd: 'Alt+M', act: () => w.minimize() },
       { label: w.state === 'max' ? '还原' : '展开', glyph: '开', kbd: 'Alt+↑', act: () => w.toggleMax(), disabled: mobile() },
-      { label: '靠左半屏', glyph: '◧', kbd: 'Alt+←', act: () => w.snapTo('left'), disabled: mobile() },
-      { label: '靠右半屏', glyph: '◨', kbd: 'Alt+→', act: () => w.snapTo('right'), disabled: mobile() },
+      { label: '靠左半屏', glyph: '左', kbd: 'Alt+←', act: () => w.snapTo('left'), disabled: mobile() },
+      { label: '靠右半屏', glyph: '右', kbd: 'Alt+→', act: () => w.snapTo('right'), disabled: mobile() },
       '-',
-      { label: '新开一卷', glyph: '＋', act: () => open(w.app), disabled: w.def.single },
+      { label: '新开一卷', glyph: '新', act: () => open(w.app), disabled: w.def.single },
       '-',
       { label: '合上', glyph: '合', kbd: 'Alt+W', danger: true, act: () => w.close() }
     ], at);
@@ -6000,7 +6109,7 @@ const Shell = (() => {
     coresEl = h('button.tb.tb-cores', { 'data-tip': '四核存储 · 点开仓廪' }, ...['OPFS', 'IndexedDB', 'localStorage', 'Cookie'].map(n => h('i', { title: n })));
     const logo = h('button.tb.tb-logo', { 'aria-label': '青丝' }, h('span.lg', {}, Ink.glyph('青', 26), Ink.glyph('丝', 26)), h('span.os', { text: 'OS' }));
     const timeBtn = h('button.tb', { 'data-tip': '时令' }, scEl, clockEl);
-    const search = h('button.tb', { html: icon('search'), 'data-tip': '寻', 'data-kbd': 'Ctrl K', 'aria-label': '搜索', on: { click: () => Launcher.open() } });
+    const search = h('button.tb.tb-seek', { 'data-tip': '寻 · 启封', 'data-kbd': 'Ctrl K', 'aria-label': '搜索', on: { click: () => Launcher.open() } }, Ink.glyph('寻', 19));
     topbar = h('div#topbar', {}, logo, appEl, h('div.spacer'), greetEl, h('div.spacer'), coresEl, search, jqEl, timeBtn);
     logo.addEventListener('click', () => UI.menuAt(logo, sysMenu()));
     appEl.addEventListener('click', () => { const w = WM.focused; UI.menuAt(appEl, w ? appMenu(w) : deskMenuItems()); });
@@ -6050,7 +6159,7 @@ const Shell = (() => {
       '-',
       { label: '全部收起', glyph: '收', act: () => WM.list.forEach(w => w.minimize()), disabled: !WM.list.length },
       { label: '卷帘', glyph: '帘', kbd: 'Alt L', act: () => Lock.lock() },
-      { label: '重新载入', glyph: '↻', act: () => location.reload() }
+      { label: '重新载入', glyph: '刷', act: () => location.reload() }
     ];
   }
   function appMenu(w) {
@@ -6229,17 +6338,17 @@ const Shell = (() => {
   }
   function iconMenu(el) {
     const { type, id } = el.dataset;
-    if (type === 'app') return [{ label: '打开', glyph: '启', act: () => WM.open(id) }, { label: '从桌面移除', glyph: '－', act: () => Prefs.set('deskApps', Prefs.get('deskApps').filter(x => x !== id)) }];
+    if (type === 'app') return [{ label: '打开', glyph: '启', act: () => WM.open(id) }, { label: '从桌面移除', glyph: '撤', act: () => Prefs.set('deskApps', Prefs.get('deskApps').filter(x => x !== id)) }];
     if (type === 'trash') return [{ label: `打开${TN()}`, glyph: TG(), act: () => WM.open('shuge', { path: '~拾遗' }) }, { label: `清空${TN()}`, glyph: '空', danger: true, act: () => Files.emptyTrash(), disabled: !FS.list(FS.TRASH).length }];
     const n = FS.get(id), ids = [...deskSel].filter(i => FS.get(i));
     return [
       { label: '打开', glyph: '启', act: () => WM.openFile(n) },
-      n.kind !== 'dir' ? { label: '打开方式', glyph: '…', sub: Files.openWithItems(n) } : null,
+      n.kind !== 'dir' ? { label: '打开方式', glyph: '择', sub: Files.openWithItems(n) } : null,
       { label: '在书阁中显示', glyph: '册', act: () => WM.open('shuge', { path: '/桌面', select: n.id }) },
       '-',
       { label: '改名', glyph: '名', quick: true, kbd: 'F2', act: () => renameNode(n), disabled: ids.length > 1 },
-      { label: n.star ? '移出收藏' : '收藏', short: n.star ? '去藏' : '收藏', glyph: '★', quick: true, act: () => FS.star(ids, !n.star) },
-      { label: '下载', glyph: '↓', quick: true, act: () => Files.download(ids) },
+      { label: n.star ? '移出收藏' : '收藏', short: n.star ? '去藏' : '收藏', glyph: '藏', quick: true, act: () => FS.star(ids, !n.star) },
+      { label: '下载', glyph: '载', quick: true, act: () => Files.download(ids) },
       '-',
       { label: Files.delLabel(), glyph: Prefs.get('useTrash') ? TG() : '弃', short: Prefs.get('useTrash') ? TN() : '弃之', quick: true, kbd: 'Del', danger: true, act: () => delNodes(ids) }
     ];
@@ -6248,13 +6357,13 @@ const Shell = (() => {
     return [
       { label: '新建文笺', glyph: '笺', act: () => Files.newText('/桌面') },
       { label: '新建文件夹', glyph: '册', act: () => Files.newFolder('/桌面') },
-      { label: '从本机放入…', glyph: '↑', act: async () => { const d = await FS.mkdir('/桌面'); Importer.pick(d.id); } },
+      { label: '从本机放入…', glyph: '入', act: async () => { const d = await FS.mkdir('/桌面'); Importer.pick(d.id); } },
       '-',
       { label: '换主题', glyph: '色', sub: THEME_ORDER.map(id => ({ label: THEMES[id].name, checked: Prefs.get('theme') === id, act: () => Prefs.set('theme', id) })) },
       { label: '壁纸与动效…', glyph: '柳', act: () => WM.open('shege', { section: 'wall' }) },
       { label: '按名称排列', glyph: '序', act: () => { deskPos = {}; savePos(); renderDesk(); } },
-      { label: '图标大小', glyph: '◫', sub: [[52, '小'], [64, '中'], [80, '大']].map(([v, l]) => ({ label: l, checked: Prefs.get('deskIconSize') === v, act: () => Prefs.set('deskIconSize', v) })) },
-      { label: '显示桌面文件', glyph: '', checked: Prefs.get('deskShowFiles'), act: () => Prefs.set('deskShowFiles', !Prefs.get('deskShowFiles')) },
+      { label: '图标大小', glyph: '尺', sub: [[52, '小'], [64, '中'], [80, '大']].map(([v, l]) => ({ label: l, checked: Prefs.get('deskIconSize') === v, act: () => Prefs.set('deskIconSize', v) })) },
+      { label: '显示桌面文件', glyph: '显', checked: Prefs.get('deskShowFiles'), act: () => Prefs.set('deskShowFiles', !Prefs.get('deskShowFiles')) },
       '-',
       { label: '卷帘', glyph: '帘', act: () => Lock.lock() }
     ];
@@ -6336,9 +6445,9 @@ const Shell = (() => {
     const ws = WM.byApp(id), def = APPS[id], pinned = Prefs.get('dockApps').includes(id);
     return [
       ...(ws.length ? [{ head: '已打开' }, ...ws.map(w => ({ label: w.title + (w.state === 'min' ? '（已收）' : ''), glyph: def.glyph, act: () => w.restore() })), '-'] : []),
-      { label: '新开一卷', glyph: '＋', act: () => WM.open(id), disabled: def.single && ws.length > 0 },
+      { label: '新开一卷', glyph: '新', act: () => WM.open(id), disabled: def.single && ws.length > 0 },
       { label: pinned ? '从程序坞移除' : '留在程序坞', glyph: pinned ? '－' : '＋', act: () => Prefs.set('dockApps', pinned ? Prefs.get('dockApps').filter(x => x !== id) : [...Prefs.get('dockApps'), id]) },
-      { label: Prefs.get('deskApps').includes(id) ? '从桌面移除' : '放到桌面', glyph: '◫', act: () => { const d = Prefs.get('deskApps'); Prefs.set('deskApps', d.includes(id) ? d.filter(x => x !== id) : [...d, id]); } },
+      { label: Prefs.get('deskApps').includes(id) ? '从桌面移除' : '放到桌面', glyph: '案', act: () => { const d = Prefs.get('deskApps'); Prefs.set('deskApps', d.includes(id) ? d.filter(x => x !== id) : [...d, id]); } },
       ...(ws.length ? ['-', { label: ws.length > 1 ? `全部合上（${ws.length}）` : '合上', glyph: '合', danger: true, act: () => ws.forEach(w => w.close()) }] : [])
     ];
   }
@@ -6635,7 +6744,10 @@ const Files = (() => {
   }
   async function reauth(id) {
     const n = FS.get(id); if (!n) return;
-    if (await FS.reauth(id)) UI.toast(`已应允 · 「${n.name}」重获授权`); else UI.toast('未获应允 · 浏览器拒绝了，或你作罢了', { type: 'warn' });
+    const r = await FS.reauth(id);
+    if (r === 'gone') UI.toast(`原处已空 · 「${n.name}」的本地文件夹已经不在了`, { type: 'warn', ms: 6000, action: { label: '送还', fn: () => unmount(id) } });
+    else if (r) UI.toast(`已应允 · 「${n.name}」重获授权`);
+    else UI.toast('未获应允 · 浏览器拒绝了，或你作罢了。不想要了也可以直接「送还」', { type: 'warn', ms: 5000, action: { label: '送还', fn: () => unmount(id) } });
   }
   async function purge(ids) {
     if (!ids.length) return;
@@ -6709,7 +6821,7 @@ const Files = (() => {
       { label: '囊匣（压缩包）', glyph: '囊', act: () => WM.open('nangxia', { path: FS.pathOf(n.id) }), checked: k === 'zip', disabled: k !== 'zip' && k !== 'bin' },
       { label: '画轩（图画影音）', glyph: '画', act: () => WM.open('huaxuan', { path: FS.pathOf(n.id) }), disabled: !['image', 'audio', 'video', 'pdf'].includes(k) },
       { label: '丹青（续画）', glyph: '丹', act: () => WM.open('danqing', { path: FS.pathOf(n.id) }), disabled: k !== 'image' },
-      '-', { label: '下载到本机', glyph: '↓', act: () => download([n.id]) }
+      '-', { label: '下载到本机', glyph: '载', act: () => download([n.id]) }
     ];
   }
   async function download(ids) {
@@ -6877,7 +6989,7 @@ const Backup = (() => {
 /* ================= 书阁：文件管理 =================
    看法：图标 · 列表 · 书架（文件是书脊，文件夹是函套） · 长卷（按日子从右往左展开的手卷） */
 Object.assign(PREF_DEFAULTS, { fmSidebar: true });
-const FM_VIEWS = [['grid', '图标', 'grid'], ['list', '列表', 'list'], ['shelf', '书架', 'shelf'], ['juan', '长卷', 'juan']];
+const FM_VIEWS = [['grid', '图标', '图'], ['list', '列表', '列'], ['shelf', '书架', '架'], ['juan', '长卷', '卷']];
 const SPINE = { dir: ['#6b4f2a', '#8a6a3a'], text: ['#4f5e48', '#6d7f62'], image: ['#3f5f5a', '#5d7a6f'], audio: ['#5a3a48', '#7a5262'], video: ['#6a3e2c', '#8a5a40'], pdf: ['#7a2e24', '#a0453a'], zip: ['#4a4640', '#666058'], ink: ['#26231f', '#3d3934'], bin: ['#55504a', '#6e6860'] };
 
 registerApp({
@@ -6903,20 +7015,22 @@ class FileManager {
   }
   /* ---------- 骨架 ---------- */
   build() {
-    const b = (ic, tip, fn, kbd) => h('button.ibtn', { html: icon(ic), 'data-tip': tip, 'data-kbd': kbd || '', 'aria-label': tip, on: { click: fn } });
-    this.bBack = b('back', '后退', () => this.back(), 'Alt ←'); this.bFwd = b('fwd', '前进', () => this.forward()); this.bUp = b('up', '上一层', () => this.up(), 'Backspace');
+    // 与墨砚同一套：墨字 + 说明；同一动作全系统同一个字（回 / 进 / 上 / 新 / 序 / 侧 / 览）
+    const b = (g, label, tip, fn, kbd) => { const x = inkBtn(g, label, tip, fn); x.dataset.kbd = kbd || ''; return x; };
+    this.bBack = b('回', '后退', '后退', () => this.back(), 'Alt ←'); this.bFwd = b('进', '前进', '前进', () => this.forward()); this.bUp = b('上', '上层', '上一层', () => this.up(), 'Backspace');
     this.crumbs = h('div.fm-crumbs', { tabindex: '0' });
     this.search = h('input.fm-search', { placeholder: '寻…', type: 'search', spellcheck: false, 'aria-label': '在此处搜索' });
     this.search.addEventListener('input', debounce(() => { this.filter = this.search.value.trim(); if (this.path.startsWith('~寻')) return; this.render(); }, 120));
     this.search.addEventListener('keydown', e => { if (e.key === 'Enter' && this.search.value.trim()) { e.preventDefault(); this.go('~寻:' + this.search.value.trim() + '@' + (this.path.startsWith('/') ? this.path : '/')); } if (e.key === 'Escape') { this.search.value = ''; this.filter = ''; this.render(); this.main.focus(); } });
-    this.viewSeg = h('div.seg.fm-views', {}, ...FM_VIEWS.map(([id, label, ic]) => h('button', { html: icon(ic), dataset: { v: id, tip: label }, 'aria-label': label, on: { click: () => this.setView(id) } })));
-    const bNew = b('plus', '新建', e => UI.menuAt(e.currentTarget, this.newMenu()));
-    const bSort = b('sort', '排序', e => UI.menuAt(e.currentTarget, this.sortMenu()));
-    const bMore = b('more', '更多', e => UI.menuAt(e.currentTarget, this.bgMenu()));
-    this.bSide = b('side', '侧栏', () => { if (isMobile()) { this.fm.classList.toggle('noside'); return; } Prefs.set('fmSidebar', !Prefs.get('fmSidebar')); this.fm.classList.toggle('noside', !Prefs.get('fmSidebar')); this.bSide.classList.toggle('on', !!Prefs.get('fmSidebar')); });
-    this.bPrev = b('pane', '预览栏', () => Prefs.set('fmPreview', !Prefs.get('fmPreview')), 'Alt P'); this.bPrev.classList.toggle('on', !!Prefs.get('fmPreview'));
+    this.viewSeg = h('div.seg.fm-views', {}, ...FM_VIEWS.map(([id, label, g]) => h('button', { text: g, dataset: { v: id, tip: label }, 'aria-label': label, on: { click: () => this.setView(id) } })));
+    const bNew = b('新', '新建', '新建', e => UI.menuAt(e.currentTarget, this.newMenu()));
+    const bSort = b('序', '排序', '排序', e => UI.menuAt(e.currentTarget, this.sortMenu()));
+    const bMore = moreBtn(e => UI.menuAt(e.currentTarget, this.bgMenu()));
+    this.bSide = b('侧', '侧栏', '侧栏', () => { if (isMobile()) { this.fm.classList.toggle('noside'); return; } Prefs.set('fmSidebar', !Prefs.get('fmSidebar')); this.fm.classList.toggle('noside', !Prefs.get('fmSidebar')); this.bSide.classList.toggle('on', !!Prefs.get('fmSidebar')); });
+    this.bPrev = b('览', '预览', '预览栏', () => Prefs.set('fmPreview', !Prefs.get('fmPreview')), 'Alt P'); this.bPrev.classList.toggle('on', !!Prefs.get('fmPreview'));
     this.bSide.classList.toggle('on', !!Prefs.get('fmSidebar'));
-    this.bar = h('div.fm-bar', {}, this.bSide, this.bBack, this.bFwd, this.bUp, this.crumbs, this.search, this.viewSeg, bSort, bNew, this.bPrev, bMore);
+    this.bar = h('div.fm-bar.appbar', {}, this.bSide, this.bBack, this.bFwd, this.bUp, this.crumbs, this.search, this.viewSeg, bSort, bNew, this.bPrev, bMore);
+    autoCompact(this.bar, { keep: this.crumbs, min: 200 });
     this.side = h('nav.fm-side', { 'aria-label': '常用位置' });
     this.main = h('div.fm-main', { tabindex: '0', role: 'listbox', 'aria-multiselectable': 'true' });
     this.prev = h('aside.fm-prev');
@@ -6941,7 +7055,7 @@ class FileManager {
     const places = [['/', '书阁根', '阁', 'var(--gold)'], ['/桌面', '桌面', '案', 'var(--willow-deep)'], ['/文稿', '文稿', '笺', 'var(--willow-deep)'], ['/图画', '图画', '画', 'var(--jade)'], ['/丹青', '丹青', '丹', 'var(--ink2)'], ['/诗笺', '诗笺', '诗', 'var(--plum)']].filter(p => p[0] === '/' || FS.exists(p[0]));
     const others = FS.list(FS.ROOT).filter(n => n.kind === 'dir' && !n.mount && !places.some(p => p[0] === '/' + n.name) && !n.name.startsWith('.')).slice(0, 12);
     const mnts = FS.mounts();
-    const mItem = n => { const b = item(FS.pathOf(n.id), n.name, n.ro ? '影' : '挂', n.lost ? 'var(--accent)' : 'var(--jade)'); b.dataset.mount = n.id; if (n.lost) b.append(h('span.fm-mlost', { text: '待授权', title: '浏览器收回了访问权限，点开后可重新授权' })); else if (n.ro) b.append(h('span.fm-mro', { text: '只读' })); return b; };
+    const mItem = n => { const b = item(FS.pathOf(n.id), n.name, n.ro ? '影' : '挂', n.lost ? 'var(--accent)' : 'var(--jade)'); b.dataset.mount = n.id; if (n.lost) b.append(h('span.fm-mlost', { text: n.gone ? '已不在' : '待授权', title: n.gone ? '本地原文件夹已经不在了，右键或点开后可送还' : '浏览器收回了访问权限，点开后可重新授权或送还' })); else if (n.ro) b.append(h('span.fm-mro', { text: '只读' })); return b; };
     const st = FS.list(FS.TRASH).length;
     this.side.replaceChildren(
       h('div.fm-sh', {}, Ink.word('常用', 18)), ...places.map(p => item(...p)), ...others.map(n => item('/' + n.name, n.name, '册', 'var(--gold)')),
@@ -6951,7 +7065,7 @@ class FileManager {
     );
     this.markSide(); this.updateQuota();
     this.side.onclick = e => { const b = e.target.closest('.fm-si'); if (b && b.dataset.act === 'mount') { Files.mountPick().then(n => n && this.go(FS.pathOf(n.id))); return; } if (b) { this.go(b.dataset.path); if (isMobile()) this.fm.classList.add('noside'); } };
-    this.side.oncontextmenu = e => { const b = e.target.closest('.fm-si'); if (!b) return; e.preventDefault(); const p = b.dataset.path; if (b.dataset.mount) { UI.menu(this.mountMenu(b.dataset.mount), { x: e.clientX, y: e.clientY }); return; } if (b.dataset.act) return; UI.menu(p === '~拾遗' ? [{ label: `清空${TN()}`, glyph: '空', danger: true, act: () => Files.emptyTrash() }] : [{ label: '打开', glyph: '启', act: () => this.go(p) }, { label: '在新窗口打开', glyph: '＋', act: () => WM.open('shuge', { path: p }) }], { x: e.clientX, y: e.clientY }); };
+    this.side.oncontextmenu = e => { const b = e.target.closest('.fm-si'); if (!b) return; e.preventDefault(); const p = b.dataset.path; if (b.dataset.mount) { UI.menu(this.mountMenu(b.dataset.mount), { x: e.clientX, y: e.clientY }); return; } if (b.dataset.act) return; UI.menu(p === '~拾遗' ? [{ label: `清空${TN()}`, glyph: '空', danger: true, act: () => Files.emptyTrash() }] : [{ label: '打开', glyph: '启', act: () => this.go(p) }, { label: '在新窗口打开', glyph: '窗', act: () => WM.open('shuge', { path: p }) }], { x: e.clientX, y: e.clientY }); };
   }
   storeLabel() {
     const mi = this.dir && FS.mountInfo(this.dir.id);
@@ -6963,8 +7077,8 @@ class FileManager {
     const n = FS.get(id); if (!n) return [];
     return [
       { label: '打开', glyph: '启', act: () => this.go(FS.pathOf(id)) },
-      { label: '在新窗口打开', glyph: '＋', act: () => WM.open('shuge', { path: FS.pathOf(id) }) },
-      n.lost ? { label: '重求应允', glyph: '钥', act: () => Files.reauth(id) } : null,
+      { label: '在新窗口打开', glyph: '窗', act: () => WM.open('shuge', { path: FS.pathOf(id) }) },
+      n.lost && !n.gone ? { label: '重求应允', glyph: '钥', act: () => Files.reauth(id) } : null,
       !n.ro && !n.lost ? { label: '重新读取', glyph: '刷', act: () => FS.refresh(id).then(() => UI.toast('已对 · 与磁盘对齐')) } : null,
       '-', { label: '送还（本地原物不动）', glyph: '还', act: () => Files.unmount(id) }
     ].filter(Boolean);
@@ -6974,9 +7088,11 @@ class FileManager {
     const d = this.dir, mi = d && FS.mountInfo(d.id);
     if (!mi || mi.area || (!mi.lost && !mi.ro)) { this.mbar.classList.add('hide'); return; }
     this.mbar.classList.remove('hide');
-    this.mbar.replaceChildren(Ink.glyph(mi.lost ? '钥' : '影', 20),
-      h('span.fm-mb-t', { text: mi.lost ? `「${mi.name}」的门被浏览器关上了（多在重开浏览器之后）。重求应允，即可继续读写。` : `「${mi.name}」是只读副本：可开、可誊进书阁，但不能写回本地。` }),
-      mi.lost ? h('button.btn.sm.primary', { text: '重求应允', on: { click: () => Files.reauth(mi.root) } }) : '');
+    // 送还永远可用：不必先应允（原文件夹没了、或你压根不想再要，都能直接撤掉）
+    const back = h('button.btn.sm.ghost', { text: '送还', dataset: { tip: '撤掉这处别馆（本地原物不动），无需先应允' }, on: { click: () => Files.unmount(mi.root) } });
+    this.mbar.replaceChildren(Ink.glyph(mi.gone ? '空' : mi.lost ? '钥' : '影', 20),
+      h('span.fm-mb-t', { text: mi.gone ? `「${mi.name}」的本地原文件夹已经不在了（被删、被移走或换了盘）。送还即可撤掉这处别馆。` : mi.lost ? `「${mi.name}」的门被浏览器关上了（多在重开浏览器之后）。重求应允即可继续读写；不要了就直接送还。` : `「${mi.name}」是只读副本：可开、可誊进书阁，但不能写回本地。` }),
+      mi.lost && !mi.gone ? h('button.btn.sm.primary', { text: '重求应允', on: { click: () => Files.reauth(mi.root) } }) : '', back);
   }
   markSide() { $$('.fm-si', this.side).forEach(b => b.classList.toggle('on', b.dataset.path === this.path || (this.path.startsWith('~寻') && false))); }
   async updateQuota() {
@@ -7035,7 +7151,8 @@ class FileManager {
     const p = this.path;
     const mi = this.dir && FS.mountInfo(this.dir.id);
     if (mi && mi.area) return h('div.empty', {}, h('div.em-glyph', {}, Ink.glyph('挂', 64)), h('div.em-poem', { text: '借得他山一片云' }), h('div.muted', { text: '把本地的文件夹引为别馆，便可在青丝里直接读写' }), h('button.btn.primary', { text: '引入本地文件夹', on: { click: () => Files.mountPick().then(n => n && this.go(FS.pathOf(n.id))) } }));
-    if (mi && mi.lost) return h('div.empty', {}, h('div.em-glyph', {}, Ink.glyph('钥', 64)), h('div.em-poem', { text: '柴门闻犬吠，风雪夜归人' }), h('div.muted', { text: '柴门已闭，须重求应允，方可读取这个本地文件夹' }), h('button.btn.primary', { text: '重求应允', on: { click: () => Files.reauth(mi.root) } }));
+    if (mi && mi.gone) return h('div.empty', {}, h('div.em-glyph', {}, Ink.glyph('空', 64)), h('div.em-poem', { text: '人面不知何处去，桃花依旧笑春风' }), h('div.muted', { text: '这处别馆的本地原文件夹已经不在了' }), h('div.em-acts', {}, h('button.btn.primary', { text: '送还', on: { click: () => Files.unmount(mi.root) } }), h('button.btn.ghost', { text: '再找找', dataset: { tip: '文件夹若只是暂时拔掉的盘，插回后再试' }, on: { click: () => Files.reauth(mi.root) } })));
+    if (mi && mi.lost) return h('div.empty', {}, h('div.em-glyph', {}, Ink.glyph('钥', 64)), h('div.em-poem', { text: '柴门闻犬吠，风雪夜归人' }), h('div.muted', { text: '柴门已闭，须重求应允，方可读取这个本地文件夹；不要了也可直接送还' }), h('div.em-acts', {}, h('button.btn.primary', { text: '重求应允', on: { click: () => Files.reauth(mi.root) } }), h('button.btn.ghost', { text: '送还', on: { click: () => Files.unmount(mi.root) } })));
     if (mi && !mi.scanned) return h('div.empty', {}, h('div.em-glyph.breath', {}, Ink.glyph('挂', 64)), h('div.em-poem', { text: '正在读取本地文件夹……' }));
     const [poem, hint] = p === '~拾遗' ? ['落花无言，人淡如菊', `${TN()}是空的`] : p === '~收藏' ? ['此情可待成追忆', '还没有收藏——在文件上右键「收藏」'] : p === '~最近' ? ['往事只堪哀', '最近还没打开过文件'] : this.filter || p.startsWith('~寻') ? ['众里寻他千百度', '没有找到'] : ['空山不见人，但闻人语响', '这里还空着 · 把文件拖进来，或点右上角「＋」'];
     return h('div.empty', {}, h('div.em-glyph', {}, Ink.glyph('丝', 64)), h('div.em-poem', { text: poem }), h('div.muted', { text: hint }));
@@ -7220,7 +7337,7 @@ class FileManager {
     if (n.kind === 'dir') return;
     try {
       if (Thumbs.can(n)) { const u = await Thumbs.get(n); if (tok === this._pv && u) box.replaceChildren(h('img', { src: u, alt: n.name })); }
-      else if (isTextKind(k) && n.size < 2 << 20) { const t = await FS.read(n, 'text'); if (tok === this._pv) box.replaceChildren(h('pre.fm-pv-text', { text: t.slice(0, 3000) })); }
+      else if (isTextKind(k) && n.size < UI.cap(2 << 20)) { const t = UI.bigAll() ? await FS.read(n, 'text') : await (await FS.read(n)).slice(0, 12000).text(); if (tok === this._pv) box.replaceChildren(h('pre.fm-pv-text', { text: t.slice(0, UI.cap(3000)) })); }
       else if ((k === 'audio' || k === 'video') && n.size < 200 << 20) { const b = await FS.read(n); if (tok !== this._pv) return; const u = URL.createObjectURL(b); const m = h(k, { src: u, controls: true, preload: 'metadata' }); box.replaceChildren(m); this.win.on('close', () => URL.revokeObjectURL(u)); }
     } catch (e) { if (tok === this._pv) box.append(h('div.muted', { text: e.code === 'ELOST' ? '内容丢失' : '无法预览' })); }
   }
@@ -7430,26 +7547,26 @@ class FileManager {
     const ids = [...this.sel].filter(id => FS.get(id)), n = FS.get(ids[0]); if (!n) return [];
     const one = ids.length === 1, k = kindOf(n);
     if (this.path === '~拾遗') return [
-      { label: '还原', glyph: '↺', act: () => Files.restore(ids) },
+      { label: '还原', glyph: '归', act: () => Files.restore(ids) },
       { label: '永弃', glyph: '弃', danger: true, kbd: 'Del', act: () => Files.purge(ids) }
     ];
     return [
       { label: '打开', glyph: '启', kbd: 'Enter', act: () => ids.forEach(id => this.open(FS.get(id))), disabled: ids.length > 6 },
-      one && n.kind !== 'dir' ? { label: '打开方式', glyph: '…', sub: Files.openWithItems(n) } : null,
-      one && n.kind === 'dir' ? { label: '在新窗口打开', glyph: '＋', act: () => WM.open('shuge', { path: FS.pathOf(n.id) }) } : null,
-      one && k !== 'dir' ? { label: '速览', glyph: '◉', kbd: 'Space', act: () => QuickLook.show(n, this.list) } : null,
+      one && n.kind !== 'dir' ? { label: '打开方式', glyph: '择', sub: Files.openWithItems(n) } : null,
+      one && n.kind === 'dir' ? { label: '在新窗口打开', glyph: '窗', act: () => WM.open('shuge', { path: FS.pathOf(n.id) }) } : null,
+      one && k !== 'dir' ? { label: '速览', glyph: '览', kbd: 'Space', act: () => QuickLook.show(n, this.list) } : null,
       this.path.startsWith('~') ? { label: '在所在文件夹中显示', glyph: '册', act: () => this.go(FS.pathOf(n.parent), { select: n.id }) } : null,
       '-',
-      { label: '剪下', glyph: '✂', quick: true, kbd: 'Ctrl X', act: () => Files.setClip('cut', ids) },
-      { label: '复制', glyph: '⎘', quick: true, kbd: 'Ctrl C', act: () => Files.setClip('copy', ids) },
-      { label: '复制一份', glyph: '⧉', act: () => Files.copyWithAsk(ids, n.parent) },
+      { label: '剪下', glyph: '剪', quick: true, kbd: 'Ctrl X', act: () => Files.setClip('cut', ids) },
+      { label: '复制', glyph: '抄', quick: true, kbd: 'Ctrl C', act: () => Files.setClip('copy', ids) },
+      { label: '复制一份', glyph: '副', act: () => Files.copyWithAsk(ids, n.parent) },
       { label: '改名', glyph: '名', quick: true, kbd: 'F2', act: () => Files.renamePrompt(n), disabled: !one },
-      { label: n.star ? '移出收藏' : '收藏', short: n.star ? '去藏' : '收藏', glyph: '★', quick: true, act: () => FS.star(ids, !n.star) },
+      { label: n.star ? '移出收藏' : '收藏', short: n.star ? '去藏' : '收藏', glyph: '藏', quick: true, act: () => FS.star(ids, !n.star) },
       '-',
       k === 'zip' && one ? { label: '解开到这里', glyph: '卷', act: () => Importer.unzip(n) } : null,
-      { label: one && n.kind !== 'dir' ? '下载' : '打包下载（ZIP）', glyph: '↓', act: () => Files.download(ids) },
+      { label: one && n.kind !== 'dir' ? '下载' : '打包下载（ZIP）', glyph: '载', act: () => Files.download(ids) },
       one && k === 'image' ? { label: '设为壁纸', glyph: '柳', act: () => { Prefs.set('wpImage', FS.pathOf(n.id)); UI.toast('已悬 · 此画已为壁纸，可在设阁调回水墨', { action: { label: '收回', fn: () => Prefs.set('wpImage', '') } }); } } : null,
-      { label: '详情', glyph: 'ⓘ', act: () => Files.props(n), disabled: !one },
+      { label: '详情', glyph: '详', act: () => Files.props(n), disabled: !one },
       '-',
       { label: Files.delLabel(), glyph: Prefs.get('useTrash') ? TG() : '弃', short: Prefs.get('useTrash') ? TN() : '弃之', quick: true, kbd: 'Del', danger: true, act: () => Files.trash(ids) }
     ];
@@ -7462,8 +7579,8 @@ class FileManager {
       { label: '札记（.md）', glyph: '札', act: () => Files.newText(d.id, { ext: '.md' }) },
       { label: '丹青（水墨画）', glyph: '丹', act: () => WM.open('danqing', { dir: FS.pathOf(d.id) }) },
       '-',
-      { label: '从本机放入文件…', glyph: '↑', act: () => Importer.pick(d.id) },
-      { label: '从本机放入文件夹…', glyph: '⇡', act: () => Importer.pick(d.id, { dir: true }) }
+      { label: '从本机放入文件…', glyph: '入', act: () => Importer.pick(d.id) },
+      { label: '从本机放入文件夹…', glyph: '纳', act: () => Importer.pick(d.id, { dir: true }) }
     ];
   }
   sortMenu() {
@@ -7479,16 +7596,16 @@ class FileManager {
   bgMenu() {
     const d = this.dir;
     return [
-      d ? { label: '新建', glyph: '＋', sub: this.newMenu() } : null,
-      d && Files.clip ? { label: `粘贴（${Files.clip.ids.length} 项）`, glyph: '⎗', kbd: 'Ctrl V', act: () => Files.paste(d.id) } : null,
-      { label: '全选', glyph: '▣', kbd: 'Ctrl A', act: () => { this.sel = new Set(this.list.map(n => n.id)); this.markSel(); this.selChanged(); } },
+      d ? { label: '新建', glyph: '新', sub: this.newMenu() } : null,
+      d && Files.clip ? { label: `粘贴（${Files.clip.ids.length} 项）`, glyph: '贴', kbd: 'Ctrl V', act: () => Files.paste(d.id) } : null,
+      { label: '全选', glyph: '全', kbd: 'Ctrl A', act: () => { this.sel = new Set(this.list.map(n => n.id)); this.markSel(); this.selChanged(); } },
       '-',
-      { label: '看法', glyph: '◫', sub: FM_VIEWS.map(([id, l]) => ({ label: l, checked: this.view === id, act: () => this.setView(id) })) },
-      { label: '排序', glyph: '⇅', sub: this.sortMenu() },
+      { label: '看法', glyph: '视', sub: FM_VIEWS.map(([id, l]) => ({ label: l, checked: this.view === id, act: () => this.setView(id) })) },
+      { label: '排序', glyph: '序', sub: this.sortMenu() },
       '-',
-      d ? { label: '把这里打包下载', glyph: '↓', act: () => Files.download(FS.list(d).map(n => n.id)), disabled: !FS.list(d).length } : null,
+      d ? { label: '把这里打包下载', glyph: '载', act: () => Files.download(FS.list(d).map(n => n.id)), disabled: !FS.list(d).length } : null,
       this.path === '~拾遗' ? { label: `清空${TN()}`, glyph: '空', danger: true, act: () => Files.emptyTrash() } : null,
-      d && d.id !== FS.ROOT ? { label: '详情', glyph: 'ⓘ', act: () => Files.props(d) } : null
+      d && d.id !== FS.ROOT ? { label: '详情', glyph: '详', act: () => Files.props(d) } : null
     ];
   }
 }
@@ -7511,7 +7628,7 @@ const QuickLook = (() => {
     el.replaceChildren(h('div.ql-card', {}, h('div.ql-head', {}, h('b', { text: n.name }), h('span.muted', { text: `${fmtSize(n.size)} · ${fmtRel(n.mtime)}　${idx + 1}/${list.length}` }), h('div.spacer'), h('button.btn.sm', { text: '打开', on: { click: () => { close(); WM.openFile(n); } } }), h('button.ibtn', { html: icon('x'), on: { click: close } })), body));
     try {
       if (['image', 'audio', 'video', 'pdf'].includes(k)) { url = URL.createObjectURL(await FS.read(n)); body.append(k === 'image' ? h('img', { src: url }) : k === 'pdf' ? h('iframe', { src: url, title: n.name }) : h(k, { src: url, controls: true, autoplay: true })); }
-      else if (isTextKind(k) || n.size < 512 * 1024) { const t = await (await FS.read(n)).slice(0, 600000).text(); body.append(h('pre.selectable', { text: t.slice(0, 200000) + (n.size > 600000 ? '\n…' : '') })); }   /* 只读开头一段，不把整卷读进内存 */
+      else if (isTextKind(k) || n.size < 512 * 1024) { const t = await (await FS.read(n)).slice(0, UI.cap(600000)).text(); body.append(h('pre.selectable', { text: t.slice(0, UI.cap(200000)) + (n.size > 600000 ? '\n…' : '') })); }   /* 只读开头一段，不把整卷读进内存 */
       else body.append(h('div.empty', {}, Shell.fileSeal(n, 96), h('div', { text: '这种文件没法速览' })));
     } catch (e) { body.append(h('div.empty', { text: e.message })); }
   }
@@ -7610,7 +7727,7 @@ class Editor {
     this.bGrid = inkBtn('格', '稿纸', '稿纸格', () => Prefs.set('edGrid', !Prefs.get('edGrid')));
     this.bMd = inkBtn('览', '预览', 'Markdown 预览（Ctrl+P）', () => this.togglePreview());
     this.bWeb = inkBtn('镜', '镜台', '在镜台里看这张网页的样子', () => { if (this.node) WM.open('jingtai', { path: FS.pathOf(this.node.id) }); }, 'hide');
-    this.bar = h('div.ed-bar', {},
+    this.bar = h('div.ed-bar.appbar', {},
       inkBtn('存', '保存', '保存（Ctrl+S）', () => this.save(true)),
       inkBtn('新', '新笺', '新开一张空白笺（Ctrl+N 在墨砚内）', () => WM.open('moyan', {})),
       h('span.ed-sep'), this.fontSeg,
@@ -7620,7 +7737,7 @@ class Editor {
       h('span.ed-sep'), this.bVert, this.bGrid, this.bMd, this.bWeb,
       h('span.spacer'),
       inkBtn('寻', '查找', '查找替换（Ctrl+F / Ctrl+H）', () => this.openFind()),
-      b('more', '更多', e => UI.menuAt(e.currentTarget, this.menu())));
+      moreBtn(e => UI.menuAt(e.currentTarget, this.menu())));
     autoCompact(this.bar);
     // 查找条
     this.fq = h('input.field.sm', { placeholder: '查找', spellcheck: false });
@@ -7659,7 +7776,7 @@ class Editor {
     const offP = BUS.on('pref', k => { if (k === '*' || String(k).startsWith('ed')) this.applyPrefs(); });
     const offF = FS.ev.on('change', e => this.onFsChange(e));
     this.autosave = debounce(() => this.save(false), Math.max(300, Prefs.get('edAutosave') || 800));
-    this.saveDraft = debounce(() => { if (this.dirty) Drafts.save(this.draftKey, this.ta.value, { path: this.node ? FS.pathOf(this.node.id) : '', base: this.node?.mtime || 0 }); }, 350);
+    this.saveDraft = debounce(() => { if (this.dirty) { Drafts.save(this.draftKey, this.ta.value, { path: this.node ? FS.pathOf(this.node.id) : '', base: this.node?.mtime || 0 }); if (!this.node) WM.saveSession(); } }, 350);
     this.gutUpd = throttle(() => this.renderGutter(), 120);
     this.mdUpd = debounce(() => this.renderMd(), 180);
     this.ro_ = new ResizeObserver(() => this.gutUpd()); this.ro_.observe(this.ta);
@@ -7668,7 +7785,8 @@ class Editor {
     win.guard(() => this.confirmClose());
     win.on('focus', () => setTimeout(() => this.ta.focus({ preventScroll: true }), 30));
     win.on('args', a => { if (a && a.path && (!this.node || FS.pathOf(this.node.id) !== a.path)) WM.open('moyan', a); });
-    win.getState = () => ({ path: this.node ? FS.pathOf(this.node.id) : undefined });
+    // 无题稿也记进会话：刷新 / 闪退后窗口带着草稿回来
+    win.getState = () => this.node ? { path: FS.pathOf(this.node.id) } : (this.dirty && !this.ro ? { draft: this.draftKey } : {});
     win.appMenu = () => this.menu();
     this.applyPrefs();
     this.load(args);
@@ -7681,7 +7799,7 @@ class Editor {
     if (args && args.path) {
       const n = FS.resolve(args.path);
       if (!n || n.kind !== 'file') { this.setText(''); this.win.setTitle('墨砚'); UI.toast('无此笺 · ' + args.path, { type: 'warn' }); return; }
-      if (n.size > 12 * 1024 * 1024 && !(await UI.confirm({ title: '文件很大', msg: `「${n.name}」有 ${fmtSize(n.size)}，打开可能会卡一会儿。仍要打开吗？`, ok: '打开' }))) { this.win.close(true); return; }
+      if (!(await UI.bigOK(n, 12 << 20, '打开'))) { this.win.close(true); return; }
       this.node = n; this.draftKey = n.id;
       let text = '';
       try { text = await FS.read(n, 'text'); } catch (e) { UI.toast('未成 · 读不出：' + e.message, { type: 'err' }); }
@@ -7735,14 +7853,14 @@ class Editor {
   }
   updSaved() {
     if (this.ro) { this.st.save.textContent = '只读（非文本内容）'; return; }
-    if (this.dirty) { this.st.save.textContent = Prefs.get('edAutosave') && this.node ? '待自动保存…' : '未保存'; this.st.save.className = 'ed-saved wait'; }
+    if (this.dirty) { this.st.save.textContent = Prefs.get('edAutosave') && (this.node || this.ta.value.trim()) ? '待自动保存…' : this.node ? '未保存' : '草稿已留 · 未落款'; this.st.save.className = 'ed-saved wait'; }
     else { this.st.save.textContent = this.node ? '已存 · ' + fmtRel(this.node.mtime) : '空白稿'; this.st.save.className = 'ed-saved'; }
   }
 
   onInput() {
     this.updTitle(); this.updCount(); this.updPos(); this.gutUpd(); if (this.mdOn) this.mdUpd(); this.updSaved();
     this.saveDraft();
-    if (this.node && Prefs.get('edAutosave') && !this.ro) this.autosave();
+    if (Prefs.get('edAutosave') && !this.ro && (this.node || this.ta.value.trim())) this.autosave();   // 无题稿也自动保存：先落款入 /文稿
     if (!this.find.classList.contains('hide')) this.findUpdate(true);
   }
   insert(text) {
@@ -7784,7 +7902,7 @@ class Editor {
   /* ---------- 保存 ---------- */
   async save(manual) {
     if (this.ro) { if (manual) UI.toast('只可观 · 非文字之物，墨砚只读打开', { type: 'warn' }); return; }
-    if (!this.node) { if (manual) return this.saveAs(); return; }
+    if (!this.node) { if (manual) return this.saveAs(); return this.autoCreate(); }
     if (!this.dirty && !manual) return;
     if (this.saving) { this.again = true; return; }
     this.saving = true;
@@ -7800,13 +7918,52 @@ class Editor {
       if (ver) this.lastVer = Date.now();
       this.saved = text; this.updTitle(); this.updSaved();
       Drafts.remove(this.draftKey);
-      if (manual) this.flashSaved();
+      if (manual) { this.flashSaved(); UI.toast('藏好 · ' + this.node.name, { type: 'ok', ms: 1400 }); }
+      if (this.autoName) await this.followName();
     } catch (e) {
       UI.toast('未藏 · ' + e.message + '（草稿仍在，不会丢）', { type: 'err', ms: 6000 });
     } finally {
       this.saving = false;
       if (this.again) { this.again = false; if (this.dirty) this.save(false); }
     }
+  }
+  /** 由首行起名（与另存为的猜名同一规则） */
+  guessName(ext = '.txt') {
+    const first = this.ta.value.split('\n').find(l => l.trim()) || '';
+    return (first.replace(/^[#\s　]+/, '').replace(/[\\/:*?"<>|\x00-\x1f]/g, '').slice(0, 16).trim() || '无题') + ext;
+  }
+  /** 无题稿自动落款：/文稿/<首行>.txt（重名加序号）。之后名字随首行走，直到你亲手改名或另存 */
+  async autoCreate() {
+    if (this.node || this.ro || this.saving || !this.ta.value.trim()) return;
+    this.saving = true;
+    const text = this.ta.value;
+    try {
+      const dir = FS.resolve('/文稿') || await FS.mkdir('/文稿');
+      const n = await FS.create(dir.id, this.guessName(), text);
+      const oldKey = this.draftKey;
+      this.node = n; this.draftKey = n.id; this.lastVer = Date.now(); this.autoName = n.name;
+      this.saved = text; Drafts.remove(oldKey); Recent.add(n.id);
+      this.win.args = { path: FS.pathOf(n.id) }; WM.saveSession();
+      this.updTitle(); this.updKind(); this.updSaved();
+      UI.toast('已自动落款 · ' + FS.pathOf(n.id), { ms: 2600, action: { label: '改名', fn: () => { this.autoName = null; Files.renamePrompt(FS.get(n.id)); } } });
+    } catch (e) { UI.toast('未藏 · ' + e.message + '（草稿仍在，不会丢）', { type: 'err', ms: 6000 }); }
+    finally {
+      this.saving = false;
+      if (this.again) { this.again = false; if (this.dirty) this.save(false); }
+      else if (this.node && this.dirty) this.autosave();
+    }
+  }
+  /** 自动起的名字跟着首行变；你在别处改过名，就不再动它 */
+  async followName() {
+    const n = this.node && FS.get(this.node.id);
+    if (!n || n.name !== this.autoName) { this.autoName = null; return; }
+    const want = this.guessName(n.name.slice(n.name.lastIndexOf('.')) || '.txt');
+    if (want === n.name || want.replace(/ \(\d+\)(?=\.[^.]+$)/, '') === n.name.replace(/ \(\d+\)(?=\.[^.]+$)/, '')) return;
+    try {
+      const nm = FS.uniqueName(n.parent, want);
+      this.node = await FS.rename(n.id, nm); this.autoName = this.node.name;
+      this.win.args = { path: FS.pathOf(this.node.id) }; WM.saveSession(); this.updTitle();
+    } catch (e) { this.autoName = null; }
   }
   flashSaved() { this.st.save.classList.remove('flash'); void this.st.save.offsetWidth; this.st.save.classList.add('flash'); }
   async saveAs() {
@@ -7824,7 +7981,7 @@ class Editor {
     try {
       const n = await FS.writeFile(path, this.ta.value);
       const oldKey = this.draftKey;
-      this.node = n; this.draftKey = n.id; this.lastVer = Date.now();
+      this.node = n; this.draftKey = n.id; this.lastVer = Date.now(); this.autoName = null;
       this.saved = this.ta.value; Drafts.remove(oldKey); Recent.add(n.id);
       this.win.args = { path: FS.pathOf(n.id) }; WM.saveSession();
       this.updTitle(); this.updKind(); this.updSaved(); this.flashSaved();
@@ -7834,11 +7991,11 @@ class Editor {
   }
   async confirmClose() {
     if (!this.dirty || this.ro) { if (!this.dirty) Drafts.remove(this.draftKey); return true; }
-    if (this.node && Prefs.get('edAutosave')) { await this.save(false); return !this.dirty || this.confirmClose2(); }
+    if (Prefs.get('edAutosave') && (this.node || this.ta.value.trim())) { this.autosave.cancel?.(); await this.save(false); return !this.dirty || this.confirmClose2(); }
     return this.confirmClose2();
   }
   async confirmClose2() {
-    const r = await UI.choose({ title: '还没保存', glyph: '存', html: `「<b>${esc(this.node ? this.node.name : '无题')}</b>」有改动尚未保存。<br><span class="muted">不保存也会留一份草稿，下次可以找回。</span>`, options: [{ label: '作罢', value: null, cls: 'ghost' }, { label: '不保存', value: 'no' }, { label: '保存', value: 'yes', cls: 'primary', primary: 1 }] });
+    const r = await UI.unsaved({ name: this.node ? this.node.name : '无题', note: '不保存也会留一份草稿，下次可以找回。' });
     if (r === 'yes') { await this.save(true); return !this.dirty; }
     if (r === 'no') { Drafts.save(this.draftKey, this.ta.value, { path: this.node ? FS.pathOf(this.node.id) : '', base: this.node?.mtime || 0 }); return true; }
     return false;
@@ -7963,9 +8120,9 @@ class Editor {
       { label: '插入当前时间', glyph: '时', act: () => { const d = new Date(), sc = shichen(d); this.insert(`${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日 ${sc.label}`); } },
       { label: '转成竖排长卷图片', glyph: '卷', act: () => this.toScrollImage() },
       '-',
-      { label: '自动换行', glyph: '↩', checked: !!Prefs.get('edWrap'), act: () => Prefs.set('edWrap', !Prefs.get('edWrap')) },
-      { label: '行号', glyph: '#', checked: !!Prefs.get('edLineNo'), act: () => Prefs.set('edLineNo', !Prefs.get('edLineNo')) },
-      { label: '拼写检查', glyph: 'A', checked: !!Prefs.get('edSpell'), act: () => Prefs.set('edSpell', !Prefs.get('edSpell')) },
+      { label: '自动换行', glyph: '折', checked: !!Prefs.get('edWrap'), act: () => Prefs.set('edWrap', !Prefs.get('edWrap')) },
+      { label: '行号', glyph: '号', checked: !!Prefs.get('edLineNo'), act: () => Prefs.set('edLineNo', !Prefs.get('edLineNo')) },
+      { label: '拼写检查', glyph: '拼', checked: !!Prefs.get('edSpell'), act: () => Prefs.set('edSpell', !Prefs.get('edSpell')) },
       { label: '自动保存', glyph: '自', checked: !!Prefs.get('edAutosave'), act: () => Prefs.set('edAutosave', Prefs.get('edAutosave') ? 0 : 800) },
       { label: '更多编辑设置…', glyph: '设', act: () => WM.open('shege', { section: 'editor' }) }
     ];
@@ -8150,11 +8307,12 @@ class InkStudio {
     this.txtIn.addEventListener('input', () => { this.txt = this.txtIn.value; this.updGhost(); });
     this.optText = h('div.dq-opt', {}, this.txtIn, slider(14, 120, 1, this.txtSize, v => { this.txtSize = v; this.updGhost(); }, '字号'));
     this.optHand = h('div.dq-opt', {}, h('span.muted', { text: '拖动移画 · 滚轮平移 · Ctrl + 滚轮 / 双指捏合缩放' }));
-    this.bUndo = h('button.ibtn', { html: icon('undo'), dataset: { tip: '撤销（Ctrl+Z）' }, on: { click: () => this.undo() } });
-    this.bRedo = h('button.ibtn', { html: icon('redo'), dataset: { tip: '重做（Ctrl+Shift+Z）' }, on: { click: () => this.redo() } });
-    this.bar = h('div.dq-bar', {}, this.toolSeg, h('span.ed-sep'), h('div.dq-opts', {}, this.optBrush, this.optSeal, this.optText, this.optHand), h('span.spacer'), this.bUndo, this.bRedo,
-      h('button.ibtn', { html: icon('save'), dataset: { tip: '保存（Ctrl+S）' }, on: { click: () => this.save() } }),
-      h('button.ibtn', { html: icon('more'), dataset: { tip: '更多' }, on: { click: e => UI.menuAt(e.currentTarget, this.menu()) } }));
+    // 与墨砚同一套写法：墨字 + 说明；「更多」是全系统唯一保留的小图标
+    this.bUndo = inkBtn('悔', '追悔', '追悔一笔（Ctrl+Z）', () => this.undo());
+    this.bRedo = inkBtn('复', '复笔', '复笔（Ctrl+Shift+Z）', () => this.redo());
+    this.bSave = inkBtn('存', '保存', '保存（Ctrl+S）', () => this.save(true));
+    this.bar = h('div.dq-bar.appbar', {}, this.toolSeg, h('span.ed-sep'), h('div.dq-opts', {}, this.optBrush, this.optSeal, this.optText, this.optHand), h('span.spacer'),
+      h('div.dq-acts', {}, this.bUndo, this.bRedo, this.bSave, moreBtn(e => UI.menuAt(e.currentTarget, this.menu()))));
     this.cvPaper = h('canvas.dq-paper'); this.cvInk = h('canvas.dq-ink'); this.cvLive = h('canvas.dq-live');
     this.sheet = h('div.dq-sheet', {}, this.cvPaper, this.cvInk, this.cvLive);
     this.cursor = h('div.dq-cursor'); this.ghost = h('canvas.dq-ghost');
@@ -8164,6 +8322,10 @@ class InkStudio {
     this.el = h('div.dq', {}, this.bar, this.stage, this.status);
     this.win.body.append(this.el);
     this.bindStage();
+    // 切到别的网页再回来，浏览器可能收走了画布内存：恢复时按笔序重放，一笔不丢
+    for (const c of [this.cvPaper, this.cvInk]) c.addEventListener('contextrestored', () => this.heal());
+    this.offWake = BUS.on('canvas-wake', ({ lost }) => { if (lost || this.lostCanvas()) this.heal(); });
+    this.win.on('close', () => { this.offWake && this.offWake(); clearTimeout(this._auto); });
   }
 
   async start(args) {
@@ -8208,6 +8370,14 @@ class InkStudio {
     this.docName = doc.name || (this.node ? baseOf(this.node.name) : '');
     this.rebuild();
     this.fit(); this.setTool(this.tool); this.updTitle();
+  }
+
+  lostCanvas() { try { return [this.pctx, this.ictx].some(c => c && c.isContextLost && c.isContextLost()); } catch (e) { return false; } }
+  heal() {
+    if (!this.ictx || this.lostCanvas()) return;      // 还没还回来：等 contextrestored
+    this.cps.clear();
+    dqPaintPaper(this.pctx, this.W, this.H, this.paper, this.paperSeed);
+    this.rebuild();
   }
 
   /* ---------- 重放 ---------- */
@@ -8255,7 +8425,7 @@ class InkStudio {
   /* ---------- 画布交互 ---------- */
   toDoc(e) { const r = this.stage.getBoundingClientRect(); return [(e.clientX - r.left - this.view.tx) / this.view.s, (e.clientY - r.top - this.view.ty) / this.view.s]; }
   bindStage() {
-    const st = this.stage, ptrs = new Map();
+    const st = this.stage, ptrs = new Map(); this._ptrs = ptrs;
     let stroke = null, pan = null, pinch = null, space = false;
     const pressure = e => e.pointerType === 'pen' ? clamp(e.pressure || 0.5, 0.05, 1) : 0.55;
     const endStroke = commit => {
@@ -8382,7 +8552,7 @@ class InkStudio {
     $$('button', this.sealSeg).forEach(b => b.classList.toggle('on', b.dataset.v === this.sealStyle));
     this.bUndo.disabled = !this.cur; this.bRedo.disabled = this.cur >= this.ops.length;
     const strokes = this.ops.slice(0, this.cur).filter(o => o.t === 's').length;
-    this.st.ops.textContent = `${strokes} 笔` + (this.cur < this.ops.length ? ` · 可重做 ${this.ops.length - this.cur}` : '');
+    this.st.ops.textContent = `${strokes} 笔` + (this.cur < this.ops.length ? ` · 可复 ${this.ops.length - this.cur} 笔` : '');
     this.st.info.textContent = `${DQ_PAPERS[this.paper]?.name || ''} · ${this.W}×${this.H} · ${this.tool === 'brush' ? this.ink + ' · 笔 ' + this.size + ' · 水 ' + Math.round(this.water * 100) + '%' : this.tool === 'eraser' ? '擦 ' + this.size : ''}`;
   }
   applyView() {
@@ -8403,7 +8573,16 @@ class InkStudio {
   zoomBy(f) { const r = this.stage.getBoundingClientRect(), ox = r.width / 2, oy = r.height / 2, ns = clamp(this.view.s * f, 0.05, 8); this.view.tx = ox - (ox - this.view.tx) * ns / this.view.s; this.view.ty = oy - (oy - this.view.ty) * ns / this.view.s; this.view.s = ns; this.userView = true; this.applyView(); }
 
   /* ---------- 存取 ---------- */
-  updTitle() { const nm = this.node ? this.node.name : (this.docName || '无题') + '（未存）'; this.win.setTitle((this.dirty && this.cur ? '● ' : '') + nm); this.win.setDirty(this.dirty && (this.cur > 0 || this.saved === -1)); }
+  updTitle() {
+    const nm = this.node ? this.node.name : (this.docName || '无题') + '（未存）', d = this.dirty && (this.cur > 0 || this.saved === -1);
+    this.win.setTitle((this.dirty && this.cur ? '● ' : '') + nm); this.win.setDirty(d);
+    if (d) this.schedAuto();
+  }
+  /** 自动保存：与墨砚同一个开关。已有落款就改写；还没起名的新画，自己落款入 /丹青 */
+  schedAuto() {
+    const ms = +Prefs.get('edAutosave'); clearTimeout(this._auto); if (!ms) return;
+    this._auto = setTimeout(() => { if (this._ptrs && this._ptrs.size) return this.schedAuto(); this.save(false); }, Math.max(1500, ms));
+  }
   composite(scale = 1, withPaper = true) {
     const c = document.createElement('canvas'); c.width = Math.round(this.W * scale); c.height = Math.round(this.H * scale); const g = c.getContext('2d');
     if (withPaper) g.drawImage(this.cvPaper, 0, 0, c.width, c.height);
@@ -8414,15 +8593,32 @@ class InkStudio {
     const th = this.composite(Math.min(1, 320 / Math.max(this.W, this.H)));
     return JSON.stringify({ app: 'qingsi-ink', v: 1, w: this.W, h: this.H, paper: this.paper, seed: this.paperSeed, base: this.baseURL || undefined, ops: this.ops.slice(0, this.cur), thumb: th.toDataURL('image/webp', 0.8), at: Date.now() });
   }
-  async save() {
-    if (!this.node) return this.saveAs();
+  async save(manual = true) {
+    if (!manual && !(this.dirty && (this.cur > 0 || this.saved === -1))) return true;
+    if (!this.node || !FS.get(this.node.id) || FS.inTrash(this.node.id)) return manual ? this.saveAs() : this.autoCreate();
+    if (this._saving) return false; this._saving = true;
     try {
-      if (!FS.get(this.node.id) || FS.inTrash(this.node.id)) return this.saveAs();
-      if (this.cur < this.ops.length) this.ops.length = this.cur;
+      const at = this.cur;
       this.node = await FS.update(this.node.id, this.docJSON(), { mime: 'application/x-qingsi-ink' });
-      this.saved = this.cur; this.updTitle(); UI.toast('藏好', { type: 'ok', ms: 1400 });
+      this.saved = at; this.updTitle(); if (manual) UI.toast('藏好 · ' + this.node.name, { type: 'ok', ms: 1400 });
       return true;
     } catch (e) { UI.toast('未藏 · ' + e.message, { type: 'err' }); return false; }
+    finally { this._saving = false; }
+  }
+  /** 新画自动落款：/丹青/<画名·M月D日>.qsink，重名自动加序号 */
+  async autoCreate() {
+    if (this._saving || !this.cur) return false; this._saving = true;
+    try {
+      const d = new Date(), stamp = `·${d.getMonth() + 1}月${d.getDate()}日`, bn = this.docName || '墨戏';
+      const name = (/·\d+月\d+日(?: \(\d+\))?$/.test(bn) ? bn : bn + stamp) + '.qsink', at = this.cur;
+      const dir = FS.resolve('/丹青') || await FS.mkdir('/丹青');
+      const n = await FS.create(dir.id, name, this.docJSON(), { mime: 'application/x-qingsi-ink' });
+      this.node = n; this.saved = at; this.docName = baseOf(n.name); Recent.add(n.id);
+      this.win.args = { path: FS.pathOf(n.id) }; WM.saveSession(); this.updTitle();
+      UI.toast('已自动落款 · /丹青/' + n.name, { ms: 2200, action: { label: '改名', fn: () => Files.renamePrompt(FS.get(n.id)) } });
+      return true;
+    } catch (e) { UI.toast('未藏 · ' + e.message, { type: 'err' }); return false; }
+    finally { this._saving = false; }
   }
   async saveAs() {
     const d = new Date(), def = (this.docName || '墨戏') + `·${d.getMonth() + 1}月${d.getDate()}日`;
@@ -8430,7 +8626,6 @@ class InkStudio {
     if (!name) return false;
     try {
       const dir = FS.resolve('/丹青') || await FS.mkdir('/丹青');
-      if (this.cur < this.ops.length) this.ops.length = this.cur;
       const n = await FS.create(dir.id, name.trim() + '.qsink', this.docJSON(), { mime: 'application/x-qingsi-ink' });
       this.node = n; this.saved = this.cur; this.docName = baseOf(n.name); Recent.add(n.id);
       this.win.args = { path: FS.pathOf(n.id) }; WM.saveSession(); this.updTitle();
@@ -8449,8 +8644,9 @@ class InkStudio {
   }
   async confirmClose() {
     if (!this.dirty || (!this.cur && this.saved !== -1)) return true;
-    const r = await UI.choose({ title: '画还没存', glyph: '丹', html: '这幅画有新的笔墨还没保存。', options: [{ label: '作罢', value: null, cls: 'ghost' }, { label: '不存了', value: 'no', cls: 'danger' }, { label: '保存', value: 'yes', cls: 'primary', primary: 1 }] });
-    if (r === 'yes') return await this.save();
+    if (this.node && Prefs.get('edAutosave')) { clearTimeout(this._auto); if (await this.save(false) && !this.dirty) return true; }
+    const r = await UI.unsaved({ name: this.node ? this.node.name : (this.docName || '无题') });
+    if (r === 'yes') return await this.save(true);
     return r === 'no';
   }
   async changePaper(pid) {
@@ -8470,10 +8666,10 @@ class InkStudio {
       { label: '换画纸', glyph: '纸', sub: Object.entries(DQ_PAPERS).map(([id, P]) => ({ label: P.name, checked: this.paper === id, act: () => this.changePaper(id) })) },
       { label: '清空笔墨', glyph: '净', danger: true, disabled: !this.cur, act: () => this.push({ t: 'clear' }) },
       '-',
-      { label: '适应窗口', glyph: '◫', kbd: 'F', act: () => this.fit() },
-      { label: '原大（100%）', glyph: '1', act: () => { const r = this.stage.getBoundingClientRect(); this.view = { s: 1, tx: (r.width - this.W) / 2, ty: (r.height - this.H) / 2 }; this.applyView(); } },
+      { label: '适应窗口', glyph: '适', kbd: 'F', act: () => this.fit() },
+      { label: '原大（100%）', glyph: '原', act: () => { const r = this.stage.getBoundingClientRect(); this.view = { s: 1, tx: (r.width - this.W) / 2, ty: (r.height - this.H) / 2 }; this.applyView(); } },
       { label: '在书阁中显示', glyph: '册', disabled: !this.node, act: () => WM.open('shuge', { path: FS.pathOf(this.node.parent), select: this.node.id }) },
-      { label: '笔法提示', glyph: '?', act: () => UI.alert({ title: '笔法', glyph: '丹', html: '<div style="text-align:left;line-height:1.9">慢行墨润、疾行飞白；墨随笔走渐枯。<br>压感笔会按力度变粗细。<br><b>B</b> 笔 · <b>E</b> 擦 · <b>S</b> 印 · <b>T</b> 款 · <b>H</b> 移<br><b>[ ]</b> 笔大小 · <b>1–9、0</b> 换墨 · <b>F</b> 适应<br>空格拖动移纸 · Ctrl+滚轮缩放 · 双指捏合</div>' }) }
+      { label: '笔法提示', glyph: '提', act: () => UI.alert({ title: '笔法', glyph: '丹', html: '<div style="text-align:left;line-height:1.9">慢行墨润、疾行飞白；墨随笔走渐枯。<br>压感笔会按力度变粗细。<br><b>B</b> 笔 · <b>E</b> 擦 · <b>S</b> 印 · <b>T</b> 款 · <b>H</b> 移<br><b>[ ]</b> 笔大小 · <b>1–9、0</b> 换墨 · <b>F</b> 适应<br>空格拖动移纸 · Ctrl+滚轮缩放 · 双指捏合</div>' }) }
     ];
   }
 }
@@ -8488,15 +8684,16 @@ registerApp({
 class Viewer {
   constructor(win, args) {
     this.win = win; this.url = null; this.v = { s: 1, x: 0, y: 0, r: 0, fx: 1 };
-    const b = (ic, tip, fn, txt) => h('button.ibtn', { html: ic ? icon(ic) : '', text: txt, dataset: { tip }, 'aria-label': tip, on: { click: fn } });
-    this.bPrev = b('back', '上一张（←）', () => this.step(-1)); this.bNext = b('fwd', '下一张（→）', () => this.step(1));
+    // 与墨砚同一套：墨字 + 说明（上一张 / 下一张与诗笺的上一首 / 下一首同字：前 / 后）
+    this.bPrev = inkBtn('前', '上一张', '上一张（←）', () => this.step(-1)); this.bNext = inkBtn('后', '下一张', '下一张（→）', () => this.step(1));
     this.imgTools = h('div.hx-imgtools', {},
-      b('zoomOut', '缩小（-）', () => this.zoom(0.8)), this.zl = h('button.hx-zl', { dataset: { tip: '适应 / 原大（双击图片也可）' }, on: { click: () => this.toggleFit() } }), b('zoomIn', '放大（+）', () => this.zoom(1.25)),
-      b('rotate', '向右转（R）', () => { this.v.r = (this.v.r + 90) % 360; this.fit(); }), b('', '水平翻转（M）', () => { this.v.fx *= -1; this.apply(); }, '⇋'));
+      inkBtn('缩', '', '缩小（-）', () => this.zoom(0.8)), this.zl = h('button.hx-zl', { dataset: { tip: '适应 / 原大（双击图片也可）' }, on: { click: () => this.toggleFit() } }), inkBtn('放', '', '放大（+）', () => this.zoom(1.25)),
+      inkBtn('转', '右转', '向右转（R）', () => { this.v.r = (this.v.r + 90) % 360; this.fit(); }), inkBtn('翻', '翻转', '水平翻转（M）', () => { this.v.fx *= -1; this.apply(); }));
     this.title = h('span.hx-title');
-    this.bar = h('div.hx-bar', {}, this.bPrev, this.bNext, this.title, h('span.spacer'), this.imgTools,
-      b('', '赏画（F，全窗挂轴）', () => this.toggleHang(), '轴'),
-      b('more', '更多', e => UI.menuAt(e.currentTarget, this.menu())));
+    this.bar = h('div.hx-bar.appbar', {}, this.bPrev, this.bNext, this.title, h('span.spacer'), this.imgTools,
+      inkBtn('轴', '赏画', '赏画（F，全窗挂轴）', () => this.toggleHang()),
+      moreBtn(e => UI.menuAt(e.currentTarget, this.menu())));
+    autoCompact(this.bar);
     this.stage = h('div.hx-stage', { tabindex: '0' });
     this.strip = h('div.hx-strip');
     this.el = h('div.hx', {}, this.bar, this.stage, this.strip);
@@ -8659,9 +8856,9 @@ class Viewer {
       { label: '在书阁中显示', glyph: '册', disabled: !n, act: () => WM.open('shuge', { path: FS.pathOf(n.parent), select: n.id }) },
       { label: '在丹青中续画', glyph: '丹', disabled: !img, act: () => WM.open('danqing', { path: FS.pathOf(n.id) }) },
       { label: '设为壁纸', glyph: '柳', disabled: !img, act: () => { Prefs.set('wpImage', FS.pathOf(n.id)); UI.toast('已悬 · 此画已为壁纸', { action: { label: '收回', fn: () => Prefs.set('wpImage', '') } }); } },
-      { label: this.show ? '停止幻灯' : '幻灯放映', glyph: '▶', disabled: this.siblings().length < 2, act: () => this.slideshow() },
+      { label: this.show ? '停止幻灯' : '幻灯放映', glyph: '映', disabled: this.siblings().length < 2, act: () => this.slideshow() },
       '-',
-      { label: '向右转', glyph: '↻', kbd: 'R', disabled: !img, act: () => { this.v.r = (this.v.r + 90) % 360; this.fit(); } },
+      { label: '向右转', glyph: '转', kbd: 'R', disabled: !img, act: () => { this.v.r = (this.v.r + 90) % 360; this.fit(); } },
       { label: '另存旋转后的图', glyph: '存', disabled: !img || (!this.v.r && this.v.fx === 1), act: () => this.saveTransformed() },
       { label: '复制图片', glyph: '复', disabled: !img || !navigator.clipboard?.write, act: () => this.copyImage() },
       '-',
@@ -8809,8 +9006,8 @@ class Terminal {
         const d = T.print(vis.map(x => T.nameHTML(x)).join('<span class="tm-sp"></span>'), true, 'tm-grid'); T.bindLinks(d);
       } },
       tree: { d: 'tree [目录]  树状展开（最多 300 项）', run([p]) { const r = T.need(p || '.'); let c = 0; const walk = (id, pre) => { const ks = FS.list(id).sort((x, y) => (y.kind === 'dir') - (x.kind === 'dir') || x.name.localeCompare(y.name, 'zh')); ks.forEach((k, i) => { if (++c > 300) return; const last = i === ks.length - 1; T.o(`<span class="tm-dim">${pre}${last ? '└─ ' : '├─ '}</span>${k.kind === 'dir' ? `<span class="tm-dir">${esc(k.name)}/</span>` : esc(k.name)}`, true); if (k.kind === 'dir') walk(k.id, pre + (last ? '   ' : '│  ')); }); }; T.o(`<span class="tm-dir">${esc(r.name || '/')}</span>`, true); walk(r.id, ''); if (c > 300) T.o('…（只显示前 300 项）', false, 'tm-dim'); } },
-      cat: { d: 'cat <文件…>  显示文本', async run(a) { if (!a.length) throw new Error('cat 要给文件'); for (const p of a) { const n = T.need(p); if (n.kind === 'dir') throw new Error(p + ' 是目录'); if (n.size > 2 * 1024 * 1024) throw new Error(p + ' 太大了（>2MB），用 open 打开吧'); T.o(await FS.read(n, 'text'), false, 'tm-pre'); } } },
-      head: { d: 'head [-n 数] <文件>  前几行', async run(a) { const i = a.indexOf('-n'), k = i >= 0 ? +a[i + 1] || 10 : 10, p = a.filter((x, j) => i < 0 || (j !== i && j !== i + 1)).pop(); const t = await (await FS.read(T.need(p))).slice(0, 1 << 20).text(); T.o(t.split('\n').slice(0, k).join('\n'), false, 'tm-pre'); } },
+      cat: { d: 'cat <文件…>  显示文本', async run(a) { if (!a.length) throw new Error('cat 要给文件'); for (const p of a) { const n = T.need(p); if (n.kind === 'dir') throw new Error(p + ' 是目录'); if (n.size > UI.cap(2 * 1024 * 1024)) throw new Error(p + ' 太大了（>2MB），用 open 打开吧；或在设阁 › 存储 › 大卷直开选「一律直开」'); T.o(await FS.read(n, 'text'), false, 'tm-pre'); } } },
+      head: { d: 'head [-n 数] <文件>  前几行', async run(a) { const i = a.indexOf('-n'), k = i >= 0 ? +a[i + 1] || 10 : 10, p = a.filter((x, j) => i < 0 || (j !== i && j !== i + 1)).pop(); const t = await (await FS.read(T.need(p))).slice(0, UI.cap(1 << 20)).text(); T.o(t.split('\n').slice(0, k).join('\n'), false, 'tm-pre'); } },
       echo: { d: 'echo <文字>  （配合 > 写文件）', run(a) { T.o(a.join(' ')); } },
       touch: { d: 'touch <文件…>  新建空文件（已存在则更新时间）', async run(a) { for (const p of a) { const ap = T.abs(p), n = FS.resolve(ap); if (n) { if (n.kind === 'file') await FS.update(n.id, await FS.read(n), { version: false }); } else await FS.writeFile(ap, ''); } } },
       mkdir: { d: 'mkdir <目录…>  新建目录（自动建上级）', async run(a) { if (!a.length) throw new Error('mkdir 要给名字'); for (const p of a.filter(x => x !== '-p')) await FS.mkdir(T.abs(p)); } },
@@ -8921,30 +9118,49 @@ const Lens = {
     }
     return rows.sort((a, b) => (a.kind === b.kind ? 0 : a.kind === 'dir' ? -1 : 1) || a.name.localeCompare(b.name));
   },
-  /* IndexedDB：另开一条只读连接，翻记录、看索引 */
-  _db: null,
-  async db() {
-    if (this._db) return this._db;
-    this._db = await new Promise((res, rej) => { const r = indexedDB.open(FS.info.dbName); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); r.onblocked = () => rej(new Error('数据库被占用')); });
-    this._db.onversionchange = () => { this._db.close(); this._db = null; };
-    return this._db;
+  /* IndexedDB：另开只读连接，翻记录、看索引。同站的每一个库都能看（不只青丝自己的） */
+  _dbs: new Map(),
+  own(name) { return !name || name === FS.info.dbName; },
+  async db(name = FS.info.dbName) {
+    if (this._dbs.has(name)) return this._dbs.get(name);
+    const p = new Promise((res, rej) => {
+      const r = indexedDB.open(name);
+      // 只看不建：库若刚被删掉，open 会顺手建一个空库——在 upgradeneeded 里撤销，绝不留下垃圾
+      r.onupgradeneeded = () => { try { r.transaction.abort(); } catch { } };
+      r.onsuccess = () => { const d = r.result; d.onversionchange = () => { d.close(); this._dbs.delete(name); }; res(d); };
+      r.onerror = () => { this._dbs.delete(name); rej(r.error && r.error.name === 'AbortError' ? new Error('这个库已经不在了') : r.error); };
+      r.onblocked = () => { this._dbs.delete(name); rej(new Error('数据库被占用')); };
+    });
+    this._dbs.set(name, p); return p;
   },
-  closeDb() { if (this._db) { this._db.close(); this._db = null; } },
-  async idbMeta() {
-    if (FS.info.meta !== 'IndexedDB') return { ok: false, reason: '数据库打不开，元数据暂存在内存里' };
-    const db = await this.db(), names = [...db.objectStoreNames], t = db.transaction(names);
+  closeDb(name) {
+    for (const [k, p] of [...this._dbs]) if (!name || k === name) { p.then(d => d.close(), () => { }); this._dbs.delete(k); }
+  },
+  /** 同站所有数据库：青丝自己的一份 + 其余（含别的入口留下的另一份青丝） */
+  async dbList() {
+    const me = FS.info.dbName;
+    if (!indexedDB.databases) return { ok: false, mine: me, others: [], reason: '这个浏览器不肯列出数据库（indexedDB.databases 不可用）' };
+    let all = []; try { all = await indexedDB.databases(); } catch (e) { return { ok: false, mine: me, others: [], reason: e.message }; }
+    const others = all.filter(d => d && d.name && d.name !== me).map(d => ({ name: d.name, version: d.version, qs: /^qingsi/.test(d.name) })).sort((a, b) => a.name.localeCompare(b.name));
+    return { ok: true, mine: me, others };
+  },
+  async idbMeta(name = FS.info.dbName) {
+    if (this.own(name) && FS.info.meta !== 'IndexedDB') return { ok: false, reason: '数据库打不开，元数据暂存在内存里' };
+    const db = await this.db(name), names = [...db.objectStoreNames];
+    if (!names.length) return { ok: true, name: db.name, version: db.version, stores: [] };
+    const t = db.transaction(names);
     const stores = await Promise.all(names.map(async n => {
       const s = t.objectStore(n);
       return { name: n, keyPath: s.keyPath, auto: s.autoIncrement, count: await idbReq(s.count()), indexes: [...s.indexNames].map(x => { const ix = s.index(x); return { name: x, keyPath: ix.keyPath, unique: ix.unique, multi: ix.multiEntry }; }) };
     }));
     return { ok: true, name: db.name, version: db.version, stores };
   },
-  async idbPage(store, { offset = 0, limit = 50, index = null, key } = {}) {
-    return IDBW.run({ op: 'page', store, index, key, hasKey: key !== undefined, offset, limit }, () => this.idbPageMain(store, { offset, limit, index, key }));
+  async idbPage(store, { offset = 0, limit = 50, index = null, key, db = FS.info.dbName } = {}) {
+    return IDBW.run({ op: 'page', db, own: this.own(db), store, index, key, hasKey: key !== undefined, offset, limit }, () => this.idbPageMain(store, { offset, limit, index, key, db }));
   },
   /* 退路：主线程版——先只取键，再一条条取值，每条之间让出主线程 */
-  async idbPageMain(store, { offset, limit, index, key }) {
-    const db = await this.db(), range = key !== undefined ? IDBKeyRange.only(key) : null;
+  async idbPageMain(store, { offset, limit, index, key, db: name }) {
+    const db = await this.db(name), own = this.own(name), range = key !== undefined ? IDBKeyRange.only(key) : null;
     const src0 = () => { const s = db.transaction([store]).objectStore(store); return index ? s.index(index) : s; };
     const total = await idbReq(src0().count(range));
     const keys = await new Promise((res, rej) => {
@@ -8955,25 +9171,63 @@ const Lens = {
     const rows = [];
     for (const k of keys) {
       const v = await idbReq(db.transaction([store]).objectStore(store).get(k)); await new Promise(r => setTimeout(r, 0));
-      const lite = !v ? null : store === 'nodes' ? { id: v.id, kind: v.kind, name: v.name, parent: v.parent } : store === 'blobs' ? { id: v.id, blob: v.data instanceof Blob ? v.data : null, type: v.type || '' } : null;
-      rows.push({ key: k, lite, sum: store === 'kv' && v ? (typeof v.v === 'string' ? v.v.slice(0, 60) : clPreview(v.v ?? v, 60, 0).text) : '', size: clBytes(v), approx: !!clBytes.approx });
+      const lite = !own || !v ? null : store === 'nodes' ? { id: v.id, kind: v.kind, name: v.name, parent: v.parent } : store === 'blobs' ? { id: v.id, blob: v.data instanceof Blob ? v.data : null, type: v.type || '' } : null;
+      const sum = !v ? '' : !own ? clPreview(v, 60, 0).text : store === 'kv' ? (typeof v.v === 'string' ? v.v.slice(0, 60) : clPreview(v.v ?? v, 60, 0).text) : '';
+      rows.push({ key: k, lite, sum, size: clBytes(v), approx: !!clBytes.approx });
     }
     return { rows, total };
   },
-  async idbRec(store, key) {
-    return IDBW.run({ op: 'rec', store, key }, async () => { const db = await this.db(), v = await idbReq(db.transaction([store]).objectStore(store).get(key)), pv = clPreview(v, 20000); return { text: pv.text, cut: pv.cut, size: clBytes(v), approx: !!clBytes.approx, lite: v && store === 'blobs' ? { id: v.id, blob: v.data instanceof Blob ? v.data : null } : v && store === 'nodes' ? { id: v.id } : null }; });
+  recMax() { return UI.bigAll() ? 4e6 : 20000; },
+  async idbRec(store, key, name = FS.info.dbName) {
+    const own = this.own(name), max = this.recMax();
+    return IDBW.run({ op: 'rec', db: name, own, store, key, max }, async () => { const db = await this.db(name), v = await idbReq(db.transaction([store]).objectStore(store).get(key)), pv = clPreview(v, max); return { text: pv.text, cut: pv.cut, size: clBytes(v), approx: !!clBytes.approx, lite: v && own && store === 'blobs' ? { id: v.id, blob: v.data instanceof Blob ? v.data : null, type: v.type || '' } : v && own && store === 'nodes' ? { id: v.id } : null }; });
   },
-  async idbExport(store, key, onProgress) {
-    const r = await IDBW.run({ op: 'export', store, key }, async () => { const db = await this.db(), v = await idbReq(db.transaction([store]).objectStore(store).get(key)); return { blob: await clExport(v, onProgress) }; });
+  async idbExport(store, key, onProgress, name = FS.info.dbName) {
+    const r = await IDBW.run({ op: 'export', db: name, store, key }, async () => { const db = await this.db(name), v = await idbReq(db.transaction([store]).objectStore(store).get(key)); return { blob: await clExport(v, onProgress) }; });
     return r.blob;
   },
-  async idbIndexKeys(store, index, limit = 300) {
-    const db = await this.db(), ix = db.transaction([store]).objectStore(store).index(index);
+  async idbIndexKeys(store, index, limit = 300, name = FS.info.dbName) {
+    const db = await this.db(name), ix = db.transaction([store]).objectStore(store).index(index);
     return new Promise((res, rej) => {
       const out = []; const r = ix.openKeyCursor(null, 'nextunique');
       r.onsuccess = async () => { const c = r.result; if (!c || out.length >= limit) { Promise.all(out.map(async o => { o.count = await idbReq(db.transaction([store]).objectStore(store).index(index).count(o.key)); })).then(() => res(out), rej); return; } out.push({ key: c.key }); c.continue(); };
       r.onerror = () => rej(r.error);
     });
+  },
+  /* ---- 删除：同站他人的东西直接删（先问）；青丝自己的文件一律走书阁，只有孤块与杂记可直接删 ---- */
+  async idbDelete(name, store, key) {
+    const db = await this.db(name);
+    await new Promise((res, rej) => { const t = db.transaction([store], 'readwrite'); t.objectStore(store).delete(key); t.oncomplete = res; t.onerror = () => rej(t.error); t.onabort = () => rej(t.error || new Error('删除被中止')); });
+  },
+  async idbClear(name, store) {
+    const db = await this.db(name);
+    await new Promise((res, rej) => { const t = db.transaction([store], 'readwrite'); t.objectStore(store).clear(); t.oncomplete = res; t.onerror = () => rej(t.error); t.onabort = () => rej(t.error || new Error('清空被中止')); });
+  },
+  async idbDrop(name) {
+    if (this.own(name)) throw new Error('青丝自己的库不能在这里整个删掉');
+    this.closeDb(name); await IDBW.close(name);
+    return new Promise((res, rej) => {
+      const r = indexedDB.deleteDatabase(name); let blocked = false;
+      r.onsuccess = () => res({ blocked }); r.onerror = () => rej(r.error);
+      r.onblocked = () => { blocked = true; };   // 别的标签页还开着：浏览器会等它们关掉再删
+    });
+  },
+  async opfsRemove(path, name, recursive) {
+    let d = await navigator.storage.getDirectory();
+    for (const p of path) d = await d.getDirectoryHandle(p);
+    await d.removeEntry(name, { recursive: !!recursive });
+  },
+  lsRemove(key) { localStorage.removeItem(key); },
+  /** 删一枚 cookie：cookieStore 优先；否则按本页路径从深到浅、带不带域名各试一遍 */
+  async ckDelete(name) {
+    const gone = () => !(document.cookie || '').split('; ').some(c => c.split('=')[0] === name);
+    if (window.cookieStore) { try { await cookieStore.delete(name); } catch { } try { await cookieStore.delete({ name, path: '/' }); } catch { } }
+    if (!gone()) {
+      const segs = location.pathname.split('/'), paths = ['/']; for (let i = 1; i < segs.length; i++) paths.push(segs.slice(0, i + 1).join('/'), segs.slice(0, i).join('/') + '/');
+      const hosts = ['', location.hostname, '.' + location.hostname];
+      for (const p of new Set(paths)) for (const d of hosts) document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=${p || '/'}${d ? '; domain=' + d : ''}`;
+    }
+    return gone();
   },
   ls() {
     const rows = [];
@@ -9060,24 +9314,25 @@ ${clWalk.toString()}
 ${clPreview.toString()}
 ${clBytes.toString()}
 const dbs = {};
-const openDb = name => dbs[name] || (dbs[name] = new Promise((res, rej) => { const r = indexedDB.open(name); r.onsuccess = () => { const d = r.result; d.onversionchange = () => { d.close(); delete dbs[name]; }; res(d); }; r.onerror = () => { delete dbs[name]; rej(r.error); }; r.onblocked = () => { delete dbs[name]; rej(new Error('数据库被占用')); }; }));
+const openDb = name => dbs[name] || (dbs[name] = new Promise((res, rej) => { const r = indexedDB.open(name); r.onupgradeneeded = () => { try { r.transaction.abort(); } catch (e) { } }; r.onsuccess = () => { const d = r.result; d.onversionchange = () => { d.close(); delete dbs[name]; }; res(d); }; r.onerror = () => { delete dbs[name]; rej(r.error); }; r.onblocked = () => { delete dbs[name]; rej(new Error('数据库被占用')); }; }));
 const req = r => new Promise((res, rej) => { r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
-const lite = (store, v) => !v ? null : store === 'nodes' ? { id: v.id, kind: v.kind, name: v.name, parent: v.parent } : store === 'blobs' ? { id: v.id, blob: v.data instanceof Blob ? v.data : null, type: v.type || (v.data && v.data.type) || '' } : null;
-const summ = (store, v) => store !== 'kv' || !v ? '' : typeof v.v === 'string' ? v.v.slice(0, 60) : clPreview(v.v === undefined ? v : v.v, 60, 0).text;
+const lite = (store, v, own) => !v || !own ? null : store === 'nodes' ? { id: v.id, kind: v.kind, name: v.name, parent: v.parent } : store === 'blobs' ? { id: v.id, blob: v.data instanceof Blob ? v.data : null, type: v.type || (v.data && v.data.type) || '' } : null;
+const summ = (store, v, own) => !v ? '' : !own ? clPreview(v, 60, 0).text : store !== 'kv' ? '' : typeof v.v === 'string' ? v.v.slice(0, 60) : clPreview(v.v === undefined ? v : v.v, 60, 0).text;
 onmessage = async e => {
-  const { id, op, db, store, index, key, hasKey, offset = 0, limit = 50 } = e.data;
+  const { id, op, db, own = true, store, index, key, hasKey, offset = 0, limit = 50, max = 20000 } = e.data;
   try {
+    if (op === 'close') { if (dbs[db]) { try { (await dbs[db]).close(); } catch (er) { } delete dbs[db]; } postMessage({ id, ok: true, res: true }); return; }
     const d = await openDb(db), os = () => d.transaction([store]).objectStore(store), src = () => index ? os().index(index) : os();
     const range = hasKey ? IDBKeyRange.only(key) : null;
     if (op === 'page') {
       const total = await req(src().count(range));
       const rows = await new Promise((res, rej) => { const out = []; let skipped = !offset; const r = src().openCursor(range);
-        r.onsuccess = () => { const c = r.result; if (!c) return res(out); if (!skipped) { skipped = true; c.advance(offset); return; } const v = c.value, size = clBytes(v); out.push({ key: c.primaryKey, lite: lite(store, v), sum: summ(store, v), size, approx: !!clBytes.approx }); if (out.length >= limit) return res(out); c.continue(); };
+        r.onsuccess = () => { const c = r.result; if (!c) return res(out); if (!skipped) { skipped = true; c.advance(offset); return; } const v = c.value, size = clBytes(v); out.push({ key: c.primaryKey, lite: lite(store, v, own), sum: summ(store, v, own), size, approx: !!clBytes.approx }); if (out.length >= limit) return res(out); c.continue(); };
         r.onerror = () => rej(r.error); });
       postMessage({ id, ok: true, res: { rows, total } });
     } else if (op === 'rec') {
-      const v = await req(os().get(key)), pv = clPreview(v, 20000), size = clBytes(v);
-      postMessage({ id, ok: true, res: { text: pv.text, cut: pv.cut, size, approx: !!clBytes.approx, lite: lite(store, v) } });
+      const v = await req(os().get(key)), pv = clPreview(v, max), size = clBytes(v);
+      postMessage({ id, ok: true, res: { text: pv.text, cut: pv.cut, size, approx: !!clBytes.approx, lite: lite(store, v, own) } });
     } else if (op === 'export') {
       const v = await req(os().get(key)), parts = []; let buf = '';
       for (const p of clWalk(v, 1)) { buf += p; if (buf.length > 65536) { parts.push(buf); buf = ''; } }
@@ -9101,12 +9356,14 @@ onmessage = async e => {
     const w = this.get(); if (!w) return Promise.reject(new Error('no-worker'));
     return new Promise((res, rej) => { const id = ++this.seq; const t = setTimeout(() => { if (this.wait.delete(id)) rej(new Error('读库超时')); }, ms); this.wait.set(id, { res, rej, t }); w.postMessage({ id, db: FS.info.dbName, ...msg }); });
   },
+  /** 删库之前，让小工先把它手里的连接放掉 */
+  async close(name) { if (!this.w || this.broken) return; try { await this.call({ op: 'close', db: name }, 5000); } catch { } },
   async run(msg, fallback) { if (!this.broken) try { return await this.call(msg); } catch (e) { if (!this.broken) throw e; } return fallback(); }
 };
 
 class Granary {
   constructor(win, args) {
-    this.win = win; this.view = 'home';
+    this.win = win; this.view = 'home'; this.scope = { opfs: 'own', idb: 'own', ls: 'own', ck: 'own' };
     this.el = h('div.cl'); win.body.append(this.el);
     const upd = throttle(() => { if (this.view === 'home') this.render(); }, 1500);
     const off = FS.ev.on('change', upd), off2 = BUS.on('drafts', upd);
@@ -9126,10 +9383,15 @@ class Granary {
     const ls = Lens.ls(), lsBytes = ls.reduce((a, r) => a + r.bytes, 0);
     const ck = await Lens.cookies(), ckOurs = ck.filter(c => c.ours), ckAll = ck.reduce((a, c) => a + c.bytes, 0);
     const opfsBytes = Object.values(st.storeKind.opfs || {}).reduce((a, b) => a + b, 0), idbBytes = Object.values(st.storeKind.idb || {}).reduce((a, b) => a + b, 0);
+    // 同站其他：与青丝自己的分开记一行（点进去切到「同站其他」即可看、可删）
+    const cx = { opfs: h('div.cl-cx'), idb: h('div.cl-cx'), ls: h('div.cl-cx'), ck: h('div.cl-cx') };
+    const setCx = (id, n, unit) => { cx[id].textContent = n ? `同站其他 ${n} ${unit}` : ''; };
+    setCx('ls', ls.filter(r => r.group === 'alien').length, '键'); setCx('ck', ck.filter(c => !c.ours).length, '片');
+    Lens.dbList().then(l => setCx('idb', l.others.length, '库')).catch(() => { });
     const core = (id, name, glyph, ok, warn, viz, line, tip) => {
       const b = h('button.cl-core' + (ok ? '.ok' : warn ? '.warn' : '.bad') + '.' + id, { type: 'button', dataset: { core: id, tip }, 'aria-label': name + ' · 点开看真实内容', on: { click: () => this.open(id) } },
         h('div.cl-cn', {}, h('span.cl-cg', { text: glyph }), h('b', { text: name }), h('span.cl-go', { text: '展观 ›' }), h('i.cl-dot')),
-        h('div.cl-cv', {}, viz), h('div.cl-cl', { text: line }));
+        h('div.cl-cv', {}, viz), h('div.cl-cl', { text: line }), cx[id]);
       return b;
     };
     const opViz = h('div.cl-blocks', {}, h('span.cl-wait', { text: '清点中…' })), idbViz = h('div.cl-books', {}, h('span.cl-wait', { text: '清点中…' }));
@@ -9179,7 +9441,7 @@ class Granary {
     this.el.replaceChildren(h('div.cl-top', {}, h('div.cl-title', {}, h('b', { text: '四仓' }), h('span', { text: '点开一仓，看里面真实的内容' })), cores, persist), h('div.cl-grid', {}, usage, health, keep, drafts, backup), about);
     this.el.scrollTop = st0;
     // 异步的两仓：清点完再画
-    Lens.opfs(1500).then(o => opViz.replaceWith(this.blocks(o, Lens.owners(), { max: 180 }))).catch(() => opViz.replaceChildren(h('span.cl-wait', { text: '清点失败' })));
+    Lens.opfs(1500).then(o => { setCx('opfs', o.root.filter(e => !e.mine).length, '处'); opViz.replaceWith(this.blocks(o, Lens.owners(), { max: 180 })); }).catch(() => opViz.replaceChildren(h('span.cl-wait', { text: '清点失败' })));
     Lens.idbMeta().then(m => idbViz.replaceChildren(...this.books(m).childNodes)).catch(e => idbViz.replaceChildren(h('span.cl-wait', { text: e.message })));
   }
 
@@ -9261,8 +9523,8 @@ class Granary {
     const titles = { opfs: ['柜', 'OPFS', '源私有文件系统 · 真实的文件'], idb: ['簿', 'IndexedDB', '数据库 · 仓、索引与每一条记录'], ls: ['砚', 'localStorage', '同步小仓 · 每一个键'], ck: ['瓦', 'Cookie', '屋檐上的瓦 · 每一枚 cookie'] };
     const [g, name, sub] = titles[id] || titles.opfs;
     this.body = h('div.cl-dvb');
-    const head = h('div.cl-dvh', {}, h('button.btn.sm.ghost.cl-back', { text: '‹ 四仓', on: { click: () => this.home() } }), h('span.cl-cg', { text: g }), h('b', { text: name }), h('span.muted.cl-dvsub', { text: sub }),
-      h('button.btn.sm.ghost.cl-refresh', { text: '重点一遍', on: { click: () => this.open(id) } }));
+    const head = h('div.cl-dvh', {}, inkBtn('回', '四仓', '回到四仓', () => this.home()), h('span.cl-cg', { text: g }), h('b', { text: name }), h('span.muted.cl-dvsub', { text: sub }),
+      inkBtn('刷', '重读', '重新清点这一仓', () => this.open(id), 'cl-refresh'));
     this.el.replaceChildren(h('div.cl-dv', {}, head, this.body)); this.el.scrollTop = 0;
     this.body.append(h('div.cl-wait.pad', { text: '清点中…' }));
     try { await ({ opfs: () => this.opfsView(), idb: () => this.idbView(), ls: () => this.lsView(), ck: () => this.ckView() })[id](); }
@@ -9277,126 +9539,208 @@ class Granary {
   empty(t) { return h('div.cl-hint', { text: t }); }
   /** 窄处列表和详情上下叠放：点了一条，把详情滚到眼前 */
   reveal() { const v = this.body && this.body.querySelector('.cl-view'); if (v && this.el.clientWidth <= 680) setTimeout(() => v.scrollIntoView({ block: 'start', behavior: 'smooth' }), 30); }
+  /** 青丝 / 同站其他：两边分开看，绝不混在一处 */
+  scopeBar(core, nOwn, nOther, unit) {
+    const cur = this.scope[core];
+    const seg = h('div.seg.cl-scope', {}, ...[['own', '青丝', nOwn], ['other', '同站其他', nOther]].map(([v, l, n]) => h('button' + (cur === v ? '.on' : ''), { dataset: { v, tip: v === 'own' ? '青丝自己的数据' : '同一网址下别的程序（或别的入口的另一份青丝）留下的' }, on: { click: () => { if (this.scope[core] === v) return; this.scope[core] = v; this.open(core); } } }, h('b', { text: l }), h('span', { text: ` ${n}${unit}` }))));
+    const note = h('span.cl-scnote', { text: cur === 'own' ? '青丝自己的数据。属于某个文件的内容请到书阁里删；这里只能直接删孤块与杂记。' : '同站其他程序的数据，与青丝无关。可以查看，也可以直接删（删前会问一句，删了不能追悔）。' });
+    return h('div.cl-scbar' + (cur === 'other' ? '.other' : ''), {}, seg, note);
+  }
+  delBtn(label, fn, tip) {
+    return h('button.btn.sm.danger', { text: label, dataset: tip ? { tip } : {}, on: { click: async e => { const b = e.currentTarget; b.disabled = true; try { await fn(); } catch (er) { UI.toast('未成 · ' + (er.message || er), { type: 'err' }); } if (b.isConnected) b.disabled = false; } } });
+  }
+  ask(title, msg, ok = '删除') { return UI.confirm({ title, msg, ok, danger: true }); }
+  /** 青丝的文件走书阁：进拾遗（或按设置直接删），与在书阁里删一模一样 */
+  async fsDelete(n) { if (!n) return; await Files.trash([n.id]); }
 
-  /* OPFS：像书阁一样逐层进目录；我们的仓里每个文件都标出它属于哪个青丝文件 */
+  /* OPFS：青丝的仓与同站其他条目分开；像书阁一样逐层进目录 */
   async opfsView(path) {
+    const sc = this.scope.opfs, mine = Lens.ourDir();
     const o = await Lens.opfs(4000), owners = Lens.owners();
     if (!o.ok) { this.body.replaceChildren(this.empty(o.reason || 'OPFS 不可用：内容都存在 IndexedDB 里')); return; }
-    this.opPath = path || this.opPath || [];
-    const view = h('div', {}, this.empty('点一个文件，看它的真身'));
+    const others = o.root.filter(e => !e.mine && e.name !== '.crswap');
+    if (path) this.opPath = path;
+    const hasMine = o.root.some(e => e.mine);
+    if (sc === 'own') { if (!this.opPath || this.opPath[0] !== mine) this.opPath = hasMine ? [mine] : []; }
+    else if (!this.opPath || this.opPath[0] === mine) this.opPath = [];
+    const inOwn = sc === 'own', scope = this.scopeBar('opfs', hasMine ? 1 : 0, others.length, ' 处');
+    if (inOwn && !hasMine) { this.body.replaceChildren(scope, this.empty('青丝还没在 OPFS 里存过东西（内容都在 IndexedDB 里）')); return; }
+    const view = h('div', {}, this.empty(inOwn ? '点一个文件，看它的真身' : '点一个文件看内容；点目录进去'));
+    const refresh = () => this.opfsView(this.opPath);
     const showFile = async (name, f, hd) => {
-      const ow = owners.get(name), kids = [];
+      const ow = inOwn ? owners.get(name) : null, kids = [];
       kids.push(h('div.cl-vh', {}, h('b', { text: name }), h('span.muted', { text: fmtSize(f.size) })),
-        h('div.cl-kvs', {}, h('span', { text: '位置' }), h('code', { text: '/' + [...this.opPath, name].join('/') }), h('span', { text: '修改' }), h('span', { text: fmtTime(f.mtime, true) }), h('span', { text: '归属' }), h('span', { text: Lens.ownerText(ow) })));
+        h('div.cl-kvs', {}, h('span', { text: '位置' }), h('code', { text: '/' + [...this.opPath, name].join('/') }), h('span', { text: '修改' }), h('span', { text: fmtTime(f.mtime, true) }), h('span', { text: '归属' }), h('span', { text: inOwn ? Lens.ownerText(ow) : '同站其他' })));
       const act = h('div.cl-row');
-      if (ow && ow.role === 'cur') act.append(h('button.btn.sm', { text: '在书阁中显示', on: { click: () => WM.open('shuge', { path: FS.pathOf(ow.n.parent), select: ow.n.id }) } }), h('button.btn.sm', { text: '打开', on: { click: () => WM.openFile(ow.n) } }));
-      act.append(h('button.btn.sm.ghost', { text: '下载这一块', on: { click: async () => { try { const file = await (hd || await this.opHandle(name)).getFile(); downloadBlob(file, ow ? ow.n.name : name); } catch (e) { UI.toast('已去 · 这一块刚被收拾掉了，重点一遍再看', { type: 'err' }); } } } }));
+      if (ow && ow.role === 'cur') act.append(h('button.btn.sm', { text: '在书阁中显示', on: { click: () => WM.open('shuge', { path: FS.pathOf(ow.n.parent), select: ow.n.id }) } }), h('button.btn.sm', { text: '打开', on: { click: () => WM.openFile(ow.n) } }),
+        this.delBtn('在书阁里删…', async () => { await this.fsDelete(ow.n); refresh(); }, '与在书阁里删这个文件完全一样'));
+      if (ow && ow.role === 'trash') act.append(h('button.btn.sm', { text: `到${TN()}里处置`, on: { click: () => WM.open('shuge', { path: '~拾遗' }) } }));
+      if (ow && ow.role === 'ver') act.append(h('span.muted', { text: `这是「${ow.n.name}」的一版旧稿，在书阁「详情 › 历史版本」里处置` }));
+      act.append(h('button.btn.sm.ghost', { text: inOwn ? '下载这一块' : '下载', on: { click: async () => { try { const file = await (hd || await this.opHandle(name)).getFile(); downloadBlob(file, ow ? ow.n.name : name); } catch (e) { UI.toast('已去 · 这一块刚被收拾掉了，重读一遍再看', { type: 'err' }); } } } }));
+      if (inOwn && !ow) act.append(this.delBtn('删掉这个孤块', async () => { if (!(await this.ask('删掉孤块', `「${name}」不属于任何文件（体检时也会回收）。现在就删？`))) return; await Lens.opfsRemove(this.opPath, name); UI.toast('已删 · 孤块 ' + name); refresh(); }));
+      if (!inOwn) act.append(this.delBtn('删除这个文件', async () => { if (!(await this.ask('删除同站文件', `「/${[...this.opPath, name].join('/')}」（${fmtSize(f.size)}）是同站其他程序留下的，删了不能追悔。`))) return; await Lens.opfsRemove(this.opPath, name); UI.toast('已删 · ' + name); refresh(); }));
       kids.push(act);
       const prev = h('div.cl-prev'); kids.push(prev);
       view.replaceChildren(...kids); this.reveal();
       try {
-        const file = await (hd || await this.opHandle(name)).getFile(), k = ow ? kindOf(ow.n) : '';
-        if (k === 'image' && file.size < 30e6) { const u = URL.createObjectURL(file.slice(0, file.size, ow.n.mime || '')); const im = h('img', { src: u, alt: '' }); im.onload = () => setTimeout(() => URL.revokeObjectURL(u), 1000); prev.append(im); }
-        else if (/^(text|sheet|web|ink)$/.test(k) || file.size < 4096) { const t = await file.slice(0, 6000).text(); prev.append(h('pre', { text: t + (file.size > 6000 ? '\n…' : '') })); }
+        const file = await (hd || await this.opHandle(name)).getFile(), k = ow ? kindOf(ow.n) : kindOf({ name, kind: 'file' }), TL = UI.cap(6000);
+        if (k === 'image' && file.size < UI.cap(30e6)) { const u = URL.createObjectURL(file.slice(0, file.size, ow ? ow.n.mime || '' : mimeOf(name))); const im = h('img', { src: u, alt: '' }); im.onload = im.onerror = () => setTimeout(() => URL.revokeObjectURL(u), 1000); prev.append(im); }
+        else if (/^(text|sheet|web|ink)$/.test(k) || file.size < 4096) { const t = await file.slice(0, TL).text(); prev.append(h('pre', { text: t + (file.size > TL ? '\n…' : '') })); }
         else { const b = new Uint8Array(await file.slice(0, 256).arrayBuffer()); let s = ''; for (let i = 0; i < b.length; i += 16) s += i.toString(16).padStart(4, '0') + '  ' + [...b.slice(i, i + 16)].map(x => x.toString(16).padStart(2, '0')).join(' ') + '\n'; prev.append(h('pre.hex', { text: s + (file.size > 256 ? '…' : '') })); }
       } catch (e) { prev.append(this.empty('读不出：' + e.message)); }
     };
     /* 清点与点击之间，分片目录可能已被回收：退到还在的那一层，轻声说一句 */
     let rows; try { rows = await Lens.opfsDir(this.opPath); }
-    catch (e) { if (!this.opPath.length) throw e; this.opPath = this.opPath.slice(0, -1); UI.toast('已去 · 这一层刚被收拾过，退回上一层'); return this.opfsView(this.opPath); }
-    const crumbs = h('div.cl-crumbs', {}, h('button.btn.sm.ghost', { text: 'OPFS', on: { click: () => this.opfsView([]) } }), ...this.opPath.map((p, i) => [h('span.muted', { text: '›' }), h('button.btn.sm.ghost', { text: p === Lens.ourDir() ? p + '（青丝）' : p, on: { click: () => this.opfsView(this.opPath.slice(0, i + 1)) } })]).flat());
+    catch (e) { if (this.opPath.length <= (inOwn ? 1 : 0)) throw e; this.opPath = this.opPath.slice(0, -1); UI.toast('已去 · 这一层刚被收拾过，退回上一层'); return this.opfsView(this.opPath); }
+    if (!inOwn && !this.opPath.length) rows = rows.filter(r => r.name !== mine);
+    rows = rows.filter(r => !r.name.endsWith('.crswap'));
+    const base = inOwn ? 1 : 0;
+    const crumbs = h('div.cl-crumbs', {}, h('button.btn.sm.ghost', { text: inOwn ? '青丝的仓' : 'OPFS 根', on: { click: () => this.opfsView(inOwn ? [mine] : []) } }),
+      ...this.opPath.slice(base).map((p, i) => [h('span.muted', { text: '›' }), h('button.btn.sm.ghost', { text: p, on: { click: () => this.opfsView(this.opPath.slice(0, base + i + 1)) } })]).flat(),
+      !inOwn && this.opPath.length ? this.delBtn('删除整个目录', async () => { const nm = this.opPath[this.opPath.length - 1]; if (!(await this.ask('删除同站目录', `「/${this.opPath.join('/')}」连同里面的一切都会删掉，不能追悔。`))) return; await Lens.opfsRemove(this.opPath.slice(0, -1), nm, true); UI.toast('已删 · ' + nm); this.opfsView(this.opPath.slice(0, -1)); }) : null);
+    const whose = r => {
+      if (inOwn) return r.kind === 'dir' ? '分片目录' : Lens.ownerText(owners.get(r.name));
+      if (!this.opPath.length && /^qingsi4-/.test(r.name)) return '另一处青丝的仓';
+      return r.name === '.probe' ? '写入探针' : '同站其他';
+    };
     const tb = this.table([
-      { label: '名称', w: 'minmax(120px, 2fr)', get: r => (r.kind === 'dir' ? '▸ ' : '') + r.name + (r.name === Lens.ourDir() ? '（青丝的仓）' : '') },
+      { label: '名称', w: 'minmax(120px, 2fr)', get: r => (r.kind === 'dir' ? '▸ ' : '') + r.name },
       { label: '大小', w: '80px', r: true, get: r => r.kind === 'dir' ? r.count + ' 项' : fmtSize(r.size) },
-      { label: '归属', w: 'minmax(100px, 2fr)', get: r => r.kind === 'dir' ? (this.opPath[0] === Lens.ourDir() ? '分片目录' : '') : this.opPath[0] === Lens.ourDir() ? Lens.ownerText(owners.get(r.name)) : r.name === '.probe' ? '写入探针' : '' }
+      { label: '归属', w: 'minmax(100px, 2fr)', get: whose }
     ], rows, r => Promise.resolve(r.kind === 'dir' ? this.opfsView([...this.opPath, r.name]) : showFile(r.name, r, r.h)).catch(e => { console.warn('[仓廪]', e); UI.toast('未成 · ' + (e.message || e), { type: 'err' }); }));
-    const sum = h('div.cl-sum', {}, h('b', { text: `${o.files.length + o.more} 个文件块 · ${fmtSize(o.total)}` }), h('span.muted', { text: ` · 孤块 ${o.files.filter(f => !owners.has(f.id)).length} · 旧稿 ${o.files.filter(f => owners.get(f.id)?.role === 'ver').length}` }));
-    const map = this.blocks(o, owners, { max: 1200, pick: async f => { this.opPath = [Lens.ourDir(), f.shard].filter(Boolean); await this.opfsView(this.opPath); const r = [...this.body.querySelectorAll('.cl-tr')].find(x => x.firstChild.textContent === f.id); r && (r.scrollIntoView({ block: 'nearest' }), r.click()); } });
-    const legend = h('div.cl-leg', {}, ...['text', 'image', 'audio', 'pdf', 'zip', 'bin'].map(k => h('span', {}, h('i', { style: { background: CL_KCOL[k] } }), KIND_LABEL[k])), h('span', {}, h('i.orph'), '孤块'), h('span', {}, h('i.dimk'), '旧稿/拾遗'));
-    this.body.replaceChildren(h('div.cl-sec', {}, sum, map, legend), this.pane(h('div', {}, crumbs, rows.length ? tb : this.empty('空目录')), view));
+    let top;
+    if (inOwn) {
+      const sum = h('div.cl-sum', {}, h('b', { text: `${o.files.length + o.more} 个文件块 · ${fmtSize(o.total)}` }), h('span.muted', { text: ` · 孤块 ${o.files.filter(f => !owners.has(f.id)).length} · 旧稿 ${o.files.filter(f => owners.get(f.id)?.role === 'ver').length}` }));
+      const map = this.blocks(o, owners, { max: 1200, pick: async f => { this.opPath = [mine, f.shard].filter(Boolean); await this.opfsView(this.opPath); const r = [...this.body.querySelectorAll('.cl-tr')].find(x => x.firstChild.textContent === f.id); r && (r.scrollIntoView({ block: 'nearest' }), r.click()); } });
+      const legend = h('div.cl-leg', {}, ...['text', 'image', 'audio', 'pdf', 'zip', 'bin'].map(k => h('span', {}, h('i', { style: { background: CL_KCOL[k] } }), KIND_LABEL[k])), h('span', {}, h('i.orph'), '孤块'), h('span', {}, h('i.dimk'), '旧稿/拾遗'));
+      top = h('div.cl-sec', {}, scope, sum, map, legend);
+    } else top = h('div.cl-sec', {}, scope, h('div.cl-sum', {}, h('b', { text: others.length ? `OPFS 根下另有 ${others.length} 处条目` : 'OPFS 根下没有别人的东西' }), h('span.muted', { text: ' · 青丝的仓「' + mine + '」不在此列' })));
+    this.body.replaceChildren(top, this.pane(h('div', {}, crumbs, rows.length ? tb : this.empty(inOwn || this.opPath.length ? '空目录' : '这里没有同站其他的文件')), view));
   }
   async opHandle(name) { let d = await navigator.storage.getDirectory(); for (const p of this.opPath) d = await d.getDirectoryHandle(p); return d.getFileHandle(name); }
 
-  /* IndexedDB：仓 → 索引 → 记录；记录点开是完整 JSON（二进制只写大小） */
+  /* IndexedDB：青丝的库与同站其他库分开；库 → 仓 → 索引 → 记录，同样的细致 */
   async idbView() {
-    const m = await Lens.idbMeta();
-    if (!m.ok) { this.body.replaceChildren(this.empty(m.reason)); return; }
-    this.idb = this.idb || { store: 'nodes', index: null, key: undefined, offset: 0 };
-    if (!m.stores.some(s => s.name === this.idb.store)) this.idb.store = m.stores[0]?.name;
-    const S = this.idb, store = m.stores.find(s => s.name === S.store), owners = Lens.owners();
-    const label = { nodes: '目录（每个文件、书册一条）', blobs: '内容块（小文件与镜像）', kv: '杂记（花字缓存、日志等）' };
+    const sc = this.scope.idb, own = sc === 'own', list = await Lens.dbList();
+    this.idbS = this.idbS || { own: { db: FS.info.dbName, store: 'nodes', index: null, key: undefined, offset: 0 }, other: { db: null, store: null, index: null, key: undefined, offset: 0 } };
+    const S = this.idbS[sc]; if (own) S.db = FS.info.dbName;
+    const scope = this.scopeBar('idb', 1, list.ok ? list.others.length : '?', ' 库');
+    let dbPick = null;
+    if (!own) {
+      if (!list.ok) { this.body.replaceChildren(h('div.cl-sec', {}, scope), this.empty(list.reason)); return; }
+      if (!list.others.length) { this.body.replaceChildren(h('div.cl-sec', {}, scope), this.empty('这个网址下没有别的数据库。')); return; }
+      if (!S.db || !list.others.some(d => d.name === S.db)) Object.assign(S, { db: list.others[0].name, store: null, index: null, key: undefined, offset: 0 });
+      dbPick = h('div.cl-stores.cl-dbs', {}, ...list.others.map(d => h('button.cl-store' + (d.name === S.db ? '.on' : ''), { type: 'button', on: { click: () => { Object.assign(S, { db: d.name, store: null, index: null, key: undefined, offset: 0 }); this.idbView(); } } },
+        h('b', { text: d.name }), h('span.muted', { text: d.qs ? '另一处青丝' : '同站其他' }), h('span.cl-n', { text: 'v' + d.version }))));
+    }
+    const dropDb = !own ? this.delBtn('删除整个数据库', async () => {
+      if (!(await this.ask('删除同站数据库', `数据库「${S.db}」连同其中所有的仓与记录都会删掉，不能追悔。若别的标签页正开着它，浏览器会等它们关掉再删。`))) return;
+      const r = await Lens.idbDrop(S.db); UI.toast(r.blocked ? '已请删 · 别的标签页还开着它，关掉后即删' : '已删 · 数据库 ' + S.db, { type: r.blocked ? 'warn' : 'ok', ms: 4000 });
+      S.db = null; this.idbView();
+    }) : null;
+    let m; try { m = await Lens.idbMeta(S.db); } catch (e) { m = { ok: false, reason: '打不开：' + (e.message || e) }; }
+    if (!m.ok) { this.body.replaceChildren(h('div.cl-sec', {}, scope, dbPick, dropDb ? h('div.cl-row', {}, dropDb) : null), this.empty(m.reason)); return; }
+    if (!m.stores.length) { this.body.replaceChildren(h('div.cl-sec', {}, scope, dbPick, h('div.cl-kvs', {}, h('span', { text: '数据库' }), h('code', { text: m.name }), h('span', { text: '版本' }), h('span', { text: String(m.version) })), dropDb ? h('div.cl-row', {}, dropDb) : null), this.empty('这个库里一个仓（object store）也没有')); return; }
+    if (!m.stores.some(s => s.name === S.store)) Object.assign(S, { store: m.stores[0].name, index: null, key: undefined, offset: 0 });
+    const store = m.stores.find(s => s.name === S.store), owners = own ? Lens.owners() : new Map();
+    const label = own ? { nodes: '目录（每个文件、书册一条）', blobs: '内容块（小文件与镜像）', kv: '杂记（花字缓存、日志等）' } : {};
     const stores = h('div.cl-stores', {}, ...m.stores.map(s => h('button.cl-store' + (s.name === S.store ? '.on' : ''), { type: 'button', on: { click: () => { Object.assign(S, { store: s.name, index: null, key: undefined, offset: 0 }); this.idbView(); } } },
       h('b', { text: s.name }), h('span.muted', { text: label[s.name] || '' }), h('span.cl-n', { text: s.count + ' 条' }))));
-    const meta = h('div.cl-kvs', {}, h('span', { text: '数据库' }), h('code', { text: m.name }), h('span', { text: '版本' }), h('span', { text: String(m.version) }),
+    const meta = h('div.cl-kvs', {}, h('span', { text: '数据库' }), h('code', { text: m.name + (own ? '（青丝）' : '') }), h('span', { text: '版本' }), h('span', { text: String(m.version) }),
       h('span', { text: '主键' }), h('code', { text: JSON.stringify(store.keyPath) + (store.auto ? ' · 自增' : '') }),
       h('span', { text: '索引' }), store.indexes.length ? h('span.cl-ixs', {}, ...store.indexes.map(ix => h('button.btn.sm' + (S.index === ix.name ? '.primary' : '.ghost'), { text: `${ix.name}（${JSON.stringify(ix.keyPath)}${ix.unique ? ' · 唯一' : ''}${ix.multi ? ' · 多值' : ''}）`, on: { click: () => { Object.assign(S, { index: S.index === ix.name ? null : ix.name, key: undefined, offset: 0 }); this.idbView(); } } }))) : h('span.muted', { text: '无' }));
+    const dbActs = !own ? h('div.cl-row', {}, this.delBtn(`清空仓「${S.store}」`, async () => { if (!(await this.ask('清空同站仓', `「${S.db}」里的仓「${S.store}」共 ${store.count} 条记录，全部删掉，不能追悔。`, '清空'))) return; await Lens.idbClear(S.db, S.store); UI.toast('已清 · ' + S.store); this.idbView(); }), dropDb) : null;
     const view = h('div', {}, this.empty('点一条记录，看它的全部字段'));
     const showRec = async r => {
       const tok = this._recTok = Symbol(); view.replaceChildren(this.empty('翻检中…'));
-      let rec; try { rec = await Lens.idbRec(S.store, r.key); } catch (e) { if (tok === this._recTok) view.replaceChildren(this.empty('读不出：' + e.message)); return; }
+      let rec; try { rec = await Lens.idbRec(S.store, r.key, S.db); } catch (e) { if (tok === this._recTok) view.replaceChildren(this.empty('读不出：' + e.message)); return; }
       if (tok !== this._recTok) return;
       const lite = rec.lite || r.lite || {}, sz = (rec.approx ? '约 ' : '') + fmtSize(rec.size);
       const kids = [h('div.cl-vh', {}, h('b', { text: String(r.key) }), h('span.muted', { text: sz }))];
       const act = h('div.cl-row');
-      if (S.store === 'nodes' && FS.get(lite.id)) act.append(h('button.btn.sm', { text: '在书阁中显示', on: { click: () => { const n = FS.get(lite.id); n.kind === 'dir' ? WM.open('shuge', { path: FS.pathOf(n.id) }) : WM.open('shuge', { path: FS.pathOf(n.parent), select: n.id }); } } }));
-      if (S.store === 'blobs') { const ow = owners.get(lite.id); kids.push(h('div.cl-kvs', {}, h('span', { text: '归属' }), h('span', { text: Lens.ownerText(ow) }))); const data = lite.blob; if (data instanceof Blob && data.size < 30e6 && /^image\//.test(data.type || ow?.n.mime || '')) { const u = URL.createObjectURL(data); const im = h('img', { src: u, alt: '' }); im.onload = im.onerror = () => setTimeout(() => URL.revokeObjectURL(u), 1000); kids.push(h('div.cl-prev', {}, im)); } }
+      const drop = async (title, msg) => { if (!(await this.ask(title, msg))) return; await Lens.idbDelete(S.db, S.store, r.key); UI.toast('已删 · ' + String(r.key).slice(0, 40)); this.idbView(); };
+      if (own && S.store === 'nodes') { const n = FS.get(lite.id); if (n) { act.append(h('button.btn.sm', { text: '在书阁中显示', on: { click: () => { n.kind === 'dir' ? WM.open('shuge', { path: FS.pathOf(n.id) }) : WM.open('shuge', { path: FS.pathOf(n.parent), select: n.id }); } } })); if (!n.sys && n.id !== FS.ROOT && n.id !== FS.TRASH) act.append(this.delBtn('在书阁里删…', async () => { await this.fsDelete(n); this.idbView(); }, '目录记录不能直接抹，只能像在书阁里一样删')); } }
+      if (own && S.store === 'blobs') {
+        const ow = owners.get(lite.id); kids.push(h('div.cl-kvs', {}, h('span', { text: '归属' }), h('span', { text: Lens.ownerText(ow) })));
+        if (ow && ow.role === 'cur') act.append(this.delBtn('在书阁里删…', async () => { await this.fsDelete(ow.n); this.idbView(); }));
+        else if (!ow) act.append(this.delBtn('删掉这个孤块', () => drop('删掉孤块', '这块内容不属于任何文件（体检时也会回收）。现在就删？')));
+        const data = lite.blob; if (data instanceof Blob && data.size < UI.cap(30e6) && /^image\//.test(data.type || ow?.n.mime || '')) { const u = URL.createObjectURL(data); const im = h('img', { src: u, alt: '' }); im.onload = im.onerror = () => setTimeout(() => URL.revokeObjectURL(u), 1000); kids.push(h('div.cl-prev', {}, im)); }
+      }
+      if (own && S.store === 'kv') act.append(this.delBtn('删掉这条杂记', () => drop('删掉杂记', `「${String(r.key)}」：花字缓存之类删了会在需要时重新生成；挂载表、日志之类删了就没了。`)));
+      if (!own) act.append(this.delBtn('删除这条记录', () => drop('删除同站记录', `「${S.db} › ${S.store}」里键为「${String(r.key).slice(0, 80)}」的记录，删了不能追悔。`)));
       if (act.childNodes.length) kids.push(act);
       // 只摆出开头一段；整条要看就下载（在后台小工里拼，不卡页面）
-      if (rec.cut) kids.push(h('div.cl-big', {}, h('span', { text: `这条记录${sz}，此处只展开头两万字。` }),
-        h('button.btn.sm', { text: '下载整条（JSON）', on: { click: async e => { const b = e.currentTarget; b.disabled = true; const t0 = b.textContent; b.textContent = '誊写中…'; try { const blob = await Lens.idbExport(S.store, r.key, n => { b.textContent = '誊写中 ' + fmtSize(n * 2); }); downloadBlob(blob, `${S.store}-${String(r.key).replace(/[\\/:*?"<>|]/g, '_').slice(0, 60)}.json`); } catch (er) { UI.toast('未成 · ' + (er.message || er), { type: 'err' }); } b.textContent = t0; b.disabled = false; } } })));
+      if (rec.cut) kids.push(h('div.cl-big', {}, h('span', { text: `这条记录${sz}，此处只展开头 ${Lens.recMax() >= 1e6 ? fmtSize(Lens.recMax()) : '两万字'}。` }),
+        h('button.btn.sm', { text: '下载整条（JSON）', on: { click: async e => { const b = e.currentTarget; b.disabled = true; const t0 = b.textContent; b.textContent = '誊写中…'; try { const blob = await Lens.idbExport(S.store, r.key, n => { b.textContent = '誊写中 ' + fmtSize(n * 2); }, S.db); downloadBlob(blob, `${S.store}-${String(r.key).replace(/[\\/:*?"<>|]/g, '_').slice(0, 60)}.json`); } catch (er) { UI.toast('未成 · ' + (er.message || er), { type: 'err' }); } b.textContent = t0; b.disabled = false; } } })));
       kids.push(h('pre.cl-json', { text: rec.text + (rec.cut ? '\n…' : '') }));
       view.replaceChildren(...kids); this.reveal();
     };
-    const sumOf = r => { const v = r.lite || {}; if (S.store === 'nodes') return `${v.kind === 'dir' ? '▸ ' : ''}${v.name || '（根）'}`; if (S.store === 'blobs') { const ow = owners.get(v.id); return ow ? ow.n.name + (ow.role === 'ver' ? '（旧稿）' : '') : '孤块'; } return r.sum || ''; };
+    const sumOf = r => { const v = r.lite || {}; if (own && S.store === 'nodes') return `${v.kind === 'dir' ? '▸ ' : ''}${v.name || '（根）'}`; if (own && S.store === 'blobs') { const ow = owners.get(v.id); return ow ? ow.n.name + (ow.role === 'ver' ? '（旧稿）' : '') : '孤块'; } return r.sum || ''; };
     const cols = [{ label: '主键', w: 'minmax(90px, 1.2fr)', get: r => String(r.key) }, { label: '摘要', w: 'minmax(100px, 2fr)', get: sumOf }, { label: '大小', w: '72px', r: true, get: r => (r.approx ? '≈' : '') + fmtSize(r.size) }];
 
     let listEl;
     if (S.index && S.key === undefined) {
-      const keys = await Lens.idbIndexKeys(S.store, S.index);
+      const keys = await Lens.idbIndexKeys(S.store, S.index, 300, S.db);
       listEl = h('div', {}, h('div.cl-sum', {}, h('b', { text: `索引 ${S.index}` }), h('span.muted', { text: ` · ${keys.length} 个不同的键（点一个看它下面的记录）` })),
-        this.table([{ label: '键', w: 'minmax(120px, 2fr)', get: k => { const n = S.index === 'parent' && FS.get(k.key); return (k.key === '' ? '（空 · 根层）' : String(k.key)) + (n ? ` · ${n.name || '根'}` : ''); } }, { label: '记录数', w: '80px', r: true, get: k => k.count }], keys, k => { S.key = k.key; S.offset = 0; this.idbView(); }));
+        this.table([{ label: '键', w: 'minmax(120px, 2fr)', get: k => { const n = own && S.index === 'parent' && FS.get(k.key); return (k.key === '' ? '（空 · 根层）' : String(k.key)) + (n ? ` · ${n.name || '根'}` : ''); } }, { label: '记录数', w: '80px', r: true, get: k => k.count }], keys, k => { S.key = k.key; S.offset = 0; this.idbView(); }));
     } else {
-      const { rows, total } = await Lens.idbPage(S.store, { offset: S.offset, limit: 50, index: S.index, key: S.key });
+      const { rows, total } = await Lens.idbPage(S.store, { offset: S.offset, limit: 50, index: S.index, key: S.key, db: S.db });
       const pager = h('div.cl-pager', {}, h('button.btn.sm.ghost', { text: '‹ 上一页', disabled: S.offset <= 0, on: { click: () => { S.offset = Math.max(0, S.offset - 50); this.idbView(); } } }),
         h('span.muted', { text: total ? `${S.offset + 1}–${Math.min(total, S.offset + 50)} / ${total}` : '0 条' }),
         h('button.btn.sm.ghost', { text: '下一页 ›', disabled: S.offset + 50 >= total, on: { click: () => { S.offset += 50; this.idbView(); } } }));
       listEl = h('div', {}, S.key !== undefined ? h('div.cl-sum', {}, h('button.btn.sm.ghost', { text: `‹ 索引 ${S.index}`, on: { click: () => { S.key = undefined; this.idbView(); } } }), h('span.muted', { text: ` = ${S.key === '' ? '（空 · 根层）' : String(S.key)}` })) : null,
         rows.length ? this.table(cols, rows, showRec) : this.empty('这里没有记录'), pager);
     }
-    this.body.replaceChildren(h('div.cl-sec', {}, stores, meta), this.pane(listEl, view));
+    this.body.replaceChildren(h('div.cl-sec', {}, scope, dbPick, stores, meta, dbActs), this.pane(listEl, view));
   }
 
-  /* localStorage：每个键、它属于哪一类、占多少；点开看值 */
+  /* localStorage：青丝的键与同站其他键分开；点开看值，可删 */
   async lsView() {
-    const rows = Lens.ls(), total = rows.reduce((a, r) => a + r.bytes, 0);
+    const sc = this.scope.ls, own = sc === 'own', all = Lens.ls(), rows = all.filter(r => own ? r.group !== 'alien' : r.group === 'alien'), total = rows.reduce((a, r) => a + r.bytes, 0);
+    const scope = this.scopeBar('ls', all.length - all.filter(r => r.group === 'alien').length, all.filter(r => r.group === 'alien').length, ' 键');
     const view = h('div', {}, this.empty('点一个键，看它存了什么'));
-    const show = r => { let v = r.value; if (v.length <= 200000) try { v = clPreview(JSON.parse(v), 60000).text; } catch { }   /* 大值不解析、不美化，只截一段原文 */ view.replaceChildren(h('div.cl-vh', {}, h('b', { text: r.key }), h('span.muted', { text: fmtSize(r.bytes) })), h('div.cl-kvs', {}, h('span', { text: '分类' }), h('span', { text: CL_LSG.find(g => g[0] === r.group)[1] })), h('pre.cl-json', { text: v.length > 60000 ? v.slice(0, 60000) + '\n…' : v })); this.reveal(); };
-    const tb = this.table([{ label: '键', w: 'minmax(120px, 2fr)', get: r => r.key }, { label: '分类', w: '96px', get: r => CL_LSG.find(g => g[0] === r.group)[1] }, { label: '大小', w: '72px', r: true, get: r => fmtSize(r.bytes) }], rows, show);
-    this.body.replaceChildren(h('div.cl-sec', {}, h('div.cl-sum', {}, h('b', { text: `${rows.length} 个键 · ${fmtSize(total)}` }), h('span.muted', { text: ` · 约占 5 MB 的 ${(total / 5242880 * 100).toFixed(2)}%（UTF-16，每字两字节）` })), this.lsViz(rows, total)),
-      this.pane(rows.length ? tb : this.empty('还是空的'), view));
+    const gName = r => r.group === 'alien' ? (/^qs4@/.test(r.key) ? '另一处青丝' : '同站其他') : CL_LSG.find(g => g[0] === r.group)[1];
+    const show = r => {
+      const PV = UI.cap(60000); let v = r.value; if (v.length <= UI.cap(200000)) try { v = clPreview(JSON.parse(v), PV).text; } catch { }   /* 大值不解析、不美化，只截一段原文 */
+      const del = this.delBtn('删除这个键', async () => {
+        if (!(await this.ask(own ? '删除青丝的键' : '删除同站的键', own ? `「${r.key}」是青丝的${gName(r)}。删掉后青丝会按初始的样子重建（偏好回到默认、草稿就没了）。` : `「${r.key}」（${fmtSize(r.bytes)}）是同站其他程序留下的，删了不能追悔。`))) return;
+        Lens.lsRemove(r.key); if (r.group === 'draft') BUS.emit('drafts'); UI.toast('已删 · ' + r.key); this.lsView();
+      });
+      view.replaceChildren(h('div.cl-vh', {}, h('b', { text: r.key }), h('span.muted', { text: fmtSize(r.bytes) })), h('div.cl-kvs', {}, h('span', { text: '分类' }), h('span', { text: gName(r) })), h('div.cl-row', {}, del), h('pre.cl-json', { text: v.length > PV ? v.slice(0, PV) + '\n…' : v })); this.reveal();
+    };
+    const tb = this.table([{ label: '键', w: 'minmax(120px, 2fr)', get: r => r.key }, { label: '分类', w: '96px', get: gName }, { label: '大小', w: '72px', r: true, get: r => fmtSize(r.bytes) }], rows, show);
+    const bulk = !own && rows.length ? this.delBtn(`全部删除（${rows.length} 个键）`, async () => { if (!(await this.ask('删除同站所有键', `同站其他程序的 ${rows.length} 个键（${fmtSize(total)}）全部删掉，青丝的键不动。不能追悔。`))) return; rows.forEach(r => Lens.lsRemove(r.key)); UI.toast(`已删 · ${rows.length} 个键`); this.lsView(); }) : null;
+    this.body.replaceChildren(h('div.cl-sec', {}, scope, h('div.cl-sum', {}, h('b', { text: `${rows.length} 个键 · ${fmtSize(total)}` }), h('span.muted', { text: ` · 约占 5 MB 的 ${(total / 5242880 * 100).toFixed(2)}%（UTF-16，每字两字节）` }), bulk ? h('span.spacer') : null, bulk), this.lsViz(rows, total)),
+      this.pane(rows.length ? tb : this.empty(own ? '还是空的' : '同站没有别的键'), view));
   }
 
-  /* Cookie：一排瓦，点一片看它的名、值、大小与用处 */
+  /* Cookie：青丝的瓦与同站外客分开；点一片看名、值、大小与用处，可删 */
   async ckView() {
-    const rows = await Lens.cookies();
+    const sc = this.scope.ck, own = sc === 'own', all = await Lens.cookies(), rows = all.filter(c => own ? c.ours : !c.ours);
+    const scope = this.scopeBar('ck', all.filter(c => c.ours).length, all.filter(c => !c.ours).length, ' 片');
     const view = h('div', {}, this.empty('点一片瓦，看这枚 cookie'));
-    let sel = null;
     const show = c => {
-      sel = c.name; $$('.cl-tile', this.body).forEach(g => g.classList.toggle('on', g.dataset.tip.startsWith(c.name + ' ')));
+      $$('.cl-tile', this.body).forEach(g => g.classList.toggle('on', g.dataset.tip.startsWith(c.name + ' ')));
       const d = Lens.ckDesc(c.name);
+      const del = this.delBtn('删除这片瓦', async () => {
+        if (!(await this.ask(own ? '删除青丝的 cookie' : '删除同站 cookie', own ? `「${c.name}」：${d ? d[1] : '青丝的小记'}。删掉后青丝会在需要时重新写。` : `「${c.name}」是同站其他程序写的，删了不能追悔。`))) return;
+        if (c.ours && c.name.startsWith('qs4_')) Cookie.remove(c.name.slice(4));
+        const ok = c.shim ? true : await Lens.ckDelete(c.name);
+        UI.toast(ok ? '已删 · ' + c.name : '删不掉 · 它可能属于别的路径或域名', { type: ok ? 'ok' : 'warn' }); this.ckView();
+      });
       view.replaceChildren(h('div.cl-vh', {}, h('b', { text: c.name }), h('span.muted', { text: `${c.bytes} 字节` })),
         h('div.cl-meter', {}, h('i', { style: { width: Math.min(100, c.bytes / 4096 * 100) + '%' } }), h('span', { text: `占一片瓦（4 KB）的 ${(c.bytes / 4096 * 100).toFixed(1)}%` })),
-        h('div.cl-kvs', {}, h('span', { text: '归属' }), h('span', { text: c.ours ? (c.shim ? '青丝 · 浏览器禁了 cookie，暂记在 localStorage' : '青丝') : '同站外客（别的程序写的，青丝不动它）' }),
+        h('div.cl-kvs', {}, h('span', { text: '归属' }), h('span', { text: c.ours ? (c.shim ? '青丝 · 浏览器禁了 cookie，暂记在 localStorage' : '青丝') : '同站外客（别的程序写的）' }),
           h('span', { text: '用处' }), h('span', { text: d ? d[1] : c.ours ? '青丝的小记' : '—' }),
           c.expires !== undefined ? h('span', { text: '到期' }) : null, c.expires !== undefined ? h('span', { text: c.expires ? fmtTime(c.expires) : '关掉浏览器即失效' }) : null,
           c.path ? h('span', { text: '路径' }) : null, c.path ? h('code', { text: c.path + (c.sameSite ? ' · SameSite=' + c.sameSite : '') + (c.secure ? ' · Secure' : '') }) : null),
-        h('pre.cl-json', { text: c.value || '（空）' }));
+        h('div.cl-row', {}, del), h('pre.cl-json', { text: c.value || '（空）' }));
       this.reveal();
     };
-    const sum = h('div.cl-sum', {}, h('b', { text: `${rows.length} 片瓦 · ${rows.reduce((a, c) => a + c.bytes, 0)} 字节` }), h('span.muted', { text: ` · 青丝 ${rows.filter(c => c.ours).length} 片 · 每片至多 4 KB，每站约 50–180 片` }));
+    const sum = h('div.cl-sum', {}, h('b', { text: `${rows.length} 片瓦 · ${rows.reduce((a, c) => a + c.bytes, 0)} 字节` }), h('span.muted', { text: ` · 全站共 ${all.length} 片 · 每片至多 4 KB，每站约 50–180 片` }));
     const roofBox = h('div.cl-roofwrap', {}, this.roof(rows, { pick: show }));
     const tb = this.table([{ label: '名', w: 'minmax(100px, 1.4fr)', get: c => c.name }, { label: '用处', w: 'minmax(100px, 2fr)', get: c => (Lens.ckDesc(c.name) || [, c.ours ? '青丝的小记' : '同站外客'])[1] }, { label: '字节', w: '64px', r: true, get: c => c.bytes }], rows, show);
-    this.body.replaceChildren(h('div.cl-sec', {}, sum, roofBox), this.pane(rows.length ? tb : this.empty('檐下还空着'), view));
+    this.body.replaceChildren(h('div.cl-sec', {}, scope, sum, roofBox), this.pane(rows.length ? tb : this.empty(own ? '檐下还空着' : '同站没有别的 cookie'), view));
   }
 
   showRep(r, old) {
@@ -9489,12 +9833,14 @@ class PoemPaper {
     this.colSeg = h('div.seg.sj-colseg', {}, ...[['all', '全部'], ['old', '古诗'], ['self', '自题']].map(([id, l]) => h('button', { text: l, dataset: { c: id, tip: id === 'self' ? '青丝旧卷每次提交留下的句子' : '' }, on: { click: () => { this.col = id; Prefs.set('sjCol', id); this.renderList(); } } })));
     this.side = h('aside.sj-side', {}, this.q, this.colSeg, this.list);
     this.sheet = h('div.sj-sheet', { tabindex: '0' });
-    const b = (txt, tip, fn, cls = '') => h('button.btn.sm' + cls, { text: txt, dataset: { tip }, on: { click: fn } });
+
     this.paperSeg = h('div.seg', {}, ...SJ_PAPERS.map(([id, l]) => h('button', { text: l, dataset: { p: id }, on: { click: () => { this.paper = id; Prefs.set('sjPaper', id); this.render(); } } })));
-    this.bar = h('div.sj-bar', {}, h('button.ibtn', { html: icon('side'), dataset: { tip: '诗目' }, on: { click: () => this.el.classList.toggle('noside') } }),
-      b('上一首', '←', () => this.step(-1), '.ghost'), b('随缘', '随机一首（R）', () => this.random()), b('下一首', '→', () => this.step(1), '.ghost'),
+    // 与墨砚同一套：墨字 + 说明；侧栏同书阁用「侧」，上一首 / 下一首同画轩用「前 / 后」
+    this.bar = h('div.sj-bar.appbar', {}, inkBtn('侧', '诗目', '诗目（侧栏）', () => this.el.classList.toggle('noside')),
+      inkBtn('前', '上一首', '上一首（←）', () => this.step(-1)), inkBtn('随', '随缘', '随机一首（R）', () => this.random()), inkBtn('后', '下一首', '下一首（→）', () => this.step(1)),
       h('span.spacer'), this.paperSeg,
-      h('button.ibtn', { html: icon('more'), dataset: { tip: '更多' }, on: { click: e => UI.menuAt(e.currentTarget, this.menu()) } }));
+      moreBtn(e => UI.menuAt(e.currentTarget, this.menu())));
+    autoCompact(this.bar);
     this.el = h('div.sj' + (isMobile() ? '.noside' : ''), {}, this.bar, h('div.sj-body', {}, this.side, h('div.sj-desk', {}, this.sheet)));
     win.body.append(this.el);
     this.el.addEventListener('keydown', e => { if (e.target === this.q) return; if (e.key === 'ArrowLeft') this.step(1); else if (e.key === 'ArrowRight') this.step(-1); else if (e.key === 'ArrowDown' || e.key === 'PageDown') this.step(1); else if (e.key === 'ArrowUp' || e.key === 'PageUp') this.step(-1); else if (e.key.toLowerCase() === 'r') this.random(); });
@@ -9646,7 +9992,6 @@ const SETTINGS = [
   { id: 'editor', name: '墨砚', g: '墨', items: [
     { k: 'edFont', label: '字体', type: 'seg', opts: [['ink', '花字'], ['base', '素字'], ['mono', '等宽']], kw: '编辑器 字体' },
     { k: 'edSize', label: '字号', type: 'range', min: 12, max: 32, step: 1, fmt: v => v + 'px', kw: '编辑器 字号 大小' },
-    { k: 'edAutosave', label: '自动保存', desc: '停笔后自动存入文件（草稿无论如何都会随写随存）', type: 'seg', opts: [[0, '不自动'], [800, '停笔即存'], [3000, '停笔三秒']], kw: '保存 autosave' },
     { k: 'edWrap', label: '自动换行', type: 'switch', kw: '换行 wrap' },
     { k: 'edLineNo', label: '行号', type: 'switch', kw: '行号' },
     { k: 'edGrid', label: '稿纸格', type: 'switch', kw: '稿纸 格子 红格' },
@@ -9663,6 +10008,8 @@ const SETTINGS = [
     { k: 'sjPaper', label: '诗笺纸样', type: 'seg', opts: () => SJ_PAPERS, kw: '诗 纸 笺' }
   ] },
   { id: 'store', name: '存储', g: '仓', items: [
+    { k: 'edAutosave', label: '自动保存', desc: '停笔后自动存入文件：墨砚、丹青、表阁一视同仁。还没起名的新作也会自己落款入册（墨砚入 /文稿，丹青入 /丹青）', type: 'seg', opts: [[0, '不自动'], [800, '停笔即存'], [3000, '停笔三秒']], kw: '保存 autosave 墨砚 丹青 表阁 草稿' },
+    { k: 'bigOpen', label: '大卷直开', desc: '多大的文件、多大的库都直接打开、整卷预览，不再先问、也不截断。机器够好，或情愿等它，就选「一律直开」', type: 'seg', opts: [['ask', '先问一声'], ['all', '一律直开']], kw: '大文件 卡顿 上限 限制 预览 截断' },
     { k: 'useOPFS', label: '启用 OPFS 主仓', desc: '关闭后全部内容存入 IndexedDB（刷新后生效）', type: 'switch', kw: 'opfs 存储 文件系统' },
     { k: 'mirrorSmall', label: '小文件镜像', desc: '在 IndexedDB 里再存一份小文件，OPFS 出问题时自动补回', type: 'switch', kw: '镜像 备份 冗余' },
     { k: 'mirrorMax', label: '镜像上限', type: 'seg', opts: [[512 * 1024, '512 KB'], [2 * 1024 * 1024, '2 MB'], [8 * 1024 * 1024, '8 MB']], kw: '镜像 大小' },
@@ -9782,7 +10129,7 @@ class SettingsPavilion {
         break;
       }
     }
-    const reset = this.changed(k) && it.type !== 'link' && it.type !== 'colw' ? h('button.sg-reset', { html: icon('restore'), dataset: { tip: '复原为默认' }, 'aria-label': '复原', on: { click: () => set(PREF_DEFAULTS[k]) } }) : null;
+    const reset = this.changed(k) && it.type !== 'link' && it.type !== 'colw' ? h('button.sg-reset', { dataset: { tip: '复原为默认' }, 'aria-label': '复原', on: { click: () => set(PREF_DEFAULTS[k]) } }, Ink.glyph('原', 15), h('span', { text: '复原' })) : null;
     const row = h('div.sg-row' + (it.type === 'theme' || it.type === 'apps' ? '.wide' : '') + (it.small ? '.small' : '') + (this.changed(k) ? '.mod' : ''), { dataset: { key: k || it.type } },
       h('div.sg-l', {}, h('div.sg-lab', {}, h('span', { text: it.label }), reset), it.desc ? h('div.sg-desc', { text: it.desc }) : null, it.note ? h('div.sg-note', { html: it.note }) : null),
       ctl ? h('div.sg-c', {}, ctl) : null);
@@ -9915,7 +10262,12 @@ registerApp({
 
 class SheetView {
   get dirty() { return !!this._dirty; }
-  set dirty(v) { this._dirty = !!v; if (this.win) this.win.setDirty(this._dirty); }
+  set dirty(v) {
+    this._dirty = !!v; if (this.win) { this.win.setDirty(this._dirty); if (this.node) this.win.setTitle((this._dirty ? '● ' : '') + this.node.name); }
+    // 自动保存：与墨砚、丹青同一个开关
+    clearTimeout(this._auto); const ms = +Prefs.get('edAutosave');
+    if (this._dirty && ms && this.node) this._auto = setTimeout(() => { if (this.scroller && this.scroller.querySelector('.bg-edit')) return (this.dirty = true); this.save(false); }, Math.max(1200, ms));
+  }
   constructor(win, args) {
     this.win = win; this.rows = []; this.header = true; this.sort = null; this.filter = ''; this.view = []; this.widths = []; this.cur = [0, 0]; this.dirty = false; this.RH = 30;
     this.bHead = inkBtn('首', '表头', '第一行当作表头', () => { this.header = !this.header; this.bHead.classList.toggle('on', this.header); this.sort = null; this.rebuild(); }, '.on');
@@ -9925,10 +10277,10 @@ class SheetView {
     this.eSel.onchange = () => this.load(true);
     this.q = h('input.field.sm', { placeholder: '筛…', type: 'search', style: { width: '140px' } });
     this.q.addEventListener('input', debounce(() => { this.filter = this.q.value.trim().toLowerCase(); this.rebuild(); }, 160));
-    this.bSave = inkBtn('存', '保存', '保存（Ctrl S）', () => this.save());
-    this.bar = h('div.bg-bar', {}, this.bHead, this.dSel, this.eSel, h('span.spacer'), this.q,
+    this.bSave = inkBtn('存', '保存', '保存（Ctrl+S）', () => this.save());
+    this.bar = h('div.bg-bar.appbar', {}, this.bHead, this.dSel, this.eSel, h('span.spacer'), this.q,
       inkBtn('增', '加行', '在末尾加一行', () => this.addRow()), this.bSave,
-      inkBtn('墨', '文本', '用墨砚当作文本打开', () => this.node && WM.open('moyan', { path: FS.pathOf(this.node.id) })));
+      inkBtn('墨', '墨砚', '在墨砚里打开这个文件（当作文本来改）', () => this.node && WM.open('moyan', { path: FS.pathOf(this.node.id) })));
     this.headEl = h('div.bg-head'); this.bodyEl = h('div.bg-rows'); this.spacer = h('div.bg-space');
     this.scroller = h('div.bg-scroll', { tabindex: '0' }, this.headEl, h('div.bg-bodywrap', {}, this.spacer, this.bodyEl));
     this.status = h('div.bg-status');
@@ -9938,7 +10290,9 @@ class SheetView {
     win.on('args', a => a && a.path && this.open(a.path));
     win.guard(async () => {
       if (!this.dirty) return true;
-      const r = await UI.choose({ title: '表格还没保存', glyph: '表', html: `「<b>${esc(this.node.name)}</b>」有改动尚未保存。`, options: [{ label: '作罢', value: null, cls: 'ghost' }, { label: '不保存', value: 'no' }, { label: '保存', value: 'yes', cls: 'primary', primary: 1 }] });
+      clearTimeout(this._auto);
+      if (Prefs.get('edAutosave')) { await this.save(false); if (!this.dirty) return true; }
+      const r = await UI.unsaved({ name: this.node.name });
       if (r === 'yes') { await this.save(); return !this.dirty; }
       return r === 'no';
     });
@@ -10005,7 +10359,6 @@ class SheetView {
     const total = this.data.length;
     this.status.textContent = `${total.toLocaleString()} 行 × ${this.cols} 列` + (this.filter ? ` · 筛出 ${idx.length.toLocaleString()} 行` : '') +
       ` · ${{ ',': '逗号', '\t': '制表符', ';': '分号', '|': '竖线' }[this.delim]}分隔 · ${this.enc.toUpperCase()}${this.bom ? ' BOM' : ''}` + (this.dirty ? ' · 未保存' : '');
-    this.bSave.classList.toggle('on', this.dirty);
   }
   gridCols() { return '56px ' + this.widths.map(w => w + 'px').join(' '); }
   renderHead() {
@@ -10081,7 +10434,7 @@ class SheetView {
     this.rows.push(new Array(Math.max(1, this.cols)).fill('')); this.dirty = true; this.rebuild();
     this.scroller.scrollTop = this.scroller.scrollHeight; this.cur = [this.rows.length - 1, 0]; this._range = null; this.paint();
   }
-  async save() {
+  async save(manual = true) {
     if (!this.node || !this.dirty) return;
     let text = CSV.stringify(this.rows, this.delim, this.eol);
     let blob;
@@ -10089,7 +10442,7 @@ class SheetView {
     else if (this.enc === 'gb18030') { UI.toast('藏好 · 浏览器只能写 UTF-8，已带上 BOM，Excel 照样认得', { type: 'warn', ms: 5000 }); blob = new Blob(['\ufeff' + text], { type: mimeOf(this.node.name) }); this.enc = 'utf-8'; this.bom = true; }
     else blob = new Blob([(this.bom ? '\ufeff' : '') + text], { type: mimeOf(this.node.name) });
     this._saving = true;
-    try { this.node = await FS.update(this.node.id, blob, { version: true }); this.text = text; this.dirty = false; this.rebuild(); UI.toast('藏好 · ' + FS.pathOf(this.node.id)); }
+    try { this.node = await FS.update(this.node.id, blob, { version: true }); this.text = text; this.dirty = false; this.rebuild(); if (manual) UI.toast('藏好 · ' + this.node.name, { type: 'ok', ms: 1400 }); }
     catch (e) { UI.toast('未藏 · ' + (e.message || e), { type: 'err' }); }
     finally { setTimeout(() => { this._saving = false; }, 300); }
   }
@@ -10114,9 +10467,9 @@ class WebView {
     this.bMode = inkBtn('码', '源码', '在网页与源码之间切换', () => this.setMode(this.mode === 'page' ? 'src' : 'page'));
     this.bJs = inkBtn('脚', '脚本', '允许页面运行脚本（在沙箱里，碰不到青丝的数据）', () => { this.scripts = !this.scripts; Prefs.set('webScripts', this.scripts); this.bJs.classList.toggle('on', this.scripts); this.render(); });
     this.bJs.classList.toggle('on', this.scripts);
-    this.bar = h('div.jt-bar', {}, this.bBack, this.addr, h('span.spacer'),
+    this.bar = h('div.jt-bar.appbar', {}, this.bBack, this.addr, h('span.spacer'),
       inkBtn('刷', '刷新', '重新载入（F5）', () => this.render()), this.bMode, this.bJs,
-      inkBtn('墨', '编辑', '在墨砚里改这个文件', () => this.node && WM.open('moyan', { path: FS.pathOf(this.node.id) })));
+      inkBtn('墨', '墨砚', '在墨砚里打开这个文件（当作文本来改）', () => this.node && WM.open('moyan', { path: FS.pathOf(this.node.id) })));
     this.stage = h('div.jt-stage');
     this.el = h('div.jt', { tabindex: '-1' }, autoCompact(this.bar), this.stage);
     win.body.append(this.el);
@@ -10149,7 +10502,7 @@ class WebView {
     return FS.resolve('/' + parts.join('/'));
   }
   async dataURL(n) {
-    if (n.size > 25 * 1024 * 1024) return null;
+    if (n.size > UI.cap(25 * 1024 * 1024)) return null;
     const b = await FS.read(n); const type = mimeOf(n.name);
     return new Promise(r => { const fr = new FileReader(); fr.onload = () => r(String(fr.result)); fr.onerror = () => r(null); fr.readAsDataURL(type && b.type !== type ? b.slice(0, b.size, type) : b); });
   }
@@ -10211,7 +10564,7 @@ class WebView {
     if (this.mode === 'src') {
       this.frame = null;
       // 着色会给每个标记造一个节点：大源码只着色前 8 万字，其余原样；超过 40 万字只摆出前 40 万字
-      const HL = 80000, MAXT = 400000, head = text.slice(0, HL), rest = text.slice(HL, MAXT);
+      const HL = UI.bigAll() ? 400000 : 80000, MAXT = UI.cap(400000), head = text.slice(0, HL), rest = text.slice(HL, MAXT);
       this.stage.replaceChildren(h('pre.jt-src.selectable', {}, ...hlHTML(head), rest, text.length > MAXT ? h('span.jt-cut', { text: `\n… 其余 ${fmtSize((text.length - MAXT) * 2)} 未摆出（可在墨砚中打开）` }) : ''));
       return;
     }
@@ -10259,7 +10612,7 @@ class ArchiveView {
   constructor(win, args) {
     this.win = win; this.entries = []; this.dir = ''; this.sel = new Set(); this.staged = new Map();
     this.crumb = h('div.nx-crumb');
-    this.bar = h('div.nx-bar', {}, inkBtn('上', '上层', '上一层', () => this.up()), this.crumb, h('span.spacer'),
+    this.bar = h('div.nx-bar.appbar', {}, inkBtn('上', '上层', '上一层', () => this.up()), this.crumb, h('span.spacer'),
       inkBtn('解', '全部解开', '整包解开到压缩包所在的书册', () => this.extract(null)),
       this.bSel = inkBtn('选', '解开选中', '只解开选中的几项', () => this.extract([...this.sel])),
       inkBtn('载', '下载', '把选中的文件下载到本机', () => this.download()));
