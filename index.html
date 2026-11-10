@@ -397,9 +397,6 @@ body.dragging-win, body.dragging-win * { cursor: grabbing !important; }
 .modal-bg.out { animation: qs-toast-out .16s forwards; }
 .hscroll { position: relative; width: min(var(--w, 440px), 100%); filter: drop-shadow(0 18px 40px rgba(30,20,10,.3)); }
 .hscroll > .rodbar { position: relative; z-index: 2; height: 12px; margin: 0 -10px; border-radius: calc(6px * var(--rk)); background: linear-gradient(180deg, #2c2118, #7b604a 38%, #a3866a 50%, #4a382a 80%, #2c2118); }
-.hscroll > .rodbar::before, .hscroll > .rodbar::after { content: ''; position: absolute; top: -3px; bottom: -3px; width: 12px; border-radius: calc(3px * var(--rk)); background: linear-gradient(180deg, #8a6a30, var(--gold) 45%, #6a4f22); }
-.hscroll > .rodbar::before { left: -6px; } .hscroll > .rodbar::after { right: -6px; }
-.hscroll.danger > .rodbar::before, .hscroll.danger > .rodbar::after { background: linear-gradient(180deg, #7a2a20, var(--accent) 45%, #6a2018); }
 .hscroll > .sheet {
   position: relative; z-index: 1; overflow: hidden; max-height: calc(100vh - 80px); display: flex; flex-direction: column;
   background: linear-gradient(90deg, color-mix(in srgb, var(--paper2) 60%, var(--paper3)) 0 10px, var(--paper3) 10px calc(100% - 10px), color-mix(in srgb, var(--paper2) 60%, var(--paper3)) calc(100% - 10px));
@@ -492,37 +489,40 @@ body.dragging-win, body.dragging-win * { cursor: grabbing !important; }
   --shadow-sm: 0 0 0 .5px rgba(40,30,20,.1), 0 1px 2px rgba(40,30,20,.12), 0 6px 14px -4px rgba(40,30,20,.16); }
 :root.dark { --qs-hl: rgba(255,255,255,.07); --qs-sink: rgba(0,0,0,.55); }
 
-/* —— 窗：一张裱好的纸。边是墨线，题头一抹淡墨，下缘一笔飞白 —— */
+/* —— 窗：一张裱好的纸。边是墨线；题头纸感（宣纸纤维、一抹淡墨、下缘一笔飞白）默认不开，设阁 › 轴 · 窗口 可开（:root.qs-tpaper） —— */
 .win { background-image: var(--tex-paper, none); border-color: color-mix(in srgb, var(--ink) 24%, var(--line)); }
-.win-title {
+:root.qs-tpaper .win-title {
   isolation: isolate; border-bottom-color: color-mix(in srgb, var(--line) 30%, transparent);
   background: var(--tex-paper, none), linear-gradient(180deg, color-mix(in srgb, var(--paper3) 90%, #fff), color-mix(in srgb, var(--paper3) 84%, var(--paper2)));
   box-shadow: inset 0 1px 0 var(--qs-hl);
 }
-:root.dark .win-title { background: var(--tex-paper, none), linear-gradient(180deg, #0f0e0c, #1a1713); border-bottom-color: rgba(212,168,90,.08); }
-.win-title::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: inherit; background: var(--tex-wash, none) center / 100% 100% no-repeat; opacity: .38; transition: opacity .45s var(--ease-ink); }
-.win-title::after { content: ''; position: absolute; left: 0; right: 0; bottom: -2px; height: 6px; z-index: -1; pointer-events: none; background: var(--tex-stroke, none) center / 100% 100% no-repeat; opacity: .3; transition: opacity .45s var(--ease-ink); }
-.win.focused .win-title::before { opacity: 1; }
-.win.focused .win-title::after { opacity: .9; }
-:root.dark .win.focused .win-title::after { opacity: .75; }
+:root.qs-tpaper.dark .win-title { background: var(--tex-paper, none), linear-gradient(180deg, #0f0e0c, #1a1713); border-bottom-color: rgba(212,168,90,.08); }
+:root.qs-tpaper .win-title::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: inherit; background: var(--tex-wash, none) center / 100% 100% no-repeat; opacity: .38; transition: opacity .45s var(--ease-ink); }
+:root.qs-tpaper .win-title::after { content: ''; position: absolute; left: 0; right: 0; bottom: -2px; height: 6px; z-index: -1; pointer-events: none; background: var(--tex-stroke, none) center / 100% 100% no-repeat; opacity: .3; transition: opacity .45s var(--ease-ink); }
+:root.qs-tpaper .win.focused .win-title::before { opacity: 1; }
+:root.qs-tpaper .win.focused .win-title::after { opacity: .9; }
+:root.qs-tpaper.dark .win.focused .win-title::after { opacity: .75; }
 .win-title .tt { font-size: 15px; letter-spacing: .08em; }
 .win.focused .win-title .tt { text-shadow: 0 0 .6px color-mix(in srgb, var(--ink) 55%, transparent); }
 
 /* —— 卷轴动效：木轴有纹有光，压在纸上有影；素纸先展，墨后洇 —— */
 
-/* —— 开关：砚槽里一颗瓷珠；拨过去，墨自左漫满，珠成朱砂 —— */
-.switch { width: 44px; height: 24px; border-radius: 24px; background: linear-gradient(180deg, color-mix(in srgb, var(--ink) 32%, var(--paper2)), color-mix(in srgb, var(--ink) 13%, var(--paper2)));
-  box-shadow: inset 0 2px 4px var(--qs-sink), inset 0 0 0 .5px rgba(0,0,0,.25), 0 1px 0 var(--qs-hl); transition: filter var(--t); }
-.switch::before { content: ''; position: absolute; left: 2px; top: 2px; bottom: 2px; width: 20px; border-radius: 20px; opacity: 0;
-  background: radial-gradient(130% 150% at 0% 50%, #0b0a09, color-mix(in srgb, var(--willow-deep) 62%, #0d0c0a) 58%, var(--willow-deep));
-  box-shadow: inset 0 1px 2px rgba(0,0,0,.55), inset 0 -1px 0 rgba(255,255,255,.08); transition: width .46s var(--ease-ink), opacity .22s; }
-.switch:checked { background: linear-gradient(180deg, color-mix(in srgb, var(--ink) 32%, var(--paper2)), color-mix(in srgb, var(--ink) 13%, var(--paper2))); }
-.switch:checked::before { width: calc(100% - 4px); opacity: 1; }
-.switch::after { left: 3px; top: 3px; width: 18px; height: 18px; background: radial-gradient(circle at 34% 27%, #fff 0 9%, #f8f3e8 24%, #dcd2bd 62%, #a59a83 100%);
-  box-shadow: 0 1px 2px rgba(0,0,0,.5), 0 3px 6px rgba(0,0,0,.2), inset 0 -1.5px 1.5px rgba(60,45,25,.25); transition: transform .4s var(--spring), background .3s .08s; }
-.switch:checked::after { transform: translateX(20px); background: radial-gradient(circle at 34% 27%, #ffe6da 0 8%, color-mix(in srgb, var(--accent) 72%, #fff) 26%, var(--accent) 60%, color-mix(in srgb, var(--accent) 55%, #000) 100%); }
-.switch:active::after { transform: scale(.88); } .switch:checked:active::after { transform: translateX(20px) scale(.88); }
-.switch:hover { filter: brightness(1.04); }
+/* —— 开关：纸上压出的一道浅槽，一枚纸钮。拨过去，柳色的墨自左洇满槽底（纸纹透出来），钮落在墨上 ——
+   不上釉、不打高光：槽是压痕（内影一线），钮是厚纸（哑光、软影），墨是吃进纸里的（底下有纤维）。 */
+.switch { width: 44px; height: 24px; border-radius: 24px; background: color-mix(in srgb, var(--ink) 9%, var(--paper2));
+  box-shadow: inset 0 1px 2px color-mix(in srgb, var(--qs-sink) 75%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--ink) 16%, var(--line)); transition: background var(--t); overflow: hidden; }
+.switch::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 24px; border-radius: 24px; opacity: 0;
+  background: var(--tex-paper, none) 0 0 / 120px 120px, color-mix(in srgb, var(--willow-deep) 92%, var(--ink));
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.32), inset 0 0 0 1px color-mix(in srgb, var(--willow-deep) 70%, #000); transition: width .42s var(--ease-ink), opacity .2s; }
+.switch:checked { background: color-mix(in srgb, var(--ink) 9%, var(--paper2)); }
+.switch:checked::before { width: 100%; opacity: 1; }
+.switch::after { left: 3px; top: 3px; width: 18px; height: 18px; z-index: 1;
+  background: var(--tex-paper, none) 0 0 / 90px 90px, color-mix(in srgb, var(--paper3) 92%, #fff);
+  box-shadow: 0 0 0 .5px color-mix(in srgb, var(--ink) 30%, transparent), 0 1px 1.5px rgba(30,22,12,.28), 0 2px 5px rgba(30,22,12,.14); transition: transform .38s var(--spring); }
+.switch:checked::after { transform: translateX(20px); box-shadow: 0 0 0 .5px rgba(0,0,0,.4), 0 1px 1.5px rgba(0,0,0,.35), 0 2px 5px rgba(0,0,0,.18); }
+:root.dark .switch { background: color-mix(in srgb, #000 30%, var(--paper2)); }
+:root.dark .switch::after { background: var(--tex-paper, none) 0 0 / 90px 90px, color-mix(in srgb, var(--ink) 78%, var(--paper3)); }
+.switch:active::after { transform: scale(.92); } .switch:checked:active::after { transform: translateX(20px) scale(.92); }
 .switch:focus-visible { outline: 2px solid color-mix(in srgb, var(--willow) 70%, transparent); outline-offset: 2px; }
 
 /* —— 滑杆：一道墨槽，一颗瓷珠 —— */
@@ -554,78 +554,45 @@ input[type=range]::-moz-range-thumb { width: 17px; height: 17px; border: 0; back
 .seg { box-shadow: inset 0 1px 2.5px color-mix(in srgb, var(--qs-sink) 60%, transparent), 0 1px 0 var(--qs-hl); border-color: color-mix(in srgb, var(--ink) 14%, var(--line)); }
 .seg button.on { background: linear-gradient(180deg, color-mix(in srgb, var(--paper3) 94%, #fff), color-mix(in srgb, var(--paper3) 88%, var(--paper2))); box-shadow: inset 0 1px 0 var(--qs-hl), 0 1px 2px rgba(40,30,20,.22), 0 0 0 .5px rgba(40,30,20,.14); }
 
-/* —— 天栏如砚、坞如漆盘、单与轴都是同一张纸 —— */
-#topbar { background-image: linear-gradient(180deg, rgba(255,255,255,.055), transparent 45%, rgba(0,0,0,.2)); box-shadow: inset 0 -1px 0 color-mix(in srgb, var(--gold) 26%, transparent), 0 2px 12px rgba(0,0,0,.22); }
-#dock { background-image: linear-gradient(180deg, rgba(255,255,255,.085), transparent 34%, rgba(0,0,0,.22)); border-color: rgba(255,255,255,.09);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.1), inset 0 -2px 3px rgba(0,0,0,.35), 0 2px 3px rgba(0,0,0,.3), 0 14px 40px -6px rgba(0,0,0,.42); }
-.mpaper { background-image: var(--tex-paper, none), repeating-linear-gradient(90deg, color-mix(in srgb, var(--ink) 2.2%, transparent) 0 1px, transparent 1px 6px); }
+/* —— 单的纸感（宣纸纤维）默认不开，原样是半透的帘纹薄纸；设阁 › 衣 · 外观 可开（:root.qs-mpaper） —— */
+:root.qs-mpaper .mpaper { background-image: var(--tex-paper, none), repeating-linear-gradient(90deg, color-mix(in srgb, var(--ink) 2.2%, transparent) 0 1px, transparent 1px 6px); }
 .hscroll > .sheet::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: var(--tex-paper, none); }
-.appbar { background-image: var(--tex-paper, none); }
+:root.qs-tpaper .appbar { background-image: var(--tex-paper, none); }
 
 @keyframes qs-range-in { from { outline-color: transparent; } to { outline-color: transparent; } }
 input[type=range] { animation: qs-range-in .01s; }
 
-/* ================= 卷轴（重做）=================
-   窗是手卷、对话框是立轴、菜单是小条幅——开合收放都是「卷」。
-   轴是圆的：迎光一侧有高光，背光有暗部，边上有反光；木头有丝；卷在轴上的纸有绫边，越卷越粗；两头出轴头；压在纸上有影。 */
-:root {
-  --zwood: #70492f; --zroll: #ece3cf; --zsilk: #8a8f70; --zcord: #94402f;
-  --zst: rgba(0,0,0,.6) 0%, rgba(0,0,0,.24) 9%, rgba(255,255,255,.04) 21%, rgba(255,255,255,.52) 32%, rgba(255,255,255,.12) 45%, rgba(0,0,0,.14) 62%, rgba(0,0,0,.45) 84%, rgba(0,0,0,.3) 94%, rgba(0,0,0,.64) 100%;
-  --zstp: rgba(0,0,0,.44) 0%, rgba(0,0,0,.17) 10%, rgba(255,255,255,0) 26%, rgba(255,255,255,.24) 38%, rgba(255,255,255,.06) 52%, rgba(0,0,0,.09) 66%, rgba(0,0,0,.3) 86%, rgba(0,0,0,.22) 95%, rgba(0,0,0,.46) 100%;
-  --zspec: radial-gradient(55% 45% at 34% 30%, rgba(255,255,255,.72), rgba(255,255,255,0) 72%);
-}
-:root.dark { --zwood: #553823; --zroll: #a0977f; --zsilk: #5b624e; }
+/* ================= 木轴：旧式的一根木杆，写实重做 =================
+   开合收放时随纸边走的那根轴，对话框的天杆地杆，坞上收起的窗——都是同一根木头：
+   Tex（20-theme.js）逐像素画出圆柱受光、顺轴木纹、棕眼与薄漆柔光（--tex-rodv / --tex-rodh）；
+   轴头是旋出来的钮，只画明暗与漆光（--tex-knob*），颜色由 --c 垫底，金、朱、各程序印色共用。菜单的天地杆仍是原来的细黑杆。 */
 .rollfx { position: absolute; z-index: 9; pointer-events: none; }
-.zhou { position: absolute; left: 0; top: 0; width: 0; height: 100%; --T: 20px; --cyl: linear-gradient(90deg, var(--zst)); --cylp: linear-gradient(90deg, var(--zstp)); --gr: var(--tex-grv, none); --a: 90deg; --b: 180deg; }
-.zhou.h { width: 100%; height: 0; --cyl: linear-gradient(180deg, var(--zst)); --cylp: linear-gradient(180deg, var(--zstp)); --gr: var(--tex-grh, none); --a: 180deg; --b: 90deg; }
-.zhou > i { position: absolute; display: block; }
-/* 木轴：比纸长，两头露一截 */
-.zhou > .zx { left: -4px; width: 8px; top: -10px; bottom: -10px; border-radius: 3px; background: var(--cyl), var(--gr) 0 0 / 12px 80px, linear-gradient(var(--zwood), var(--zwood)); }
-.zhou.h > .zx { left: -10px; right: -10px; width: auto; top: -4px; bottom: auto; height: 8px; background-size: auto, 80px 12px, auto; }
-/* 卷在轴上的纸：两端一道绫边，纸口一线 */
-.zhou > .zp { left: calc(var(--T) / -2); width: var(--T); top: 0; bottom: 0; border-radius: 1.5px;
-  background: var(--cylp),
-    linear-gradient(var(--b), var(--zsilk) 0 7px, rgba(40,30,15,.4) 7px 8px, transparent 8px calc(100% - 8px), rgba(40,30,15,.4) calc(100% - 8px) calc(100% - 7px), var(--zsilk) calc(100% - 7px)),
-    linear-gradient(var(--a), transparent 0 71%, rgba(60,42,20,.16) 71% calc(71% + 1px), transparent calc(71% + 1px)),
-    var(--tex-paper, none), linear-gradient(var(--zroll), var(--zroll));
-  box-shadow: 3px 5px 10px rgba(24,14,4,.38), 0 0 0 .5px rgba(40,28,12,.45); }
-.zhou.h > .zp { left: 0; right: 0; width: auto; top: calc(var(--T) / -2); bottom: auto; height: var(--T); box-shadow: 0 6px 11px rgba(24,14,4,.4), 0 0 0 .5px rgba(40,28,12,.45); }
-/* 卷压在展开的纸上的影 */
-.zhou.l > .zs { left: 0; width: 30px; top: 0; bottom: 0; background: linear-gradient(90deg, rgba(24,14,4,.44), rgba(24,14,4,.15) 38%, transparent); }
-.zhou.r > .zs { right: 0; width: 26px; top: 0; bottom: 0; background: linear-gradient(270deg, rgba(24,14,4,.28), rgba(24,14,4,.09) 38%, transparent); }
-.zhou.h.u > .zs { left: 0; right: 0; bottom: 0; height: 24px; background: linear-gradient(0deg, rgba(24,14,4,.26), rgba(24,14,4,.08) 40%, transparent); }
-/* 轴头：一粒旋出来的钮，根上一道铜箍 */
-.zhou > .zk { left: -6.5px; width: 13px; height: 12px; background: var(--zspec), var(--cyl), linear-gradient(var(--c, var(--gold)), var(--c, var(--gold))); box-shadow: 0 0 0 .5px rgba(20,10,0,.5), 2px 3px 4px rgba(20,10,0,.35); }
-.zhou > .zk::after { content: ''; position: absolute; left: 2px; right: 2px; height: 3px; background: var(--cyl), linear-gradient(#cfa85c, #cfa85c); box-shadow: 0 0 0 .5px rgba(20,10,0,.45); }
-.zhou > .zk.a { top: -21px; border-radius: 6.5px 6.5px 3px 3px / 7px 7px 2px 2px; } .zhou > .zk.a::after { bottom: -3px; }
-.zhou > .zk.b { bottom: -21px; border-radius: 3px 3px 6.5px 6.5px / 2px 2px 7px 7px; } .zhou > .zk.b::after { top: -3px; }
-.zhou.h > .zk { left: auto; top: -6.5px; bottom: auto; width: 12px; height: 13px; }
-.zhou.h > .zk::after { left: auto; right: auto; top: 2px; bottom: 2px; width: 3px; height: auto; }
-.zhou.h > .zk.a { left: -21px; border-radius: 7px 2px 2px 7px / 6.5px 3px 3px 6.5px; } .zhou.h > .zk.a::after { right: -3px; }
-.zhou.h > .zk.b { right: -21px; border-radius: 2px 7px 7px 2px / 3px 6.5px 6.5px 3px; } .zhou.h > .zk.b::after { left: -3px; }
+.qrod { position: absolute; display: block; left: 0; top: -8px; bottom: -8px; width: 12px; margin-left: -6px; border-radius: 2px;
+  background: var(--tex-rodv, linear-gradient(90deg, #2c2118, #7b604a 38%, #a3866a 50%, #4a382a 80%, #2c2118)) 0 0 / 100% 128px repeat-y;
+  filter: drop-shadow(3px 4px 3px rgba(20,12,4,.34)) drop-shadow(0 0 .5px rgba(20,12,4,.6)); will-change: transform; }
+.qrod.h { left: -8px; right: -8px; top: 0; bottom: auto; width: auto; height: 12px; margin: -6px 0 0;
+  background: var(--tex-rodh, linear-gradient(180deg, #2c2118, #7b604a 38%, #a3866a 50%, #4a382a 80%, #2c2118)) 0 0 / 128px 100% repeat-x;
+  filter: drop-shadow(0 4px 3px rgba(20,12,4,.34)) drop-shadow(0 0 .5px rgba(20,12,4,.6)); }
+/* 轴头（竖）：上一粒、下一粒（下头那粒上下翻过来） */
+.qrod::before, .qrod::after, .rodbar::before, .rodbar::after { content: ''; position: absolute; left: -2px; right: -2px; height: 11px; border-radius: 3px;
+  background: var(--tex-knobvs, none) 0 0 / 100% 100%, var(--tex-knobv, none) 0 0 / 100% 100%, linear-gradient(var(--c, var(--gold)), var(--c, var(--gold)));
+  background-blend-mode: screen, multiply, normal;
+  -webkit-mask: var(--tex-knobv, linear-gradient(#000, #000)) 0 0 / 100% 100%; mask: var(--tex-knobv, linear-gradient(#000, #000)) 0 0 / 100% 100%; }
+.qrod::before { top: -10px; } .qrod::after { bottom: -10px; transform: scaleY(-1); }
+/* 轴头（横）：右一粒，左一粒（左右翻过来） */
+.qrod.h::before, .qrod.h::after, .rodbar::before, .rodbar::after, .dock-item .minroll::before, .dock-item .minroll::after { left: auto; right: auto; top: -2px; bottom: -2px; width: 11px; height: auto;
+  background: var(--tex-knobhs, none) 0 0 / 100% 100%, var(--tex-knobh, none) 0 0 / 100% 100%, linear-gradient(var(--c, var(--gold)), var(--c, var(--gold)));
+  background-blend-mode: screen, multiply, normal;
+  -webkit-mask: var(--tex-knobh, linear-gradient(#000, #000)) 0 0 / 100% 100%; mask: var(--tex-knobh, linear-gradient(#000, #000)) 0 0 / 100% 100%; }
+.qrod.h::after { right: -10px; bottom: -2px; transform: none; } .qrod.h::before { left: -10px; transform: scaleX(-1); }
+/* 对话框（立轴）：天杆、地杆同样粗细（原样 12px），两头出轴头；危险的对话框轴头是朱色 */
+.hscroll > .rodbar { --c: var(--gold); background: var(--tex-rodh, linear-gradient(180deg, #2c2118, #7b604a 38%, #a3866a 50%, #4a382a 80%, #2c2118)) 0 0 / 128px 100% repeat-x; box-shadow: 0 2px 3px rgba(20,12,4,.28); }
+.hscroll.danger > .rodbar { --c: var(--accent); }
+.hscroll > .rodbar::before { left: -9px; transform: scaleX(-1); } .hscroll > .rodbar::after { right: -9px; }
+/* 坞：收起的窗——印上搁一根小木杆，两头是它的轴头 */
+.dock-item .minroll { height: 7px; top: -7px; background: var(--tex-rodh, linear-gradient(180deg, #7a5f46, #3a2b1f)) 0 0 / 64px 100% repeat-x; box-shadow: 0 1px 2px rgba(0,0,0,.45); }
+.dock-item .minroll::before { left: -6px; width: 7px; top: -1.5px; bottom: -1.5px; transform: scaleX(-1); } .dock-item .minroll::after { right: -6px; width: 7px; top: -1.5px; bottom: -1.5px; }
 
-/* 菜单：小条幅。天杆细，地杆粗、两头出轴头 */
-.mrod, :root.dark .mrod { background: linear-gradient(180deg, var(--zst)), var(--tex-grh, none) 0 0 / 80px 12px, linear-gradient(var(--zwood), var(--zwood)); box-shadow: 0 2px 4px rgba(20,12,4,.4); }
-.mrod.top { height: 6px; margin: 0 -3px; border-radius: 3px 3px 1.5px 1.5px; }
-.mrod.bot { height: 10px; margin: 0 2px; border-radius: 2px; }
-.mrod.bot::before, .mrod.bot::after { top: -1.5px; width: 11px; height: 13px; background: var(--zspec), linear-gradient(180deg, var(--zst)), linear-gradient(#c9a257, #c9a257); box-shadow: 0 0 0 .5px rgba(20,10,0,.5), 1px 2px 3px rgba(20,10,0,.4); }
-.mrod.bot::before { left: -10px; border-radius: 6px 2px 2px 6px / 6.5px 3px 3px 6.5px; } .mrod.bot::after { right: -10px; border-radius: 2px 6px 6px 2px / 3px 6.5px 6.5px 3px; }
-
-/* 对话框：立轴。上面是天杆（细、无轴头），下面是地杆（粗、两头出轴头）；展开时地杆上还卷着纸 */
-.hscroll > .rodbar { height: 9px; margin: 0 -6px; border-radius: 4.5px 4.5px 2px 2px; background: linear-gradient(180deg, var(--zst)), var(--tex-grh, none) 0 0 / 80px 12px, linear-gradient(var(--zwood), var(--zwood)); box-shadow: 0 2px 4px rgba(20,12,4,.35); }
-.hscroll > .rodbar::before, .hscroll > .rodbar::after { display: none; }
-.hscroll > .rodbar.bottom { height: 15px; margin: 0 -4px; border-radius: 3px; box-shadow: 0 5px 9px rgba(20,12,4,.4); }
-.hscroll > .rodbar.bottom::before, .hscroll > .rodbar.bottom::after { display: block; top: -2px; bottom: -2px; width: 15px; background: var(--zspec), linear-gradient(180deg, var(--zst)), linear-gradient(var(--gold), var(--gold)); box-shadow: 0 0 0 .5px rgba(20,10,0,.5), 1px 3px 4px rgba(20,10,0,.4); }
-.hscroll > .rodbar.bottom::before { left: -14px; border-radius: 8px 2px 2px 8px / 9.5px 3px 3px 9.5px; } .hscroll > .rodbar.bottom::after { right: -14px; border-radius: 2px 8px 8px 2px / 3px 9.5px 9.5px 3px; }
-.hscroll.danger > .rodbar.bottom::before, .hscroll.danger > .rodbar.bottom::after { background: var(--zspec), linear-gradient(180deg, var(--zst)), linear-gradient(var(--accent), var(--accent)); }
-.hscroll > .rodbar > .zp { position: absolute; inset: -4px 5px; border-radius: 2px; opacity: 0; pointer-events: none;
-  background: linear-gradient(180deg, var(--zstp)), linear-gradient(90deg, var(--zsilk) 0 10px, rgba(40,30,15,.4) 10px 11px, transparent 11px calc(100% - 11px), rgba(40,30,15,.4) calc(100% - 11px) calc(100% - 10px), var(--zsilk) calc(100% - 10px)), var(--tex-paper, none), linear-gradient(var(--zroll), var(--zroll)); box-shadow: 0 0 0 .5px rgba(40,28,12,.45); }
-
-/* 坞：收起的窗——印上搁一小卷，红绳系着，两头是它的轴头 */
-.dock-item .minroll { top: -8px; height: 9px; border-radius: 1.5px; box-shadow: 0 2px 3px rgba(0,0,0,.45), 0 0 0 .5px rgba(30,20,8,.55);
-  background: linear-gradient(180deg, var(--zstp)), linear-gradient(90deg, transparent calc(50% - 1.5px), var(--zcord) calc(50% - 1.5px) calc(50% + 1.5px), transparent calc(50% + 1.5px)), linear-gradient(90deg, var(--zsilk) 0 4px, transparent 4px calc(100% - 4px), var(--zsilk) calc(100% - 4px)), linear-gradient(var(--zroll), var(--zroll)); }
-.dock-item .minroll::before, .dock-item .minroll::after { top: 1.5px; width: 5px; height: 6px; background: var(--zspec), linear-gradient(180deg, var(--zst)), linear-gradient(var(--c, var(--gold)), var(--c, var(--gold))); box-shadow: 0 0 0 .5px rgba(20,10,0,.5); }
-.dock-item .minroll::before { left: -5px; border-radius: 3px 1px 1px 3px; } .dock-item .minroll::after { right: -5px; border-radius: 1px 3px 3px 1px; }
 /* ── 30-shuge.css ── */
 /* ================= 书阁 ================= */
 .fm { display: flex; flex-direction: column; height: 100%; min-height: 0; }
@@ -1128,12 +1095,12 @@ body.fm-dragging, body.fm-dragging * { cursor: grabbing !important; }
 .cl-persist { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 12px; font-size: 13px; color: var(--ink2); }
 .cl-okt { color: var(--willow-deep); } .cl-warnt { color: var(--gold); }
 .cl-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 14px; }
-@container (max-width: 460px) { .cl-top, .cl-card { padding: 12px; } .cl-usage { justify-content: center; } }
+@container (max-width: 460px) { .cl-top, .cl-card { padding: 12px; } .cl-usage { grid-template-columns: 1fr; justify-items: center; } }
 @media (max-width: 480px) { .cl { padding: 10px; } }
 .cl-card { padding: 16px; border-radius: calc(14px * var(--rk)); background: var(--paper3); border: 1px solid color-mix(in srgb, var(--line) 70%, transparent); min-width: 0; }
 .cl-h { display: flex; align-items: center; gap: 9px; margin: 0 0 12px; font: 600 16px var(--font-kai); letter-spacing: .2em; }
 .cl-p { margin: 0 0 12px; font-size: 13px; line-height: 1.7; color: var(--ink2); }
-.cl-ubig { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; } .cl-ubig b { font: 600 28px var(--font-song); } .cl-ubig span { color: var(--ink3); font-size: 13px; }
+.cl-ubig { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 6px 0 8px; padding: 8px 10px; font-size: 12.5px; color: var(--rust); border-left: 2px solid var(--rust); background: color-mix(in srgb, var(--rust) 7%, transparent); }
 .cl-bar { display: flex; height: 12px; border-radius: calc(6px * var(--rk)); overflow: hidden; background: var(--line); gap: 1px; } .cl-bar i { display: block; height: 100%; }
 .cl-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 10px 0 4px; font-size: 12px; color: var(--ink2); } .cl-legend i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
 .cl-q { margin-top: 12px; font-size: 12px; color: var(--ink3); } .cl-qb { height: 5px; border-radius: calc(3px * var(--rk)); background: var(--line); overflow: hidden; margin-bottom: 5px; } .cl-qb i { display: block; height: 100%; background: var(--gold); }
@@ -1159,7 +1126,9 @@ body.fm-dragging, body.fm-dragging * { cursor: grabbing !important; }
 .cl-core.warn .cl-cg { background: var(--gold); } .cl-core.bad .cl-cg { background: var(--accent); }
 .cl-cn { display: flex; align-items: center; gap: 7px; } .cl-cn b { font-size: 14px; } .cl-cn .cl-dot { margin-left: auto; }
 /* 「仓储」一卡：左瓮右简。类名与数据库仓按钮（.cl-store）撞过车——那边的网格与边框把这里挤变了形，故另起名 */
-.cl-usage { display: flex; gap: 18px 26px; align-items: center; flex-wrap: wrap; }
+/* 版式照旧：一方浅框，左栏宽、瓮居中，右栏是竹简；字数一行是一条朱边小签 */
+.cl-usage { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; padding: 9px 12px; border-radius: calc(9px * var(--rk)); border: 1px solid color-mix(in srgb, var(--line) 80%, transparent); background: color-mix(in srgb, var(--paper) 40%, transparent); }
+.cl-usage b { font-family: var(--font-mono); font-size: 13px; } .cl-usage .muted { font-size: 11.5px; }
 .cl-vatbox { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 0 0 170px; }
 .cl-vatbox .cl-art { max-width: 160px; }
 .cl-vatcap { font-size: 12px; color: var(--ink2); display: grid; gap: 2px; justify-items: start; }
@@ -1167,8 +1136,8 @@ body.fm-dragging, body.fm-dragging * { cursor: grabbing !important; }
 @media (max-width: 759px) { .cl { padding: 10px; } .cl-grid { grid-template-columns: 1fr; } .cl-card.wide { grid-column: auto; } .cl-cl + .cl-cl { display: none; } }
 
 .cl-vatbox canvas.ia { width: 170px; max-width: 100%; height: auto; display: block; }
-.cl-slipbox { flex: 1 1 240px; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; }
-.cl-slipbox canvas.ia { flex: none; max-width: 100%; height: auto; display: block; }
+.cl-slipbox { min-width: 0; }
+.cl-slipbox canvas.ia { max-width: 100%; height: auto; display: block; }
 
 /* ---------- 四仓：真实数据的小图 ---------- */
 .cl-core { text-align: left; font: inherit; color: inherit; cursor: pointer; align-items: stretch; justify-content: flex-start; }
@@ -1750,7 +1719,7 @@ const LS = {
 
 /* ---------- 偏好（带默认值，写入即持久化并广播） ---------- */
 const PREF_DEFAULTS = {
-  theme: 'qingsi', accent: '', fontBase: 'auto', scrollOrient: 'h', useTrash: false, trashName: 'shiyi', uiScale: 1, density: 'comfy', corner: 0, menuGlyph: 'kai',
+  theme: 'qingsi', accent: '', fontBase: 'auto', scrollOrient: 'h', useTrash: false, trashName: 'shiyi', uiScale: 1, density: 'comfy', corner: 0, menuGlyph: 'kai', menuPaper: false, titlePaper: false,
   glyphStyle: 'ink',
   webScripts: true,       // 墨字 ink / 系统字体 font
   motion: 2,               // 0 静 1 简 2 全
@@ -4202,83 +4171,34 @@ const InkArt = (() => {
     c.translate(0, footY - 2); c.scale(1, .22); c.fillStyle = sg; c.translate(0, -(footY - 2)); c.beginPath(); c.arc(W / 2 + 8, footY - 2, H8 * .36, 0, 7); c.fill(); c.restore();
     if (img) { c.imageSmoothingQuality = 'high'; c.drawImage(img, x, 0, w, img.height / k); }
   }
-  /* 竹简：一枚一枚削出来的老竹片——微拱的竹面、纵向的竹丝、竹节的棱、两端的崩口与手泽，
-     两道麻绳一压一挑编起来，绳头垂在左侧（古书自右向左）。字用墨直接写在竹上，不再贴图拉伸。 */
-  function inkText(c, s, x, y, size, P, alpha = 0.9, weight = 600) {
-    c.save(); c.textAlign = 'center'; c.textBaseline = 'middle'; c.font = `${weight} ${size}px "QS Huazi", ${P.font}`;
-    if (hasFilter) { c.filter = `blur(${Math.max(0.35, size * 0.045)}px)`; c.fillStyle = rgba(P.INK, alpha * 0.42); c.fillText(s, x, y); c.filter = 'none'; }   // 墨往竹丝里洇一点
-    c.fillStyle = rgba(P.INK, alpha); c.fillText(s, x, y); c.restore();
-  }
-  function bambooSlip(c, x, y, w, h, q, P) {
-    const jag = k => (q() - 0.5) * k, path = new Path2D();
-    path.moveTo(x + 0.5, y + 1.5 + jag(1.4)); path.lineTo(x + w * 0.32, y + jag(1)); path.lineTo(x + w * 0.7, y + jag(1)); path.lineTo(x + w - 0.5, y + 1.3 + jag(1.4));
-    path.lineTo(x + w, y + h - 1.5 + jag(1.4)); path.lineTo(x + w * 0.66, y + h + jag(1)); path.lineTo(x + w * 0.3, y + h + jag(1)); path.lineTo(x, y + h - 1.3 + jag(1.4)); path.closePath();
-    c.save(); c.clip(path);
-    const base = mixHex(mixHex('#cdae70', '#a57d43', q() * 0.75), P.dark ? '#4a3418' : '#ead6a4', P.dark ? 0.22 : 0.08);
-    let g = c.createLinearGradient(x, 0, x + w, 0);          // 竹面微拱：左缘暗、偏左一道亮、右缘更暗
-    g.addColorStop(0, mixHex(base, '#241405', 0.5)); g.addColorStop(0.09, mixHex(base, '#241405', 0.16)); g.addColorStop(0.34, mixHex(base, '#fff4d2', 0.22)); g.addColorStop(0.6, base); g.addColorStop(0.9, mixHex(base, '#241405', 0.24)); g.addColorStop(1, mixHex(base, '#180d03', 0.56));
-    c.fillStyle = g; c.fillRect(x - 1, y - 3, w + 2, h + 6);
-    for (let k = 0; k < 54; k++) {                             // 竹丝
-      const fx = x + q() * w, a = 0.035 + q() * 0.1, len = h * (0.2 + q() * 0.8), fy = y + q() * (h - len);
-      c.strokeStyle = q() < 0.7 ? rgba('#4a2e0c', a) : rgba('#fff2cc', a * 0.85); c.lineWidth = 0.3 + q() * 0.5;
-      c.beginPath(); c.moveTo(fx, fy); c.bezierCurveTo(fx + jag(0.9), fy + len * 0.33, fx + jag(0.9), fy + len * 0.66, fx + jag(0.6), fy + len); c.stroke();
-    }
-    g = c.createLinearGradient(0, y, 0, y + h);               // 两端的手泽与烟色
-    g.addColorStop(0, rgba('#221405', 0.34)); g.addColorStop(0.09, rgba('#221405', 0.03)); g.addColorStop(0.88, rgba('#221405', 0.05)); g.addColorStop(1, rgba('#221405', 0.4));
-    c.fillStyle = g; c.fillRect(x - 1, y - 3, w + 2, h + 6);
-    for (let k = 0; k < 9; k++) { c.fillStyle = rgba('#3a2408', 0.04 + q() * 0.1); c.beginPath(); c.ellipse(x + q() * w, y + q() * h, 0.5 + q() * 1.6, 0.8 + q() * 3.2, jag(0.5), 0, 7); c.fill(); }
-    const nodes = [y + h * (0.1 + q() * 0.14)]; if (q() < 0.7) nodes.push(y + h * (0.56 + q() * 0.3));
-    for (const ny of nodes) {                                  // 竹节：一道微弯的棱，上面压着暗，下面一线亮
-      const bow = 1 + q() * 1.2;
-      g = c.createLinearGradient(0, ny - 4, 0, ny + 1); g.addColorStop(0, rgba('#2a1806', 0)); g.addColorStop(1, rgba('#2a1806', 0.26)); c.fillStyle = g; c.fillRect(x - 1, ny - 4, w + 2, 6);
-      c.strokeStyle = rgba('#2e1a06', 0.62); c.lineWidth = 1.05; c.beginPath(); c.moveTo(x - 1, ny); c.quadraticCurveTo(x + w / 2, ny + bow, x + w + 1, ny - 0.2); c.stroke();
-      c.strokeStyle = rgba('#fff3cf', 0.5); c.lineWidth = 0.75; c.beginPath(); c.moveTo(x - 1, ny + 1.25); c.quadraticCurveTo(x + w / 2, ny + bow + 1.25, x + w + 1, ny + 1.05); c.stroke();
-    }
-    c.restore();
-    c.strokeStyle = rgba('#1f1204', P.dark ? 0.7 : 0.46); c.lineWidth = 0.6; c.stroke(path);
-  }
-  /** 一段麻绳：先落影，再绳身，最后一丝一丝的捻纹 */
-  function hemp(c, pts, w, q, P) {
-    const line = () => { c.beginPath(); c.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length - 1; i++) { const mx = (pts[i][0] + pts[i + 1][0]) / 2, my = (pts[i][1] + pts[i + 1][1]) / 2; c.quadraticCurveTo(pts[i][0], pts[i][1], mx, my); } c.lineTo(pts[pts.length - 1][0], pts[pts.length - 1][1]); };
-    c.save(); c.lineCap = 'round'; c.lineJoin = 'round';
-    blurred(c, 1.4, () => { c.translate(0.6, 1.7); c.strokeStyle = `rgba(0,0,0,${P.dark ? 0.55 : 0.34})`; c.lineWidth = w + 0.6; line(); c.stroke(); });
-    c.strokeStyle = '#4a321a'; c.lineWidth = w + 0.9; line(); c.stroke();
-    c.strokeStyle = P.dark ? '#8a6a40' : '#a17c4c'; c.lineWidth = w; line(); c.stroke();
-    c.strokeStyle = rgba('#e9cf9c', 0.5); c.lineWidth = w * 0.34; c.translate(0, -w * 0.2); line(); c.stroke(); c.translate(0, w * 0.2);
-    for (let i = 0; i < pts.length - 1; i++) {                 // 捻纹：沿绳身斜斜的短划
-      const [ax, ay] = pts[i], [bx, by] = pts[i + 1], len = Math.hypot(bx - ax, by - ay), nx = (bx - ax) / len, ny = (by - ay) / len;
-      for (let s = 0.8; s < len; s += 1.9) { const px = ax + nx * s, py = ay + ny * s, k = w * 0.5; c.strokeStyle = rgba('#3a2410', 0.42 + q() * 0.25); c.lineWidth = 0.55; c.beginPath(); c.moveTo(px - nx * 0.9 + ny * k, py - ny * 0.9 - nx * k); c.lineTo(px + nx * 0.9 - ny * k, py + ny * 0.9 + nx * k); c.stroke(); }
-    }
-    c.restore();
-  }
   function slips(c, W, H, d, P, r) {
-    const ks = d.kinds || [], n = ks.length;
-    if (!n) { txt(c, '还没有文件', W / 2, H / 2, 12, P.ink3, P, 'center'); return; }
-    const sw = 27, gp = 2.4, top = 12, bot = H - 18, hh = bot - top, total = n * sw + (n - 1) * gp, xR = W / 2 + total / 2 + 6;
-    const max = Math.max(1, ...ks.map(k => k[1])), cordY = [top + hh * 0.235, top + hh * 0.79];
-    blurred(c, 5, () => { c.fillStyle = `rgba(0,0,0,${P.shadowA * 0.85})`; c.fillRect(xR - total + 4, top + 7, total, hh - 2); });
-    shadow(c, xR - total / 2, bot + 5, total * 0.58, 4.2, P.shadowA);
-    const geo = ks.map((_, i) => { const q = rng(i * 131 + 7); return { q, x: xR - (i + 1) * sw - i * gp, y: top + (q() - 0.5) * 5, h: hh + (q() - 0.5) * 6, rot: (q() - 0.5) * 0.016 }; });
-    geo.forEach((g, i) => {
-      const [k, b] = ks[i], cx = g.x + sw / 2;
-      c.save(); c.translate(cx, g.y + g.h / 2); c.rotate(g.rot); c.translate(-cx, -(g.y + g.h / 2));
-      bambooSlip(c, g.x, g.y, sw, g.h, g.q, P);
-      inkText(c, KIND_GLYPH[k] || '杂', cx, g.y + 19, 16.5, P, 0.92, 700);                                // 简首：类别
-      const m = Math.max(1, Math.round(Math.sqrt(b / max) * 7)), y0 = cordY[0] + 10, y1 = cordY[1] - 7, step = (y1 - y0) / 7;   // 正文：占得多，写得满
-      for (let j = 0; j < m; j++) inkText(c, LETTER[(i * 7 + j) % LETTER.length], cx + (g.q() - 0.5) * 1.2, y0 + j * step + step / 2, Math.min(12.5, step * 0.92), P, 0.7 + g.q() * 0.16, 500);
-      const [num, unit] = fmtSize(b).split(' ');                                                          // 简尾：大小
-      inkText(c, num, cx, cordY[1] + 12, 8.2, P, 0.78, 600); inkText(c, unit || '', cx, cordY[1] + 21.5, 7.2, P, 0.58, 500);
-      c.restore();
+    const ks = d.kinds || [], n = ks.length, sw = 24, gp = 4, x0 = W / 2 + (n * (sw + gp) - gp) / 2, top = 10, bot = H - 12;
+    const max = Math.max(1, ...ks.map(k => k[1]));
+    shadow(c, W / 2, bot + 4, W * 0.42, 4, P.shadowA * 0.8);
+    const cordY = [top + 30, bot - 26];
+    // 背后的编绳
+    c.strokeStyle = mixHex('#6a4a2a', P.dark ? '#000000' : '#3a2a18', 0.2); c.lineWidth = 1.6;
+    for (const y of cordY) { c.beginPath(); c.moveTo(x0 + 10, y + 1); for (let i = 0; i <= n; i++) c.lineTo(x0 - i * (sw + gp) + 2, y + (i % 2 ? 1.2 : -1.2)); c.stroke(); }
+    ks.forEach(([k, b], i) => {
+      const x = x0 - (i + 1) * sw - i * gp, rr2 = rng(i * 131 + 7);
+      const base = mixHex(P.dark ? '#b49a66' : '#d8bf88', '#a8854a', rr2() * 0.35);
+      let g = c.createLinearGradient(x, 0, x + sw, 0); g.addColorStop(0, mixHex(base, '#000000', 0.18)); g.addColorStop(0.35, mixHex(base, '#ffffff', 0.15)); g.addColorStop(1, mixHex(base, '#000000', 0.22));
+      c.fillStyle = g; c.beginPath(); c.moveTo(x + 2, top); c.lineTo(x + sw - 2, top); c.quadraticCurveTo(x + sw, top, x + sw, top + 3); c.lineTo(x + sw, bot - 3); c.quadraticCurveTo(x + sw, bot, x + sw - 2, bot); c.lineTo(x + 2, bot); c.quadraticCurveTo(x, bot, x, bot - 3); c.lineTo(x, top + 3); c.quadraticCurveTo(x, top, x + 2, top); c.fill();
+      c.strokeStyle = rgba('#6a4a20', 0.16); c.lineWidth = 0.4; for (let q = 0; q < 5; q++) { const fx = x + 3 + rr2() * (sw - 6); c.beginPath(); c.moveTo(fx, top + 2); c.lineTo(fx + (rr2() - 0.5) * 1.5, bot - 2); c.stroke(); }
+      c.fillStyle = rgba('#6a4a20', 0.12); c.fillRect(x, top + (bot - top) * (0.3 + rr2() * 0.4), sw, 1.2);
+      // 简首：类别
+      glyph(c, KIND_GLYPH[k] || '杂', x + sw / 2, top + 14, 15, P.INK, P);
+      // 正文：按占用写字
+      const m = Math.max(1, Math.round(Math.sqrt(b / max) * 8)), y0 = cordY[0] + 9, step = (cordY[1] - 8 - y0) / 8;
+      for (let q = 0; q < m; q++) glyph(c, LETTER[(i * 7 + q) % LETTER.length], x + sw / 2 + (rr2() - 0.5) * 0.8, y0 + q * step + step / 2, Math.min(sw - 9, step * 0.95), P.INK, P, 0.82);
+      // 简尾：大小
+      const [num, unit] = fmtSize(b).split(' ');
+      txt(c, num, x + sw / 2, bot - 15, 8, rgba(P.INK, 0.78), P, 'center'); txt(c, unit || '', x + sw / 2, bot - 6, 7, rgba(P.INK, 0.55), P, 'center');
     });
-    // 编绳：每道绳在每枚简面上压过去，钻进简缝再出来
-    cordY.forEach((y, ci) => {
-      const q = rng(977 + ci * 31);
-      geo.forEach(g => hemp(c, [[g.x + sw + 1.4, y + 1.8], [g.x + sw - 1.5, y - 0.2], [g.x + sw / 2, y - 1.1 + (q() - 0.5) * 0.8], [g.x + 1.5, y - 0.2], [g.x - 1.4, y + 1.8]], 2.5, q, P));
-      const xl = geo[n - 1].x - 1.2, xr = geo[0].x + sw + 1.2;                                             // 左侧垂下的绳头，右侧收一个小结
-      hemp(c, [[xl + 1, y + 1.2], [xl - 4, y + 2.5], [xl - 7.5, y + 9 + ci * 3], [xl - 6, y + 19 + ci * 5], [xl - 9, y + 27 + ci * 6]], 2.1, q, P);
-      hemp(c, [[xl + 1, y + 0.6], [xl - 5, y + 0.5], [xl - 11, y + 5], [xl - 12.5, y + 14 + ci * 2], [xl - 11, y + 20 + ci * 3]], 1.9, q, P);
-      hemp(c, [[xr - 1, y + 1.2], [xr + 2.6, y - 1], [xr + 4.2, y + 2.2], [xr + 1.4, y + 4.4], [xr - 0.6, y + 2]], 2.1, q, P);
-    });
+    // 前面的编绳结
+    c.fillStyle = mixHex('#7a5a32', '#000000', P.dark ? 0.35 : 0.15);
+    for (const y of cordY) for (let i = 0; i < n; i++) { const x = x0 - (i + 1) * sw - i * gp; if (i % 2 === 0) { c.beginPath(); c.ellipse(x + sw / 2, y, sw / 2 + 0.5, 1.5, 0, 0, 7); c.fill(); } }
+    if (!n) txt(c, '还没有文件', W / 2, H / 2, 12, P.ink3, P, 'center');
   }
 
   const PAINT = { jar, slips };
@@ -4421,6 +4341,7 @@ const Theme = (() => {
     const root = document.documentElement;
     root.style.setProperty('--ui-scale', Prefs.get('uiScale'));
     root.style.setProperty('--rk', +Prefs.get('corner') || 0); root.dataset.mg = Prefs.get('menuGlyph');
+    root.classList.toggle('qs-mpaper', !!Prefs.get('menuPaper')); root.classList.toggle('qs-tpaper', !!Prefs.get('titlePaper'));
     root.dataset.glyph = Prefs.get('glyphStyle'); root.dataset.density = Prefs.get('density');
     root.dataset.motion = REDUCED_MOTION.matches ? 0 : Prefs.get('motion');
   }
@@ -4428,7 +4349,7 @@ const Theme = (() => {
     apply(true); applyUI();
     BUS.on('pref', k => {
       if (k === '*' || ['theme', 'accent', 'nightMode', 'seasonAuto'].includes(k)) apply(true);
-      if (k === '*' || ['uiScale', 'glyphStyle', 'density', 'motion', 'corner', 'menuGlyph'].includes(k)) applyUI();
+      if (k === '*' || ['uiScale', 'glyphStyle', 'density', 'motion', 'corner', 'menuGlyph', 'menuPaper', 'titlePaper'].includes(k)) applyUI();
     });
     matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => apply());
     REDUCED_MOTION.addEventListener('change', applyUI);
@@ -4495,13 +4416,6 @@ const Tex = (() => {
     for (let i = 0; i < 260; i++) { g.fillStyle = r() < .5 ? `rgba(255,255,255,${.05 + r() * .08})` : `rgba(0,0,0,${.06 + r() * .1})`; g.fillRect((r() * S) | 0, (r() * S) | 0, r() < .3 ? 3 : 2, 1); }
     return c;
   }
-  /* 轴上的木纹：顺着轴走的细丝，深浅不一。hz=横轴用（转 90°，原来迎光的左边到了上边） */
-  function rodGrain(hz) {
-    const W = 24, H = 160, [c, g] = mk(hz ? H : W, hz ? W : H), r = rng(91);
-    if (hz) { g.translate(H, 0); g.rotate(Math.PI / 2); }
-    for (let i = 0; i < 80; i++) { const x = r() * W, wd = r() < .15 ? 1.6 : .7, y0 = r() * H, len = 30 + r() * 130; g.fillStyle = r() < .62 ? `rgba(30,14,4,${.1 + r() * .22})` : `rgba(255,236,200,${.06 + r() * .14})`; g.fillRect(x, y0, wd, len); if (y0 + len > H) g.fillRect(x, 0, wd, y0 + len - H); }
-    return c;
-  }
   /* 书格一层（高 196）：背板在里、在暗处，竖木纹、拼板缝；上层搁板压下一道影；搁板正面一道木棱，上沿受光 */
   function shelf(dark) {
     const W = 512, H = 196, K = 2, [c, g] = mk(W * K, H * K), r = rng(dark ? 303 : 202); g.scale(K, K);
@@ -4521,6 +4435,58 @@ const Tex = (() => {
     g.fillStyle = 'rgba(0,0,0,.32)'; g.fillRect(0, 193, W, 1); g.fillStyle = 'rgba(0,0,0,.72)'; g.fillRect(0, 194, W, 2);
     return c;
   }
+  /* ── 木轴：旧式的一根木杆，写实重做 ──
+     圆柱逐像素受光：左前方一盏灯，右缘纸面回一点暖光；顺轴的木纹带、细丝、棕眼；薄漆一层柔光（宽的一层、窄的一线）。
+     沿轴四方连续（周期 256px，@2x），横轴是同一张图转 90°（原来迎光的左边到了上边）。 */
+  const pw = (seed, n) => { const r = rng(seed), k = Array.from({ length: n }, (_, i) => [i + 1, r() * 6.2832, (0.4 + r() * 0.6) / (i + 1)]); return t => k.reduce((s, [f, ph, a]) => s + a * Math.sin(6.2832 * f * t + ph), 0); };
+  const mixc = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+  const turn = (src, hz) => { if (!hz) return src; const [c, g] = mk(src.height, src.width); g.translate(src.height, 0); g.rotate(Math.PI / 2); g.drawImage(src, 0, 0); return c; };
+  function rodTex(hz) {
+    const D = 24, L = 256, [c, g] = mk(D, L), im = g.createImageData(D, L), d = im.data, r = rng(57);
+    const n1 = pw(11, 5), n2 = pw(23, 7), n3 = pw(37, 6);
+    const dk = [30, 18, 11], md = [64, 40, 25], lt = [104, 70, 44];
+    const L1 = [-0.55, 0.835], H1 = [-0.29, 0.957];
+    for (let x = 0; x < D; x++) {
+      const u = (x + 0.5) / D * 2 - 1, nz = Math.sqrt(Math.max(0, 1 - u * u)), sx = Math.asin(Math.max(-1, Math.min(1, u))) * 3.8;
+      const dif = Math.max(0, u * L1[0] + nz * L1[1]), nh = Math.max(0, u * H1[0] + nz * H1[1]);
+      const sh = 0.3 + 0.84 * dif, spB = 0.12 * nh ** 8, spN = 0.36 * nh ** 60, rim = 0.12 * Math.max(0, u) ** 6, ao = 0.72 + 0.28 * Math.sqrt(nz);
+      for (let y = 0; y < L; y++) {
+        const t = y / L, ring = sx + 0.42 * n1(t) + 0.14 * n2(t);   // 纹几乎顺直，只微微游走
+        const band = 0.5 + 0.5 * Math.sin(ring * 1.7 + 0.6 * Math.sin(ring * 0.4 + 2)), fine = 0.5 + 0.5 * Math.sin(sx * 15 + 1.1 * n3(t) + ring * 0.5);
+        const k = Math.min(1, 0.12 + band * band * 0.55 + fine * 0.22);
+        const col = k < 0.5 ? mixc(dk, md, k * 2) : mixc(md, lt, (k - 0.5) * 2), sp = (spB + spN) * (1 - 0.35 * k);
+        const i = (y * D + x) * 4;
+        d[i] = Math.min(255, col[0] * sh * ao + 255 * sp + 70 * rim); d[i + 1] = Math.min(255, col[1] * sh * ao + 242 * sp + 52 * rim); d[i + 2] = Math.min(255, col[2] * sh * ao + 222 * sp + 34 * rim); d[i + 3] = 255;
+      }
+    }
+    g.putImageData(im, 0, 0);
+    for (let i = 0; i < 70; i++) {               // 棕眼：顺纹的细短暗痕，四方连续
+      const x = 2 + r() * (D - 4), y = r() * L, len = 3 + r() * 12, a = 0.12 + r() * 0.22, e = Math.abs(x / D * 2 - 1);
+      g.fillStyle = `rgba(16,8,3,${a * (1 - e * 0.6)})`; g.fillRect(x, y, 0.8, len); if (y + len > L) g.fillRect(x, 0, 0.8, y + len - L);
+    }
+    return turn(c, hz);
+  }
+  /* 轴头：一粒旋出来的钮——圆顶、腰身、一道凹线、一圈珠、颈。只画明暗（灰）与漆光（亮），颜色由 CSS 垫底（--c），
+     所以金、朱、各程序的印色都用这一套。返回 [明暗兼形状, 漆光]；竖轴给上头那粒，横轴给右头那粒。 */
+  function knobTex(hz) {
+    const W = 32, H = 22, cx = W / 2, [c1, g1] = mk(W, H), [c2, g2] = mk(W, H), A = g1.createImageData(W, H), B = g2.createImageData(W, H);
+    const R = y => y < 9 ? 15 * Math.sqrt(Math.max(0, 1 - ((9 - y) / 10.2) ** 2)) : y < 14 ? 15 : y < 16 ? 12.6 : y < 19 ? 14.4 : 12.4;
+    const Ll = [-0.5, -0.45, 0.74], ln = Math.hypot(...Ll), Lv = Ll.map(v => v / ln), Hh = [Lv[0], Lv[1], Lv[2] + 1], hn = Math.hypot(...Hh), Hv = Hh.map(v => v / hn);
+    for (let y = 0; y < H; y++) {
+      const yc = y + 0.5, r = R(yc), sl = (R(yc + 0.5) - R(yc - 0.5));
+      for (let x = 0; x < W; x++) {
+        const xc = x + 0.5 - cx, cov = Math.max(0, Math.min(1, r - Math.abs(xc) + 0.5)); if (!cov) continue;
+        const u = Math.max(-1, Math.min(1, xc / r)), nz0 = Math.sqrt(1 - u * u), n = [u, -sl * nz0, nz0], nn = Math.hypot(...n), N = n.map(v => v / nn);
+        const dif = Math.max(0, N[0] * Lv[0] + N[1] * Lv[1] + N[2] * Lv[2]), nh = Math.max(0, N[0] * Hv[0] + N[1] * Hv[1] + N[2] * Hv[2]);
+        let v = Math.min(255, (0.3 + 0.85 * dif) * 225); if (Math.abs(yc - 14) < 0.8 || Math.abs(yc - 16) < 0.8 || Math.abs(yc - 19) < 0.7) v *= 0.62;   // 凹线、珠缝里压暗
+        const sp = Math.min(1, 0.6 * nh ** 46 + 0.16 * nh ** 8), i = (y * W + x) * 4;
+        A.data[i] = A.data[i + 1] = A.data[i + 2] = v; A.data[i + 3] = 255 * cov;
+        B.data[i] = 255 * sp; B.data[i + 1] = 246 * sp; B.data[i + 2] = 226 * sp; B.data[i + 3] = 255 * cov;
+      }
+    }
+    g1.putImageData(A, 0, 0); g2.putImageData(B, 0, 0);
+    return [turn(c1, hz), turn(c2, hz)];
+  }
   let last = '', urls = [];
   const blobUrl = c => new Promise(res => c.toBlob(b => res(b ? URL.createObjectURL(b) : null), 'image/png'));
   async function apply() {
@@ -4528,9 +4494,10 @@ const Tex = (() => {
     const hx = cs.getPropertyValue('--ink').trim(), key = (dark ? 'd' : 'l') + hx; if (key === last) return; last = key;
     try {
       const ink = dark ? '205,170,104' : (/^#[0-9a-f]{3,6}$/i.test(hx) ? hexToRgb(hx) : [28, 26, 23]).join(',');
-      const us = await Promise.all([paper(dark), wash(ink, dark), stroke(ink, dark), cloth(), shelf(dark), rodGrain(false), rodGrain(true)].map(blobUrl));
+      const [kv, kvs] = knobTex(false), [kh, khs] = knobTex(true);
+      const us = await Promise.all([paper(dark), wash(ink, dark), stroke(ink, dark), cloth(), shelf(dark), rodTex(false), rodTex(true), kv, kvs, kh, khs].map(blobUrl));
       if (key !== last) { us.forEach(u => u && URL.revokeObjectURL(u)); return; }
-      ['paper', 'wash', 'stroke', 'cloth', 'shelf', 'grv', 'grh'].forEach((k, i) => us[i] ? root.style.setProperty('--tex-' + k, `url(${us[i]})`) : root.style.removeProperty('--tex-' + k));
+      ['paper', 'wash', 'stroke', 'cloth', 'shelf', 'rodv', 'rodh', 'knobv', 'knobvs', 'knobh', 'knobhs'].forEach((k, i) => us[i] ? root.style.setProperty('--tex-' + k, `url(${us[i]})`) : root.style.removeProperty('--tex-' + k));
       const old = urls; urls = us; setTimeout(() => old.forEach(u => u && URL.revokeObjectURL(u)), 4000);
     } catch (e) { console.warn('[Tex]', e); }
   }
@@ -5628,7 +5595,7 @@ const UI = (() => {
     return new Promise(resolve => {
       if (owner && owner.on) owner.on('close', () => finish(null));   // 所属窗口合上，对话也随之收起
       const prevFocus = document.activeElement;
-      const sheet = h('div.sheet'), wrap = h('div.hscroll' + (danger ? '.danger' : ''), { style: { '--w': w + 'px' }, role: 'dialog', 'aria-modal': 'true' }, h('div.rodbar'), sheet, h('div.rodbar.bottom', {}, h('i.zp')));
+      const sheet = h('div.sheet'), wrap = h('div.hscroll' + (danger ? '.danger' : ''), { style: { '--w': w + 'px' }, role: 'dialog', 'aria-modal': 'true' }, h('div.rodbar'), sheet, h('div.rodbar.bottom'));
       const bg = h('div.modal-bg', {}, wrap);
       let done = false;
       const finish = v => {
@@ -6218,8 +6185,10 @@ const WM = (() => {
   const animOn = () => Prefs.get('motion') >= 1 && !REDUCED_MOTION.matches;
   const mobile = () => isMobile();
 
+  /* 顶栏下沿（含刘海安全区）：以真实位置为准，不信 offsetHeight（缩放、安全区后来才生效时会量少） */
+  function barBottom() { const b = $('#topbar'); if (!b) return 34; const r = b.getBoundingClientRect(); return Math.max(b.offsetHeight, Math.ceil(r.bottom)); }
   function area() {
-    const bar = $('#topbar')?.offsetHeight || 34, dock = $('#dock'), W = innerWidth, H = innerHeight;
+    const bar = barBottom(), dock = $('#dock'), W = innerWidth, H = innerHeight;
     let x = 0, y = bar, w = W, hh = H - bar;
     if (dock && !Prefs.get('dockAutoHide')) {
       const r = dock.getBoundingClientRect();
@@ -6251,7 +6220,12 @@ const WM = (() => {
     addTool(...els) { this.tools.append(...els); return els[0]; }
     on(e, f) { return this.ev.on(e, f); }
     rect() { return { x: this.el.offsetLeft, y: this.el.offsetTop, w: this.el.offsetWidth, h: this.el.offsetHeight }; }
-    place(r) { const s = this.el.style; s.left = Math.round(r.x) + 'px'; s.top = Math.round(r.y) + 'px'; s.width = Math.round(r.w) + 'px'; s.height = Math.round(r.h) + 'px'; }
+    place(r) {
+      /* 铁律：标题栏（收开合三轴、拖动处）永远不许钻到顶栏底下——否则既关不掉也挪不动。
+         无论来路（还原会话、换方向、输入法顶起、顶栏变高、拖动、改大小），落位时一律兜底。 */
+      const s = this.el.style, top = barBottom(), y = mobile() ? r.y : Math.max(r.y, top), x = mobile() ? r.x : Math.min(r.x, innerWidth - 120);
+      s.left = Math.round(x) + 'px'; s.top = Math.round(y) + 'px'; s.width = Math.round(r.w) + 'px'; s.height = Math.round(r.h) + 'px';
+    }
     _bind() {
       const el = this.el;
       el.addEventListener('pointerdown', () => focus(this), true);
@@ -6347,7 +6321,8 @@ const WM = (() => {
     if (def.single) { const ex = [...wins.values()].find(w => w.app === appId); if (ex) { await ex.restore(); focus(ex); ex.ev.emit('args', args); return ex; } }
     const w = new Win(appId, args);
     const same = [...wins.values()].filter(x => x.app === appId).length;
-    const r = args._rect || defaultRect(def, same);
+    let r = args._rect || defaultRect(def, same);
+    if (args._rect && !mobile()) { const a = area(); r = { x: clamp(r.x, a.x - r.w + 80, innerWidth - 120), y: clamp(r.y, a.y, Math.max(a.y, innerHeight - 60)), w: Math.min(r.w, a.w), h: Math.min(r.h, a.h) }; }   // 上次存下的位置可能来自另一种屏幕方向
     w.place(r); w.normal = r;
     if (mobile()) w.el.classList.add('mobile');
     wins.set(w.id, w); layer.append(w.el); focus(w);
@@ -6363,37 +6338,34 @@ const WM = (() => {
   /* ---------- 动效 ---------- */
   function rollLayer(w, rect, c) { const fx = h('div.rollfx', { style: { left: rect.x + 'px', top: rect.y + 'px', width: rect.w + 'px', height: rect.h + 'px', zIndex: (+w.el.style.zIndex || zTop) + 1, '--c': c } }); layer.append(fx); return fx; }
   const E_IN = 'cubic-bezier(.22,.8,.24,1)', E_INK = 'cubic-bezier(.6,.05,.3,1)';
-  /* 开合都是卷轴——窗是一幅手卷：
-     开：两卷自中间向两边展开，卷越展越细，到边撤下；合：两边往中间卷，越卷越粗，合成一卷，一顿，收走；
-     收：地杆自下往上卷到标题，整卷飞回坞上；放：飞回来，再往下展开。
+  /* 开合是一根木轴（旧式的一根杆，写实重做：Tex 逐像素画出圆柱、顺轴木纹、棕眼与漆光，两头旋出轴头）：
+     开：两轴自中间向两边推开，纸随之展开，到边撤下；合：两边往中间收，并成一线，一顿，收走；
+     收：轴自下往上收到标题，整幅飞回坞上；放：飞回来，再往下推开。
      每一段都有时限，轴一定撤掉，不会留在桌面上。窗本身只动裁切，不动透明度，不闪。 */
-  const rollT = L => Math.min(32, Math.sqrt(150 + 1.3 * Math.max(0, L)));   // 卷进去 L 像素的纸，这一卷有多粗
-  const mkRod = (cls, T) => h('i.zhou' + cls, { style: { '--T': T.toFixed(1) + 'px' } }, h('i.zs'), h('i.zx'), h('i.zp'), h('i.zk.a'), h('i.zk.b'));
+  const mkRod = cls => h('i.qrod' + (cls || ''));
   const fin = (a, ms) => Promise.race([a.finished.catch(() => { }), sleep(ms + 150)]);
   const CLIP_ALL = 'inset(-20px -40px -40px -40px)';
   async function fxOpen(w) {
-    const r = w.rect(), half = r.w / 2, T = rollT(half), t1 = (rollT(0) / T).toFixed(3), fx = rollLayer(w, r, 'var(--gold)'), L = mkRod('.l', T), R = mkRod('.r', T); fx.append(L, R);
-    const D = 540, X = 150, f = D / (D + X), o = { duration: D + X, fill: 'forwards' };
+    const r = w.rect(), half = r.w / 2, fx = rollLayer(w, r, 'var(--gold)'), L = mkRod(), R = mkRod(); fx.append(L, R);
+    const D = 520, X = 120, f = D / (D + X), o = { duration: D + X, fill: 'forwards' };
     try {
       const a = w.el.animate([{ clipPath: `inset(-20px ${half}px -40px ${half}px)`, easing: E_IN }, { clipPath: 'inset(-20px 0px -40px 0px)', offset: f }, { clipPath: CLIP_ALL }], { duration: D + X });
-      L.animate([{ transform: `translateX(${half - T / 2}px)`, easing: E_IN }, { transform: 'translateX(0px)', offset: f }, { transform: 'translateX(-5px)' }], o);
-      R.animate([{ transform: `translateX(${half + T / 2}px)`, easing: E_IN }, { transform: `translateX(${r.w}px)`, offset: f }, { transform: `translateX(${r.w + 5}px)` }], o);
-      for (const k of [L, R]) k.children[2].animate([{ transform: 'scaleX(1)', easing: E_IN }, { transform: `scaleX(${t1})`, offset: f }, { transform: `scaleX(${t1})` }], o);
+      L.animate([{ transform: `translateX(${half}px)`, easing: E_IN }, { transform: 'translateX(0px)', offset: f }, { transform: 'translateX(0px)' }], o);
+      R.animate([{ transform: `translateX(${half}px)`, easing: E_IN }, { transform: `translateX(${r.w}px)`, offset: f }, { transform: `translateX(${r.w}px)` }], o);
       fx.animate([{ opacity: 1 }, { opacity: 1, offset: f }, { opacity: 0 }], o);
       await fin(a, D + X);
     } finally { fx.remove(); }
   }
   async function fxClose(w) {
-    const r = w.rect(), half = r.w / 2, T = rollT(half), t0 = (rollT(0) / T).toFixed(3), fx = rollLayer(w, r, 'var(--accent)'), L = mkRod('.l', T), R = mkRod('.r', T); fx.append(L, R);
-    const D = 430, o = { duration: D, easing: E_INK, fill: 'forwards' };
+    const r = w.rect(), half = r.w / 2, fx = rollLayer(w, r, 'var(--accent)'), L = mkRod(), R = mkRod(); fx.append(L, R);
+    const D = 420, o = { duration: D, easing: E_INK, fill: 'forwards' };
     try {
-      fx.animate([{ opacity: 0 }, { opacity: 1, offset: .14 }, { opacity: 1 }], { duration: D, fill: 'forwards' });
-      L.animate([{ transform: 'translateX(0px)' }, { transform: `translateX(${half - T / 2}px)` }], o);
-      R.animate([{ transform: `translateX(${r.w}px)` }, { transform: `translateX(${half + T / 2}px)` }], o);
-      for (const k of [L, R]) k.children[2].animate([{ transform: `scaleX(${t0})` }, { transform: 'scaleX(1)' }], o);
+      fx.animate([{ opacity: 0 }, { opacity: 1, offset: .12 }, { opacity: 1 }], { duration: D, fill: 'forwards' });
+      L.animate([{ transform: 'translateX(0px)' }, { transform: `translateX(${half}px)` }], o);
+      R.animate([{ transform: `translateX(${r.w}px)` }, { transform: `translateX(${half}px)` }], o);
       await fin(w.el.animate([{ clipPath: 'inset(-20px 0px -40px 0px)' }, { clipPath: `inset(-20px ${half}px -40px ${half}px)` }], o), D);
-      await sleep(70);   // 合成一卷，顿一下
-      await fin(fx.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(10px) scale(.95)' }], { duration: 170, easing: 'ease-in', fill: 'forwards' }), 170);
+      await sleep(60);   // 两轴并成一线，顿一下
+      await fin(fx.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'scaleY(.6)' }], { duration: 180, easing: 'ease-in', fill: 'forwards' }), 180);
     } finally { fx.remove(); }
   }
   function dockTarget(w) {
@@ -6401,12 +6373,10 @@ const WM = (() => {
     const r = it.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
   }
   async function fxMin(w) {
-    const r = w.rect(), th = 42, T = rollT(r.h - th), t0 = (rollT(0) / T).toFixed(3), fx = rollLayer(w, r, w.def.color), rod = mkRod('.h.u', T); fx.append(rod);
-    const D = 380, o = { duration: D, easing: E_INK, fill: 'forwards' };
+    const r = w.rect(), th = 42, fx = rollLayer(w, r, w.def.color), rod = mkRod('.h'); fx.append(rod);
+    const D = 360, o = { duration: D, easing: E_INK, fill: 'forwards' };
     try {
-      fx.animate([{ opacity: 0 }, { opacity: 1, offset: .14 }, { opacity: 1 }], { duration: D, fill: 'forwards' });
-      rod.animate([{ transform: `translateY(${r.h}px)` }, { transform: `translateY(${th + T / 2}px)` }], o);
-      rod.children[2].animate([{ transform: `scaleY(${t0})` }, { transform: 'scaleY(1)' }], o);
+      rod.animate([{ transform: `translateY(${r.h}px)` }, { transform: `translateY(${th}px)` }], o);
       await fin(w.el.animate([{ clipPath: 'inset(-20px -40px 0px -40px)' }, { clipPath: `inset(-20px -40px ${r.h - th}px -40px)` }], o), D);
       const t = dockTarget(w), dx = t.x - (r.x + r.w / 2), dy = t.y - (r.y + th / 2);
       const fly = [{ transform: 'none', opacity: 1 }, { transform: `translate(${dx}px, ${dy}px) scale(${Math.max(0.06, 44 / r.w)}, .5)`, opacity: 0 }];
@@ -6416,18 +6386,17 @@ const WM = (() => {
     } finally { w.el.getAnimations().forEach(x => x.cancel()); fx.remove(); }
   }
   async function fxUnmin(w) {
-    const r = w.rect(), th = 42, T = rollT(r.h - th), t1 = (rollT(0) / T).toFixed(3), t = dockTarget(w), dx = t.x - (r.x + r.w / 2), dy = t.y - (r.y + th / 2);
-    const fx = rollLayer(w, r, w.def.color), rod = mkRod('.h.u', T); fx.append(rod);
+    const r = w.rect(), th = 42, t = dockTarget(w), dx = t.x - (r.x + r.w / 2), dy = t.y - (r.y + th / 2);
+    const fx = rollLayer(w, r, w.def.color), rod = mkRod('.h'); fx.append(rod);
     const shut = `inset(-20px -40px ${r.h - th}px -40px)`;
     try {
-      rod.style.transform = `translateY(${th + T / 2}px)`;
+      rod.style.transform = `translateY(${th}px)`;
       const fly = [{ transform: `translate(${dx}px, ${dy}px) scale(${Math.max(0.06, 44 / r.w)}, .5)`, opacity: 0 }, { transform: 'none', opacity: 1 }];
       const o = { duration: 300, easing: 'cubic-bezier(.25,1,.5,1)' };
       w.el.style.clipPath = shut;
       fx.animate(fly, o); await fin(w.el.animate(fly, o), 300);
-      const D = 440, X = 140, f = D / (D + X), o2 = { duration: D + X, fill: 'forwards' };
-      rod.animate([{ transform: `translateY(${th + T / 2}px)`, easing: E_IN }, { transform: `translateY(${r.h}px)`, offset: f }, { transform: `translateY(${r.h + 5}px)` }], o2);
-      rod.children[2].animate([{ transform: 'scaleY(1)', easing: E_IN }, { transform: `scaleY(${t1})`, offset: f }, { transform: `scaleY(${t1})` }], o2);
+      const D = 420, X = 100, f = D / (D + X), o2 = { duration: D + X, fill: 'forwards' };
+      rod.animate([{ transform: `translateY(${th}px)`, easing: E_IN }, { transform: `translateY(${r.h}px)`, offset: f }, { transform: `translateY(${r.h}px)` }], o2);
       fx.animate([{ opacity: 1 }, { opacity: 1, offset: f }, { opacity: 0 }], o2);
       const a = w.el.animate([{ clipPath: shut, easing: E_IN }, { clipPath: 'inset(-20px -40px 0px -40px)', offset: f }, { clipPath: CLIP_ALL }], { duration: D + X });
       w.el.style.clipPath = '';
@@ -6441,11 +6410,12 @@ const WM = (() => {
     if (fxOn() && dir) {
       /* 放大、还原：左右两根轴跟着纸边走，到位撤下 */
       const big = { x: Math.min(from.x, to.x), y: Math.min(from.y, to.y), w: 0, h: 0 }; big.w = Math.max(from.x + from.w, to.x + to.w) - big.x; big.h = Math.max(from.y + from.h, to.y + to.h) - big.y;
-      const fx = rollLayer(w, big, 'var(--gold)'), L = mkRod('.l', 11), R = mkRod('.r', 11); fx.append(L, R); L.style.height = R.style.height = 'auto';
+      const fx = rollLayer(w, big, 'var(--gold)'), L = mkRod(), R = mkRod(); fx.append(L, R);
       const f0 = from.x - big.x, f1 = from.x + from.w - big.x, t0 = to.x - big.x, t1 = to.x + to.w - big.x;
       const o = { duration: 300, easing: E_IN, fill: 'forwards' };
-      L.animate([{ left: f0 + 'px', top: (from.y - big.y) + 'px', bottom: (big.y + big.h - from.y - from.h) + 'px' }, { left: t0 + 'px', top: (to.y - big.y) + 'px', bottom: (big.y + big.h - to.y - to.h) + 'px' }], o);
-      R.animate([{ left: f1 + 'px', top: (from.y - big.y) + 'px', bottom: (big.y + big.h - from.y - from.h) + 'px' }, { left: t1 + 'px', top: (to.y - big.y) + 'px', bottom: (big.y + big.h - to.y - to.h) + 'px' }], o);
+      const ends = (x, q) => ({ left: x + 'px', top: (q.y - big.y - 8) + 'px', bottom: (big.y + big.h - q.y - q.h - 8) + 'px' });   // 轴比纸长，两头各出一截
+      L.animate([ends(f0, from), ends(t0, to)], o);
+      R.animate([ends(f1, from), ends(t1, to)], o);
       fx.animate([{ opacity: 0 }, { opacity: 1, offset: .15 }, { opacity: 1, offset: .72 }, { opacity: 0 }], { duration: 390, fill: 'forwards' });
       setTimeout(() => fx.remove(), 420);
       if (dir === 'out' && typeof Wallpaper !== 'undefined') Wallpaper.gust(0.6);
@@ -6645,6 +6615,10 @@ const WM = (() => {
     layer = container; snapEl = h('div#snap'); layer.parentElement.append(snapEl);
     addEventListener('resize', debounce(() => relayout(), 80));
     MQ_MOBILE.addEventListener && MQ_MOBILE.addEventListener('change', () => relayout(true));
+    /* 窗口尺寸没变、顶栏却变了（平板接上 / 拔掉键盘鼠标换了指针、全屏后多出安全区、界面缩放）：也要重排，不然标题栏会压在顶栏下 */
+    const coarse = matchMedia('(pointer: coarse)'); coarse.addEventListener && coarse.addEventListener('change', () => setTimeout(() => relayout(true), 60));
+    { const tb = $('#topbar'); let lastBar = -1; if (tb && 'ResizeObserver' in window) new ResizeObserver(() => { const b = barBottom(); if (b !== lastBar) { const first = lastBar < 0; lastBar = b; if (!first) relayout(true); } }).observe(tb); }
+    if (window.visualViewport) visualViewport.addEventListener('resize', debounce(() => relayout(), 120));
     /* 输入法、地址栏有时会把整页顶走（overflow:hidden 挡不住程序性滚动）：一律拉回原位 */
     addEventListener('scroll', () => { if (scrollX || scrollY) scrollTo(0, 0); }, { passive: true });
     document.addEventListener('keydown', keys);
@@ -10115,7 +10089,7 @@ class Granary {
         q.quota ? h('div.cl-vatbox', {}, InkArt.make('jar', { usage: q.usage, quota: q.quota }, { w: 210, h: 196, cls: 'cl-vatart' }),
           h('div.cl-vatcap', {}, h('div.cl-ying', {}, h('b', { text: '盈 ' + (q.usage / q.quota < .001 ? '不足 0.1%' : (q.usage / q.quota * 100).toFixed(q.usage / q.quota < .1 ? 1 : 0) + '%') })), h('div', {}, `青丝文件 ${fmtSize(st.bytes + (st.trashBytes || 0) + (st.verBytes || 0))}`), h('div', {}, `本站共用 ${fmtSize(q.usage)}`), h('div.muted', { text: `缸容约 ${fmtSize(q.quota)}` }))) : null,
         h('div.cl-slipbox', {}, h('div.cl-ubig', {}, h('b', { text: fmtSize(st.bytes) }), h('span', { text: `${st.files} 个文件 · ${st.dirs} 个书册` })),
-          kinds.length ? (() => { const cv = InkArt.make('slips', { kinds }, { w: Math.max(150, kinds.length * 29.4 + 62), h: 204, cls: 'cl-slipart', natural: true }); cv.dataset.tip = kinds.map(([k, b]) => `${KIND_LABEL[k]} ${fmtSize(b)}`).join(' · '); cv.setAttribute('aria-label', cv.dataset.tip); return cv; })() : h('p.cl-p', { text: '还没有文件。' }))));
+          kinds.length ? (() => { const cv = InkArt.make('slips', { kinds }, { w: Math.max(150, kinds.length * 28 + 36), h: 186, cls: 'cl-slipart', natural: true }); cv.dataset.tip = kinds.map(([k, b]) => `${KIND_LABEL[k]} ${fmtSize(b)}`).join(' · '); cv.setAttribute('aria-label', cv.dataset.tip); return cv; })() : h('p.cl-p', { text: '还没有文件。' }))));
     usage.classList.add('wide');
     // 体检
     const lf = LS.get('fs.lastFsck', null), lfAt = LS.get('canglin.fsckAt', 0);
@@ -10653,6 +10627,7 @@ const SETTINGS = [
     { k: 'corner', label: '棱角', desc: '窗口、图标与按钮的转角：直角硬朗，圆角温和', type: 'range', min: 0, max: 1, step: 0.05, fmt: v => +v === 0 ? '直角' : Math.round(v * 100) + '%', kw: '圆角 直角 转角 radius' },
     { k: 'glyphStyle', label: '花字', desc: '本机字体当场写成的毛笔字。正文不加：只有标题、印、菜单用花字', type: 'seg', opts: [['ink', '通篇'], ['display', '正文不加'], ['font', '不用']], kw: '字体 墨字 书法 毛笔 楷书 font' },
     { k: 'fontBase', label: '字底', desc: '花字照哪种字写：有楷用楷，无楷用宋', type: 'seg', opts: [['auto', '自择'], ['kai', '楷'], ['song', '宋']], kw: '字体 楷体 宋体 font' },
+    { k: 'menuPaper', label: '菜单纸感', desc: '右键菜单与各处小单：默认是半透的薄纸，透出底下的东西；开了换成有纤维的宣纸', type: 'switch', kw: '菜单 右键 透明 纸 宣纸 质感' },
     { k: 'menuGlyph', label: '菜单字头', desc: '右键菜单左侧那一列', type: 'seg', opts: [['kai', '楷字'], ['seal', '小印'], ['none', '不显示']], kw: '菜单 图标 右键' },
     { k: 'density', label: '疏密', type: 'seg', opts: [['comfy', '舒展'], ['compact', '紧凑']], kw: '间距' },
     { k: 'motion', label: '动效', desc: '静：几乎不动；简：只留必要的过渡；全：卷轴、风吹、墨晕', type: 'seg', opts: [[0, '静'], [1, '简'], [2, '全']], kw: '动画 animation' }
@@ -10670,6 +10645,7 @@ const SETTINGS = [
     { k: 'wpDim', label: '暗化', desc: '让桌面图标更清楚', type: 'range', min: 0, max: 0.6, step: 0.05, fmt: v => Math.round(v * 100) + '%', kw: '亮度 遮罩' }
   ] },
   { id: 'win', name: '窗口', g: '轴', items: [
+    { k: 'titlePaper', label: '标题栏纸感', desc: '窗口题头与工具条铺一层宣纸纤维、一抹淡墨、下缘一笔飞白。默认不开，素净一条', type: 'switch', kw: '标题栏 纸 宣纸 质感 淡墨 飞白' },
     { k: 'winAnim', label: '卷轴开合', desc: '窗口打开、收起时的卷轴动画', type: 'switch', kw: '动画 窗口' },
     { k: 'scrollLabels', label: '三轴题字', desc: '标题栏正中的「收 · 开 · 合」三根卷轴上的字', type: 'seg', opts: [['hover', '悬停时写出'], ['always', '常显'], ['never', '不显']], kw: '按钮 关闭 最小化 最大化' },
     { k: 'scrollOrient', label: '卷轴方向', desc: '横展：轴竖立，纸向两旁展开；竖展：轴横卧，纸上下展开（旧版样式）', type: 'seg', opts: [['h', '横展'], ['v', '竖展']], kw: '卷轴 按钮 旧版 方向 标题栏' },
