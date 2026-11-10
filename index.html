@@ -315,13 +315,6 @@ body.dragging-win, body.dragging-win * { cursor: grabbing !important; }
 @media (pointer: coarse) { .scrolls { gap: 4px; } }
 
 /* 卷轴动效层：窗口开合时出现的两根轴 */
-.rollfx { position: absolute; z-index: 9; pointer-events: none; }
-.rollfx .rod { position: absolute; top: -7px; bottom: -7px; width: 12px; margin-left: -6px; border-radius: calc(6px * var(--rk)); background: linear-gradient(90deg, #2c2118, #7b604a 38%, #a3866a 50%, #4a382a 80%, #2c2118); box-shadow: 0 4px 14px rgba(0,0,0,.35); }
-.rollfx .rod::before, .rollfx .rod::after { content: ''; position: absolute; left: -3px; right: -3px; height: 11px; border-radius: calc(3px * var(--rk)); background: linear-gradient(90deg, color-mix(in srgb, var(--c) 70%, #000), var(--c) 45%, color-mix(in srgb, var(--c) 60%, #000)); }
-.rollfx .rod::before { top: -6px; } .rollfx .rod::after { bottom: -6px; }
-.rollfx .rod.h { top: auto; left: -7px; right: -7px; bottom: auto; width: auto; height: 12px; margin: -6px 0 0; background: linear-gradient(180deg, #2c2118, #7b604a 38%, #a3866a 50%, #4a382a 80%, #2c2118); }
-.rollfx .rod.h::before, .rollfx .rod.h::after { top: -3px; bottom: -3px; height: auto; width: 11px; left: auto; right: auto; background: linear-gradient(180deg, color-mix(in srgb, var(--c) 70%, #000), var(--c) 45%, color-mix(in srgb, var(--c) 60%, #000)); }
-.rollfx .rod.h::before { left: -6px; } .rollfx .rod.h::after { right: -6px; }
 
 #snap { position: absolute; z-index: 40; pointer-events: none; border-radius: calc(12px * var(--rk)); border: 2px solid color-mix(in srgb, var(--willow) 70%, transparent); background: color-mix(in srgb, var(--willow-mist) 22%, transparent); backdrop-filter: blur(2px); opacity: 0; transition: all .16s var(--ease); }
 #snap.on { opacity: 1; }
@@ -516,11 +509,6 @@ body.dragging-win, body.dragging-win * { cursor: grabbing !important; }
 .win.focused .win-title .tt { text-shadow: 0 0 .6px color-mix(in srgb, var(--ink) 55%, transparent); }
 
 /* —— 卷轴动效：木轴有纹有光，压在纸上有影；素纸先展，墨后洇 —— */
-.rollfx .inkveil { position: absolute; inset: 0; background: var(--tex-paper, none), var(--paper3); }
-.rollfx .rod { background: repeating-linear-gradient(180deg, rgba(0,0,0,.09) 0 1px, transparent 1px 9px), linear-gradient(90deg, #1b140e, #6b5340 28%, #c2a583 44%, #8a6e54 56%, #3a2b1f 82%, #17110c); box-shadow: 0 6px 16px rgba(0,0,0,.4); }
-.rollfx .rod:not(.h):nth-of-type(2) { box-shadow: 9px 0 16px -3px rgba(20,14,8,.42), 0 6px 14px rgba(0,0,0,.3); }
-.rollfx .rod:not(.h):last-child { box-shadow: -9px 0 16px -3px rgba(20,14,8,.42), 0 6px 14px rgba(0,0,0,.3); }
-.rollfx .rod.h { background: repeating-linear-gradient(90deg, rgba(0,0,0,.09) 0 1px, transparent 1px 9px), linear-gradient(180deg, #1b140e, #6b5340 28%, #c2a583 44%, #8a6e54 56%, #3a2b1f 82%, #17110c); box-shadow: 0 9px 16px -3px rgba(20,14,8,.45); }
 
 /* —— 开关：砚槽里一颗瓷珠；拨过去，墨自左漫满，珠成朱砂 —— */
 .switch { width: 44px; height: 24px; border-radius: 24px; background: linear-gradient(180deg, color-mix(in srgb, var(--ink) 32%, var(--paper2)), color-mix(in srgb, var(--ink) 13%, var(--paper2)));
@@ -576,6 +564,68 @@ input[type=range]::-moz-range-thumb { width: 17px; height: 17px; border: 0; back
 
 @keyframes qs-range-in { from { outline-color: transparent; } to { outline-color: transparent; } }
 input[type=range] { animation: qs-range-in .01s; }
+
+/* ================= 卷轴（重做）=================
+   窗是手卷、对话框是立轴、菜单是小条幅——开合收放都是「卷」。
+   轴是圆的：迎光一侧有高光，背光有暗部，边上有反光；木头有丝；卷在轴上的纸有绫边，越卷越粗；两头出轴头；压在纸上有影。 */
+:root {
+  --zwood: #70492f; --zroll: #ece3cf; --zsilk: #8a8f70; --zcord: #94402f;
+  --zst: rgba(0,0,0,.6) 0%, rgba(0,0,0,.24) 9%, rgba(255,255,255,.04) 21%, rgba(255,255,255,.52) 32%, rgba(255,255,255,.12) 45%, rgba(0,0,0,.14) 62%, rgba(0,0,0,.45) 84%, rgba(0,0,0,.3) 94%, rgba(0,0,0,.64) 100%;
+  --zstp: rgba(0,0,0,.44) 0%, rgba(0,0,0,.17) 10%, rgba(255,255,255,0) 26%, rgba(255,255,255,.24) 38%, rgba(255,255,255,.06) 52%, rgba(0,0,0,.09) 66%, rgba(0,0,0,.3) 86%, rgba(0,0,0,.22) 95%, rgba(0,0,0,.46) 100%;
+  --zspec: radial-gradient(55% 45% at 34% 30%, rgba(255,255,255,.72), rgba(255,255,255,0) 72%);
+}
+:root.dark { --zwood: #553823; --zroll: #a0977f; --zsilk: #5b624e; }
+.rollfx { position: absolute; z-index: 9; pointer-events: none; }
+.zhou { position: absolute; left: 0; top: 0; width: 0; height: 100%; --T: 20px; --cyl: linear-gradient(90deg, var(--zst)); --cylp: linear-gradient(90deg, var(--zstp)); --gr: var(--tex-grv, none); --a: 90deg; --b: 180deg; }
+.zhou.h { width: 100%; height: 0; --cyl: linear-gradient(180deg, var(--zst)); --cylp: linear-gradient(180deg, var(--zstp)); --gr: var(--tex-grh, none); --a: 180deg; --b: 90deg; }
+.zhou > i { position: absolute; display: block; }
+/* 木轴：比纸长，两头露一截 */
+.zhou > .zx { left: -4px; width: 8px; top: -10px; bottom: -10px; border-radius: 3px; background: var(--cyl), var(--gr) 0 0 / 12px 80px, linear-gradient(var(--zwood), var(--zwood)); }
+.zhou.h > .zx { left: -10px; right: -10px; width: auto; top: -4px; bottom: auto; height: 8px; background-size: auto, 80px 12px, auto; }
+/* 卷在轴上的纸：两端一道绫边，纸口一线 */
+.zhou > .zp { left: calc(var(--T) / -2); width: var(--T); top: 0; bottom: 0; border-radius: 1.5px;
+  background: var(--cylp),
+    linear-gradient(var(--b), var(--zsilk) 0 7px, rgba(40,30,15,.4) 7px 8px, transparent 8px calc(100% - 8px), rgba(40,30,15,.4) calc(100% - 8px) calc(100% - 7px), var(--zsilk) calc(100% - 7px)),
+    linear-gradient(var(--a), transparent 0 71%, rgba(60,42,20,.16) 71% calc(71% + 1px), transparent calc(71% + 1px)),
+    var(--tex-paper, none), linear-gradient(var(--zroll), var(--zroll));
+  box-shadow: 3px 5px 10px rgba(24,14,4,.38), 0 0 0 .5px rgba(40,28,12,.45); }
+.zhou.h > .zp { left: 0; right: 0; width: auto; top: calc(var(--T) / -2); bottom: auto; height: var(--T); box-shadow: 0 6px 11px rgba(24,14,4,.4), 0 0 0 .5px rgba(40,28,12,.45); }
+/* 卷压在展开的纸上的影 */
+.zhou.l > .zs { left: 0; width: 30px; top: 0; bottom: 0; background: linear-gradient(90deg, rgba(24,14,4,.44), rgba(24,14,4,.15) 38%, transparent); }
+.zhou.r > .zs { right: 0; width: 26px; top: 0; bottom: 0; background: linear-gradient(270deg, rgba(24,14,4,.28), rgba(24,14,4,.09) 38%, transparent); }
+.zhou.h.u > .zs { left: 0; right: 0; bottom: 0; height: 24px; background: linear-gradient(0deg, rgba(24,14,4,.26), rgba(24,14,4,.08) 40%, transparent); }
+/* 轴头：一粒旋出来的钮，根上一道铜箍 */
+.zhou > .zk { left: -6.5px; width: 13px; height: 12px; background: var(--zspec), var(--cyl), linear-gradient(var(--c, var(--gold)), var(--c, var(--gold))); box-shadow: 0 0 0 .5px rgba(20,10,0,.5), 2px 3px 4px rgba(20,10,0,.35); }
+.zhou > .zk::after { content: ''; position: absolute; left: 2px; right: 2px; height: 3px; background: var(--cyl), linear-gradient(#cfa85c, #cfa85c); box-shadow: 0 0 0 .5px rgba(20,10,0,.45); }
+.zhou > .zk.a { top: -21px; border-radius: 6.5px 6.5px 3px 3px / 7px 7px 2px 2px; } .zhou > .zk.a::after { bottom: -3px; }
+.zhou > .zk.b { bottom: -21px; border-radius: 3px 3px 6.5px 6.5px / 2px 2px 7px 7px; } .zhou > .zk.b::after { top: -3px; }
+.zhou.h > .zk { left: auto; top: -6.5px; bottom: auto; width: 12px; height: 13px; }
+.zhou.h > .zk::after { left: auto; right: auto; top: 2px; bottom: 2px; width: 3px; height: auto; }
+.zhou.h > .zk.a { left: -21px; border-radius: 7px 2px 2px 7px / 6.5px 3px 3px 6.5px; } .zhou.h > .zk.a::after { right: -3px; }
+.zhou.h > .zk.b { right: -21px; border-radius: 2px 7px 7px 2px / 3px 6.5px 6.5px 3px; } .zhou.h > .zk.b::after { left: -3px; }
+
+/* 菜单：小条幅。天杆细，地杆粗、两头出轴头 */
+.mrod, :root.dark .mrod { background: linear-gradient(180deg, var(--zst)), var(--tex-grh, none) 0 0 / 80px 12px, linear-gradient(var(--zwood), var(--zwood)); box-shadow: 0 2px 4px rgba(20,12,4,.4); }
+.mrod.top { height: 6px; margin: 0 -3px; border-radius: 3px 3px 1.5px 1.5px; }
+.mrod.bot { height: 10px; margin: 0 2px; border-radius: 2px; }
+.mrod.bot::before, .mrod.bot::after { top: -1.5px; width: 11px; height: 13px; background: var(--zspec), linear-gradient(180deg, var(--zst)), linear-gradient(#c9a257, #c9a257); box-shadow: 0 0 0 .5px rgba(20,10,0,.5), 1px 2px 3px rgba(20,10,0,.4); }
+.mrod.bot::before { left: -10px; border-radius: 6px 2px 2px 6px / 6.5px 3px 3px 6.5px; } .mrod.bot::after { right: -10px; border-radius: 2px 6px 6px 2px / 3px 6.5px 6.5px 3px; }
+
+/* 对话框：立轴。上面是天杆（细、无轴头），下面是地杆（粗、两头出轴头）；展开时地杆上还卷着纸 */
+.hscroll > .rodbar { height: 9px; margin: 0 -6px; border-radius: 4.5px 4.5px 2px 2px; background: linear-gradient(180deg, var(--zst)), var(--tex-grh, none) 0 0 / 80px 12px, linear-gradient(var(--zwood), var(--zwood)); box-shadow: 0 2px 4px rgba(20,12,4,.35); }
+.hscroll > .rodbar::before, .hscroll > .rodbar::after { display: none; }
+.hscroll > .rodbar.bottom { height: 15px; margin: 0 -4px; border-radius: 3px; box-shadow: 0 5px 9px rgba(20,12,4,.4); }
+.hscroll > .rodbar.bottom::before, .hscroll > .rodbar.bottom::after { display: block; top: -2px; bottom: -2px; width: 15px; background: var(--zspec), linear-gradient(180deg, var(--zst)), linear-gradient(var(--gold), var(--gold)); box-shadow: 0 0 0 .5px rgba(20,10,0,.5), 1px 3px 4px rgba(20,10,0,.4); }
+.hscroll > .rodbar.bottom::before { left: -14px; border-radius: 8px 2px 2px 8px / 9.5px 3px 3px 9.5px; } .hscroll > .rodbar.bottom::after { right: -14px; border-radius: 2px 8px 8px 2px / 3px 9.5px 9.5px 3px; }
+.hscroll.danger > .rodbar.bottom::before, .hscroll.danger > .rodbar.bottom::after { background: var(--zspec), linear-gradient(180deg, var(--zst)), linear-gradient(var(--accent), var(--accent)); }
+.hscroll > .rodbar > .zp { position: absolute; inset: -4px 5px; border-radius: 2px; opacity: 0; pointer-events: none;
+  background: linear-gradient(180deg, var(--zstp)), linear-gradient(90deg, var(--zsilk) 0 10px, rgba(40,30,15,.4) 10px 11px, transparent 11px calc(100% - 11px), rgba(40,30,15,.4) calc(100% - 11px) calc(100% - 10px), var(--zsilk) calc(100% - 10px)), var(--tex-paper, none), linear-gradient(var(--zroll), var(--zroll)); box-shadow: 0 0 0 .5px rgba(40,28,12,.45); }
+
+/* 坞：收起的窗——印上搁一小卷，红绳系着，两头是它的轴头 */
+.dock-item .minroll { top: -8px; height: 9px; border-radius: 1.5px; box-shadow: 0 2px 3px rgba(0,0,0,.45), 0 0 0 .5px rgba(30,20,8,.55);
+  background: linear-gradient(180deg, var(--zstp)), linear-gradient(90deg, transparent calc(50% - 1.5px), var(--zcord) calc(50% - 1.5px) calc(50% + 1.5px), transparent calc(50% + 1.5px)), linear-gradient(90deg, var(--zsilk) 0 4px, transparent 4px calc(100% - 4px), var(--zsilk) calc(100% - 4px)), linear-gradient(var(--zroll), var(--zroll)); }
+.dock-item .minroll::before, .dock-item .minroll::after { top: 1.5px; width: 5px; height: 6px; background: var(--zspec), linear-gradient(180deg, var(--zst)), linear-gradient(var(--c, var(--gold)), var(--c, var(--gold))); box-shadow: 0 0 0 .5px rgba(20,10,0,.5); }
+.dock-item .minroll::before { left: -5px; border-radius: 3px 1px 1px 3px; } .dock-item .minroll::after { right: -5px; border-radius: 1px 3px 3px 1px; }
 /* ── 30-shuge.css ── */
 /* ================= 书阁 ================= */
 .fm { display: flex; flex-direction: column; height: 100%; min-height: 0; }
@@ -776,6 +826,79 @@ body.fm-dragging, body.fm-dragging * { cursor: grabbing !important; }
 .fm-bar.wrapped .fm-search { flex: 1 1 96px; width: auto; max-width: 260px; margin-left: auto; }
 .fm-ghost.dragimg { top: -400px; left: 0; z-index: -1; max-width: 260px; backdrop-filter: none; -webkit-backdrop-filter: none; background: var(--paper3); pointer-events: none; }
 :root.qs-dragout .fm-main [data-drop], :root.qs-dragout .dicon { transition: none; }
+
+
+/* ================= 书架（写实）：木书格里立着线装书，书脊朝外；文件夹是蓝布函套 =================
+   书脊 = 一叠纸页的切口 + 两侧封皮的边 + 上下包角 + 四道订线 + 一枚题签。木格由 Tex 画出（--tex-shelf）。 */
+.v-shelf { background: #3d2c1d; }
+:root.dark .v-shelf { background: #120d09; }
+.fm-shelf { --pg1: #f0e6cd; --pg2: #e0d2b2; --th: #f6f0df;
+  background: linear-gradient(90deg, rgba(0,0,0,.55), rgba(0,0,0,.14) 14px, transparent 36px, transparent calc(100% - 36px), rgba(0,0,0,.14) calc(100% - 14px), rgba(0,0,0,.55)),
+              var(--tex-shelf, linear-gradient(#674b33, #674b33)) 0 0 / 512px var(--row) repeat; }
+:root.dark .fm-shelf { --pg1: #b4a88b; --pg2: #988c70; --th: #cfc7b2; }
+.fm-spine { border-radius: 1.5px 1.5px 0 0;
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.5) 0, rgba(0,0,0,.14) 7%, rgba(255,255,255,.2) 24%, rgba(255,255,255,0) 50%, rgba(0,0,0,.12) 82%, rgba(0,0,0,.5) 100%),
+    linear-gradient(180deg, rgba(255,255,255,.22), transparent 3px, transparent calc(100% - 14px), rgba(0,0,0,.34)),
+    linear-gradient(90deg, var(--c1) 0 3.5px, transparent 3.5px calc(100% - 3.5px), var(--c1) calc(100% - 3.5px)),
+    linear-gradient(180deg, rgba(0,0,0,.4), var(--th) 40%, rgba(0,0,0,.25)) 0 39% / 100% 1.7px no-repeat,
+    linear-gradient(180deg, rgba(0,0,0,.4), var(--th) 40%, rgba(0,0,0,.25)) 0 61% / 100% 1.7px no-repeat,
+    repeating-linear-gradient(90deg, rgba(90,70,40,.24) 0 .5px, transparent .5px 2px),
+    linear-gradient(180deg, var(--pg1), var(--pg2));
+  box-shadow: 5px 0 7px -3px rgba(0,0,0,.6), -1px 0 2px -1px rgba(0,0,0,.4), 0 -1px 0 rgba(255,255,255,.1); }
+.fm-spine::before, .fm-spine::after { content: ''; position: absolute; left: 0; right: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(90deg, rgba(0,0,0,.5), rgba(255,255,255,.18) 26%, transparent 55%, rgba(0,0,0,.5)), var(--tex-cloth, none) 0 0 / 48px 48px, linear-gradient(var(--c2), var(--c1)); }
+.fm-spine::before { top: 0; height: 11px; box-shadow: 0 1px 1.5px rgba(0,0,0,.35); }
+.fm-spine::after { bottom: 0; height: 20px; box-shadow: 0 -1px 1.5px rgba(0,0,0,.35); }
+.fm-spine .band { z-index: 2; height: 1.7px; background: linear-gradient(180deg, rgba(0,0,0,.4), var(--th) 40%, rgba(0,0,0,.25)); box-shadow: 0 .8px 1px rgba(0,0,0,.4); }
+.fm-spine .band.t { top: 18%; } .fm-spine .band.b { top: 82%; bottom: auto; }
+.fm-slip { position: relative; z-index: 3; margin-top: 24px; max-height: calc(100% - 62px); border: 0; outline: 1px solid rgba(70,50,25,.3); outline-offset: -2.5px;
+  background: var(--tex-paper, none), linear-gradient(90deg, #efe5cd, #fbf6e6 45%, #e9ddc2); box-shadow: 0 0 0 .5px rgba(60,40,20,.55), 1px 1.5px 2.5px rgba(0,0,0,.4); }
+.fm-slip span { color: #241d15; text-shadow: 0 0 .6px rgba(36,29,21,.6); }
+.fm-ext { z-index: 2; color: rgba(255,244,222,.82); text-shadow: 0 1px 1px rgba(0,0,0,.5); }
+.fm-bthumb { opacity: .2; z-index: 0; }
+.fm-book:hover .fm-spine { transform: translateY(-9px); box-shadow: 5px 0 7px -3px rgba(0,0,0,.6), 0 12px 12px -6px rgba(0,0,0,.55), 0 -1px 0 rgba(255,255,255,.1); }
+.fm-book.sel .fm-spine { transform: translateY(-13px); box-shadow: 0 0 0 1.5px var(--gold), 0 0 12px color-mix(in srgb, var(--gold) 55%, transparent), 0 16px 14px -6px rgba(0,0,0,.6); }
+.fm-book.drop .fm-spine { box-shadow: 0 0 0 2.5px var(--gold), 0 0 16px color-mix(in srgb, var(--gold) 60%, transparent); }
+:root.dark .fm-spine { filter: brightness(.86); }
+/* 函套：靛蓝布面，一道掩口缝，两枚骨别子，题签贴在正中 */
+.fm-book.case .fm-spine { border-radius: 1px;
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.52) 0, rgba(0,0,0,.12) 6%, rgba(255,255,255,.14) 22%, transparent 50%, rgba(0,0,0,.14) 84%, rgba(0,0,0,.52)),
+    linear-gradient(180deg, rgba(255,255,255,.22), transparent 3px, transparent calc(100% - 12px), rgba(0,0,0,.4)),
+    var(--tex-cloth, none) 0 0 / 48px 48px,
+    linear-gradient(180deg, #34496b, #24344f); }
+.fm-book.case .fm-spine::before { inset: 0 auto 0 80%; width: 2px; height: auto; background: linear-gradient(90deg, rgba(0,0,0,.55), rgba(255,255,255,.16)); box-shadow: none; }
+.fm-book.case .fm-spine::after { left: 80%; top: 27%; bottom: auto; width: 5px; height: 15px; margin: 0 0 0 -1.5px; border-radius: 2.5px; z-index: 2;
+  background: linear-gradient(90deg, #a2967e, #fcf7ec 40%, #dcd2bb 75%, #8a806c); box-shadow: 0 1px 2px rgba(0,0,0,.6), 0 52px 0 0 #e6decb, 0 53px 2px rgba(0,0,0,.6); }
+.fm-book.case .band { display: none; }
+.fm-book.case .fm-slip { margin-top: 15px; }
+
+/* ================= 长卷（写实）：案上铺毡，展开一卷手卷——上下绫边、泥金隔界、两头卷着、朱丝栏分段 ================= */
+.v-juan { padding: 20px 0 22px; background: var(--tex-cloth, none) 0 0 / 48px 48px, radial-gradient(120% 100% at 50% 0%, #5d5c50, #3b3b33 75%); }
+:root.dark .v-juan { background: var(--tex-cloth, none) 0 0 / 48px 48px, radial-gradient(120% 100% at 50% 0%, #1f1f1a, #0e0e0b 75%); }
+.fm-juan { --silk: color-mix(in srgb, var(--willow) 48%, #b7b097); padding: 30px 0; min-height: 220px; box-shadow: 0 2px 3px rgba(0,0,0,.4), 0 16px 28px -8px rgba(0,0,0,.6);
+  background: linear-gradient(180deg, rgba(0,0,0,.1), transparent 4px, transparent calc(100% - 4px), rgba(0,0,0,.14)), var(--tex-paper, none),
+              linear-gradient(180deg, color-mix(in srgb, var(--paper3) 93%, #fff), var(--paper3) 50%, color-mix(in srgb, var(--paper3) 92%, var(--paper2))); }
+:root.dark .fm-juan { --silk: color-mix(in srgb, var(--willow) 40%, #3a3a30); background: linear-gradient(180deg, rgba(0,0,0,.2), transparent 4px, transparent calc(100% - 4px), rgba(0,0,0,.24)), var(--tex-paper, none), linear-gradient(180deg, #2a251d, #231f18); }
+.fm-juan::before, .fm-juan::after { content: ''; position: absolute; left: 0; right: 0; height: 21px; pointer-events: none;
+  background: linear-gradient(180deg, rgba(255,255,255,.14), transparent 35%, rgba(0,0,0,.16)), var(--tex-cloth, none) 0 0 / 48px 48px, linear-gradient(var(--silk), var(--silk)); }
+.fm-juan::before { top: 0; box-shadow: 0 1px 0 color-mix(in srgb, var(--gold) 70%, #4a3a1c), 0 2px 4px rgba(0,0,0,.14); }
+.fm-juan::after { bottom: 0; box-shadow: 0 -1px 0 color-mix(in srgb, var(--gold) 70%, #4a3a1c), 0 -2px 4px rgba(0,0,0,.1); }
+.fm-jend { width: 30px; margin: -30px 0; z-index: 2; border-radius: 2px;
+  background: linear-gradient(90deg, rgba(0,0,0,.6), rgba(0,0,0,.12) 18%, rgba(255,255,255,.36) 38%, rgba(255,255,255,.04) 56%, rgba(0,0,0,.32) 82%, rgba(0,0,0,.66)),
+              var(--tex-cloth, none) 0 0 / 48px 48px, linear-gradient(var(--silk), var(--silk));
+  box-shadow: -18px 0 24px -9px rgba(0,0,0,.5), 16px 0 22px -9px rgba(0,0,0,.45), 0 3px 6px rgba(0,0,0,.45); }
+.fm-jend::before, .fm-jend::after { left: 6px; right: 6px; height: 15px; border-radius: 3px;
+  background: linear-gradient(90deg, #140b07, #5c3625 22%, #a87656 40%, #6e4332 56%, #2a1710 86%, #0f0805); box-shadow: 0 2px 3px rgba(0,0,0,.5), inset 0 0 0 .5px rgba(0,0,0,.5); }
+.fm-jend::before { top: -13px; } .fm-jend::after { bottom: -13px; }
+.fm-jend.r { margin-left: 20px; } .fm-jend.l { margin-right: auto; width: 22px; }
+.fm-jseg { border-left: 0; position: relative; }
+.fm-jseg::after { content: ''; position: absolute; left: 0; top: 34px; bottom: 34px; width: 1px; pointer-events: none;
+  background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--accent) 42%, transparent) 9%, color-mix(in srgb, var(--accent) 42%, transparent) 91%, transparent); }
+.fm-juan .fm-jseg:last-of-type::after { display: none; }
+.fm-jtitle span { background: none; border: 0; font-size: 19px; padding: 8px 4px; text-shadow: 0 0 .7px color-mix(in srgb, var(--ink) 60%, transparent); }
+.fm-jimg { border: 4px solid #f7f1e2; outline: 1px solid rgba(60,45,25,.3); box-shadow: 0 1px 2px rgba(0,0,0,.25), 0 8px 12px -5px rgba(0,0,0,.4); }
 /* ── 31-moyan.css ── */
 /* ================= 墨砚 ================= */
 .ed { --ed-font: var(--font-song); --ed-size: 17px; --ed-lh: 1.85; display: flex; flex-direction: column; height: 100%; min-height: 0; }
@@ -4161,7 +4284,7 @@ const InkArt = (() => {
   const PAINT = { jar, slips };
   function draw(cv) {
     const { name, data, w, h: hh } = cv._ia, k = dpr();
-    if (cv.width !== Math.round(w * k)) { cv.width = Math.round(w * k); cv.height = Math.round(hh * k); }
+    const pw = Math.round(w * k), ph = Math.round(hh * k); if (cv.width !== pw || cv.height !== ph) { cv.width = pw; cv.height = ph; }   /* 宽高都要比：新画布默认 300×150，宽碰巧相等时高会被漏掉，画就被拉长了 */
     const c = cv.getContext('2d'); c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, cv.width, cv.height);
     c.setTransform(k, 0, 0, k, 0, 0); c.lineCap = 'round'; c.lineJoin = 'round';
     try { PAINT[name](c, w, hh, data, pal(), rng(name.length * 7919 + 17)); } catch (e) { console.warn('InkArt', name, e); }
@@ -4364,6 +4487,40 @@ const Tex = (() => {
     g.globalCompositeOperation = 'destination-in'; const m = g.createLinearGradient(0, 0, W, 0); m.addColorStop(0, 'rgba(0,0,0,.25)'); m.addColorStop(.012, '#000'); m.addColorStop(.88, '#000'); m.addColorStop(1, 'rgba(0,0,0,.04)'); g.fillStyle = m; g.fillRect(0, 0, W, H);
     return c;
   }
+  /* 布纹：经纬交织，可平铺；盖在什么底色上都是一块织物（函套、包角、绫边、画毡） */
+  function cloth() {
+    const S = 96, [c, g] = mk(S, S), r = rng(63);
+    for (let y = 0; y < S; y += 2) { g.fillStyle = `rgba(0,0,0,${.05 + r() * .09})`; g.fillRect(0, y, S, 1); g.fillStyle = `rgba(255,255,255,${.02 + r() * .06})`; g.fillRect(0, y + 1, S, 1); }
+    for (let x = 0; x < S; x += 2) { g.fillStyle = `rgba(0,0,0,${.04 + r() * .08})`; g.fillRect(x, 0, 1, S); g.fillStyle = `rgba(255,255,255,${.015 + r() * .05})`; g.fillRect(x + 1, 0, 1, S); }
+    for (let i = 0; i < 260; i++) { g.fillStyle = r() < .5 ? `rgba(255,255,255,${.05 + r() * .08})` : `rgba(0,0,0,${.06 + r() * .1})`; g.fillRect((r() * S) | 0, (r() * S) | 0, r() < .3 ? 3 : 2, 1); }
+    return c;
+  }
+  /* 轴上的木纹：顺着轴走的细丝，深浅不一。hz=横轴用（转 90°，原来迎光的左边到了上边） */
+  function rodGrain(hz) {
+    const W = 24, H = 160, [c, g] = mk(hz ? H : W, hz ? W : H), r = rng(91);
+    if (hz) { g.translate(H, 0); g.rotate(Math.PI / 2); }
+    for (let i = 0; i < 80; i++) { const x = r() * W, wd = r() < .15 ? 1.6 : .7, y0 = r() * H, len = 30 + r() * 130; g.fillStyle = r() < .62 ? `rgba(30,14,4,${.1 + r() * .22})` : `rgba(255,236,200,${.06 + r() * .14})`; g.fillRect(x, y0, wd, len); if (y0 + len > H) g.fillRect(x, 0, wd, y0 + len - H); }
+    return c;
+  }
+  /* 书格一层（高 196）：背板在里、在暗处，竖木纹、拼板缝；上层搁板压下一道影；搁板正面一道木棱，上沿受光 */
+  function shelf(dark) {
+    const W = 512, H = 196, K = 2, [c, g] = mk(W * K, H * K), r = rng(dark ? 303 : 202); g.scale(K, K);
+    const back = dark ? ['#15100b', '#241a12', '#2c2017'] : ['#473322', '#674b33', '#77573c'], board = dark ? ['#4c3828', '#34251a', '#1c130d'] : ['#b48e63', '#8f6a45', '#5c4129'];
+    g.fillStyle = back[0]; g.fillRect(0, 0, W, H);
+    let gr = g.createLinearGradient(0, 0, 0, 180); gr.addColorStop(0, back[0]); gr.addColorStop(.45, back[1]); gr.addColorStop(1, back[2]); g.fillStyle = gr; g.fillRect(0, 0, W, 180);
+    for (let i = 0; i < 520; i++) { const x = r() * W, y = r() * 180, L = 30 + r() * 150, n = vn(i * 3 + 1); g.strokeStyle = r() < .72 ? `rgba(0,0,0,${.04 + r() * .1})` : `rgba(255,220,170,${.02 + r() * .05})`; g.lineWidth = .5 + r() * .9; g.beginPath(); for (let t = 0; t <= L && y + t <= 180; t += 10) { const xx = x + (n(t / 40) - .5) * 5; t ? g.lineTo(xx, y + t) : g.moveTo(xx, y + t); } g.stroke(); }
+    for (let x = 40; x < W; x += 128) { g.fillStyle = 'rgba(0,0,0,.34)'; g.fillRect(x, 0, 1.2, 180); g.fillStyle = 'rgba(255,225,180,.07)'; g.fillRect(x + 1.2, 0, 1, 180); }
+    gr = g.createLinearGradient(0, 0, 0, 64); gr.addColorStop(0, 'rgba(0,0,0,.66)'); gr.addColorStop(.35, 'rgba(0,0,0,.28)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = gr; g.fillRect(0, 0, W, 64);
+    gr = g.createLinearGradient(0, 148, 0, 180); gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(1, 'rgba(0,0,0,.45)'); g.fillStyle = gr; g.fillRect(0, 148, W, 32);
+    gr = g.createLinearGradient(0, 180, 0, 194); gr.addColorStop(0, board[0]); gr.addColorStop(.22, board[1]); gr.addColorStop(1, board[2]); g.fillStyle = gr; g.fillRect(0, 180, W, 14);
+    for (let i = 0; i < 150; i++) {
+      const y = 180.6 + r() * 12.6, x = r() * W, L = 40 + r() * 220, n = vn(700 + i); g.strokeStyle = r() < .7 ? `rgba(40,22,8,${.08 + r() * .2})` : `rgba(255,228,180,${.05 + r() * .1})`; g.lineWidth = .4 + r() * .7;
+      for (const off of [0, -W]) { g.beginPath(); for (let t = 0; t <= L; t += 12) { const yy = y + (n(t / 60) - .5) * 1.6; t ? g.lineTo(x + off + t, yy) : g.moveTo(x + off + t, yy); } g.stroke(); }
+    }
+    g.fillStyle = dark ? 'rgba(255,220,170,.22)' : 'rgba(255,240,210,.55)'; g.fillRect(0, 180, W, 1);
+    g.fillStyle = 'rgba(0,0,0,.32)'; g.fillRect(0, 193, W, 1); g.fillStyle = 'rgba(0,0,0,.72)'; g.fillRect(0, 194, W, 2);
+    return c;
+  }
   let last = '', urls = [];
   const blobUrl = c => new Promise(res => c.toBlob(b => res(b ? URL.createObjectURL(b) : null), 'image/png'));
   async function apply() {
@@ -4371,9 +4528,9 @@ const Tex = (() => {
     const hx = cs.getPropertyValue('--ink').trim(), key = (dark ? 'd' : 'l') + hx; if (key === last) return; last = key;
     try {
       const ink = dark ? '205,170,104' : (/^#[0-9a-f]{3,6}$/i.test(hx) ? hexToRgb(hx) : [28, 26, 23]).join(',');
-      const us = await Promise.all([paper(dark), wash(ink, dark), stroke(ink, dark)].map(blobUrl));
+      const us = await Promise.all([paper(dark), wash(ink, dark), stroke(ink, dark), cloth(), shelf(dark), rodGrain(false), rodGrain(true)].map(blobUrl));
       if (key !== last) { us.forEach(u => u && URL.revokeObjectURL(u)); return; }
-      ['paper', 'wash', 'stroke'].forEach((k, i) => us[i] ? root.style.setProperty('--tex-' + k, `url(${us[i]})`) : root.style.removeProperty('--tex-' + k));
+      ['paper', 'wash', 'stroke', 'cloth', 'shelf', 'grv', 'grh'].forEach((k, i) => us[i] ? root.style.setProperty('--tex-' + k, `url(${us[i]})`) : root.style.removeProperty('--tex-' + k));
       const old = urls; urls = us; setTimeout(() => old.forEach(u => u && URL.revokeObjectURL(u)), 4000);
     } catch (e) { console.warn('[Tex]', e); }
   }
@@ -5421,9 +5578,10 @@ const UI = (() => {
       }
       el.style.left = clamp(x, 14, Math.max(14, innerWidth - w - 14)) + 'px';   /* 14：给地杆两端的轴头留地方 */ el.style.top = clamp(y, 6, Math.max(6, innerHeight - hh - 6)) + 'px';
       if (Prefs.get('motion') >= 1 && !REDUCED_MOTION.matches) {
-        const ph = paper.offsetHeight;
-        paper.animate([{ clipPath: 'inset(0 0 100% 0)' }, { clipPath: 'inset(0 0 0 0)' }], { duration: 200, easing: 'cubic-bezier(.22,.8,.24,1)' });
-        el.lastChild.animate([{ transform: `translateY(${-ph}px)` }, { transform: 'none' }], { duration: 200, easing: 'cubic-bezier(.22,.8,.24,1)' });
+        /* 条幅自天杆往下展开，地杆带着纸走；展到底再把纸下的影放出来 */
+        const ph = paper.offsetHeight, E = 'cubic-bezier(.22,.8,.24,1)', D = 220, X = 90, f = D / (D + X), o = { duration: D + X };
+        paper.animate([{ clipPath: `inset(0 -40px ${ph}px -40px)`, easing: E }, { clipPath: 'inset(0 -40px 0px -40px)', offset: f }, { clipPath: 'inset(0 -40px -40px -40px)' }], o);
+        el.lastChild.animate([{ transform: `translateY(${-ph}px)`, easing: E }, { transform: 'none', offset: f }, { transform: 'none' }], o);
       }
     }
     setTimeout(() => { document.addEventListener('keydown', key, true); if (!parent) document.addEventListener('pointerdown', outside, true); }, 0);
@@ -5470,16 +5628,18 @@ const UI = (() => {
     return new Promise(resolve => {
       if (owner && owner.on) owner.on('close', () => finish(null));   // 所属窗口合上，对话也随之收起
       const prevFocus = document.activeElement;
-      const sheet = h('div.sheet'), wrap = h('div.hscroll' + (danger ? '.danger' : ''), { style: { '--w': w + 'px' }, role: 'dialog', 'aria-modal': 'true' }, h('div.rodbar'), sheet, h('div.rodbar.bottom'));
+      const sheet = h('div.sheet'), wrap = h('div.hscroll' + (danger ? '.danger' : ''), { style: { '--w': w + 'px' }, role: 'dialog', 'aria-modal': 'true' }, h('div.rodbar'), sheet, h('div.rodbar.bottom', {}, h('i.zp')));
       const bg = h('div.modal-bg', {}, wrap);
       let done = false;
       const finish = v => {
         if (done) return; done = true; document.removeEventListener('keydown', key, true);
         const anim = Prefs.get('motion') > 0;
         if (anim) {
-          const hh = sheet.offsetHeight;
-          sheet.animate([{ clipPath: 'inset(0 0 0 0)' }, { clipPath: `inset(0 0 100% 0)` }], { duration: 220, easing: 'cubic-bezier(.6,.05,.3,1)', fill: 'forwards' });
-          wrap.lastChild.animate([{ transform: 'none' }, { transform: `translateY(${-hh}px)` }], { duration: 220, easing: 'cubic-bezier(.6,.05,.3,1)', fill: 'forwards' });
+          /* 地杆往上卷，纸跟着收进去，杆上的纸卷越卷越粗 */
+          const hh = sheet.offsetHeight, o = { duration: 230, easing: 'cubic-bezier(.6,.05,.3,1)', fill: 'forwards' }, rod = wrap.lastChild;
+          sheet.animate([{ clipPath: 'inset(0 0 0px 0)' }, { clipPath: `inset(0 0 ${hh}px 0)` }], o);
+          rod.animate([{ transform: 'none' }, { transform: `translateY(${-hh}px)` }], o);
+          rod.firstChild && rod.firstChild.animate([{ opacity: 0, transform: 'scaleY(.75)' }, { opacity: 1, transform: 'scaleY(.82)', offset: .12 }, { opacity: 1, transform: 'scaleY(1.45)' }], o);
           bg.classList.add('out'); setTimeout(() => bg.remove(), 230);
         } else bg.remove();
         prevFocus && prevFocus.focus && prevFocus.focus({ preventScroll: true });
@@ -5495,9 +5655,11 @@ const UI = (() => {
       document.body.append(bg);
       document.addEventListener('keydown', key, true);
       if (Prefs.get('motion') > 0) {
-        const hh = sheet.offsetHeight;
-        sheet.animate([{ clipPath: 'inset(0 0 100% 0)' }, { clipPath: 'inset(0 0 0 0)' }], { duration: 420, easing: 'cubic-bezier(.22,.8,.24,1)' });
-        wrap.lastChild.animate([{ transform: `translateY(${-hh}px)` }, { transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.22,.8,.24,1)' });
+        /* 立轴挂上去，地杆带着纸往下展开；杆上卷着的纸越放越薄，放完只剩木杆 */
+        const hh = sheet.offsetHeight, o = { duration: 440, easing: 'cubic-bezier(.22,.8,.24,1)' }, rod = wrap.lastChild;
+        sheet.animate([{ clipPath: `inset(0 0 ${hh}px 0)` }, { clipPath: 'inset(0 0 0px 0)' }], o);
+        rod.animate([{ transform: `translateY(${-hh}px)` }, { transform: 'none' }], o);
+        rod.firstChild && rod.firstChild.animate([{ opacity: 1, transform: 'scaleY(1.45)' }, { opacity: 1, transform: 'scaleY(.82)', offset: .88 }, { opacity: 0, transform: 'scaleY(.75)' }], o);
       }
       requestAnimationFrame(() => { const f = sheet.querySelector('[autofocus]') || sheet.querySelector('[data-primary]'); f && f.focus({ preventScroll: true }); if (f && f.select && f.dataset.selectBase != null) { const v = f.value, d = v.lastIndexOf('.'); f.setSelectionRange(0, d > 0 && f.dataset.selectBase === '1' ? d : v.length); } });
     });
@@ -6201,70 +6363,91 @@ const WM = (() => {
   /* ---------- 动效 ---------- */
   function rollLayer(w, rect, c) { const fx = h('div.rollfx', { style: { left: rect.x + 'px', top: rect.y + 'px', width: rect.w + 'px', height: rect.h + 'px', zIndex: (+w.el.style.zIndex || zTop) + 1, '--c': c } }); layer.append(fx); return fx; }
   const E_IN = 'cubic-bezier(.22,.8,.24,1)', E_INK = 'cubic-bezier(.6,.05,.3,1)';
+  /* 开合都是卷轴——窗是一幅手卷：
+     开：两卷自中间向两边展开，卷越展越细，到边撤下；合：两边往中间卷，越卷越粗，合成一卷，一顿，收走；
+     收：地杆自下往上卷到标题，整卷飞回坞上；放：飞回来，再往下展开。
+     每一段都有时限，轴一定撤掉，不会留在桌面上。窗本身只动裁切，不动透明度，不闪。 */
+  const rollT = L => Math.min(32, Math.sqrt(150 + 1.3 * Math.max(0, L)));   // 卷进去 L 像素的纸，这一卷有多粗
+  const mkRod = (cls, T) => h('i.zhou' + cls, { style: { '--T': T.toFixed(1) + 'px' } }, h('i.zs'), h('i.zx'), h('i.zp'), h('i.zk.a'), h('i.zk.b'));
+  const fin = (a, ms) => Promise.race([a.finished.catch(() => { }), sleep(ms + 150)]);
+  const CLIP_ALL = 'inset(-20px -40px -40px -40px)';
   async function fxOpen(w) {
-    const r = w.rect(), fx = rollLayer(w, r, 'var(--gold)'), L = h('i.rod'), R = h('i.rod'), veil = h('i.inkveil'); fx.append(veil, L, R);
-    const D = 520, half = r.w / 2;
-    veil.animate([{ clipPath: `inset(0 ${half}px 0 ${half}px)`, opacity: .92 }, { clipPath: 'inset(0 0 0 0)', opacity: .5, offset: .6 }, { clipPath: 'inset(0 0 0 0)', opacity: 0 }], { duration: D + 240, easing: E_IN, fill: 'forwards' });
-    const a1 = w.el.animate([{ clipPath: `inset(-20px ${half}px -20px ${half}px)`, opacity: .4 }, { clipPath: 'inset(-20px -40px -40px -40px)', opacity: 1 }], { duration: D, easing: E_IN });
-    L.animate([{ left: half + 'px' }, { left: '0px' }], { duration: D, easing: E_IN, fill: 'forwards' });
-    R.animate([{ left: half + 'px' }, { left: r.w + 'px' }], { duration: D, easing: E_IN, fill: 'forwards' });
-    fx.animate([{ opacity: 1 }, { opacity: 1, offset: .75 }, { opacity: 0 }], { duration: D + 120, fill: 'forwards' });
-    await a1.finished.catch(() => { }); await sleep(250); fx.remove();
+    const r = w.rect(), half = r.w / 2, T = rollT(half), t1 = (rollT(0) / T).toFixed(3), fx = rollLayer(w, r, 'var(--gold)'), L = mkRod('.l', T), R = mkRod('.r', T); fx.append(L, R);
+    const D = 540, X = 150, f = D / (D + X), o = { duration: D + X, fill: 'forwards' };
+    try {
+      const a = w.el.animate([{ clipPath: `inset(-20px ${half}px -40px ${half}px)`, easing: E_IN }, { clipPath: 'inset(-20px 0px -40px 0px)', offset: f }, { clipPath: CLIP_ALL }], { duration: D + X });
+      L.animate([{ transform: `translateX(${half - T / 2}px)`, easing: E_IN }, { transform: 'translateX(0px)', offset: f }, { transform: 'translateX(-5px)' }], o);
+      R.animate([{ transform: `translateX(${half + T / 2}px)`, easing: E_IN }, { transform: `translateX(${r.w}px)`, offset: f }, { transform: `translateX(${r.w + 5}px)` }], o);
+      for (const k of [L, R]) k.children[2].animate([{ transform: 'scaleX(1)', easing: E_IN }, { transform: `scaleX(${t1})`, offset: f }, { transform: `scaleX(${t1})` }], o);
+      fx.animate([{ opacity: 1 }, { opacity: 1, offset: f }, { opacity: 0 }], o);
+      await fin(a, D + X);
+    } finally { fx.remove(); }
   }
   async function fxClose(w) {
-    const r = w.rect(), fx = rollLayer(w, r, 'var(--accent)'), L = h('i.rod'), R = h('i.rod'); fx.append(L, R);
-    const D = 420, half = r.w / 2;
-    fx.animate([{ opacity: 0 }, { opacity: 1, offset: .12 }, { opacity: 1 }], { duration: D, fill: 'forwards' });
-    L.animate([{ left: '0px' }, { left: half + 'px' }], { duration: D, easing: E_INK, fill: 'forwards' });
-    R.animate([{ left: r.w + 'px' }, { left: half + 'px' }], { duration: D, easing: E_INK, fill: 'forwards' });
-    await w.el.animate([{ clipPath: 'inset(-20px -40px -40px -40px)' }, { clipPath: `inset(-20px ${half}px -20px ${half}px)` }], { duration: D, easing: E_INK, fill: 'forwards' }).finished.catch(() => { });
-    // 两轴合成一线，一顿，消失
-    await fx.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'scaleY(.6)' }], { duration: 180, easing: 'ease-in', fill: 'forwards' }).finished.catch(() => { });
-    fx.remove();
+    const r = w.rect(), half = r.w / 2, T = rollT(half), t0 = (rollT(0) / T).toFixed(3), fx = rollLayer(w, r, 'var(--accent)'), L = mkRod('.l', T), R = mkRod('.r', T); fx.append(L, R);
+    const D = 430, o = { duration: D, easing: E_INK, fill: 'forwards' };
+    try {
+      fx.animate([{ opacity: 0 }, { opacity: 1, offset: .14 }, { opacity: 1 }], { duration: D, fill: 'forwards' });
+      L.animate([{ transform: 'translateX(0px)' }, { transform: `translateX(${half - T / 2}px)` }], o);
+      R.animate([{ transform: `translateX(${r.w}px)` }, { transform: `translateX(${half + T / 2}px)` }], o);
+      for (const k of [L, R]) k.children[2].animate([{ transform: `scaleX(${t0})` }, { transform: 'scaleX(1)' }], o);
+      await fin(w.el.animate([{ clipPath: 'inset(-20px 0px -40px 0px)' }, { clipPath: `inset(-20px ${half}px -40px ${half}px)` }], o), D);
+      await sleep(70);   // 合成一卷，顿一下
+      await fin(fx.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(10px) scale(.95)' }], { duration: 170, easing: 'ease-in', fill: 'forwards' }), 170);
+    } finally { fx.remove(); }
   }
   function dockTarget(w) {
     const it = $(`#dock .dock-item[data-app="${w.app}"]`); if (!it) return { x: innerWidth / 2, y: innerHeight };
     const r = it.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
   }
   async function fxMin(w) {
-    const r = w.rect(), th = 42, fx = rollLayer(w, r, w.def.color), rod = h('i.rod.h'); fx.append(rod);
-    const D = 360;
-    rod.animate([{ top: r.h + 'px' }, { top: th + 'px' }], { duration: D, easing: E_INK, fill: 'forwards' });
-    await w.el.animate([{ clipPath: 'inset(-20px -40px -40px -40px)' }, { clipPath: `inset(0 0 ${r.h - th}px 0)` }], { duration: D, easing: E_INK, fill: 'forwards' }).finished.catch(() => { });
-    const t = dockTarget(w), dx = t.x - (r.x + r.w / 2), dy = t.y - (r.y + th / 2);
-    const fly = [{ transform: 'none', opacity: 1 }, { transform: `translate(${dx}px, ${dy}px) scale(${Math.max(0.06, 44 / r.w)}, .5)`, opacity: 0 }];
-    const o = { duration: 320, easing: 'cubic-bezier(.5,0,.75,0)', fill: 'forwards' };
-    const a = w.el.animate(fly, o); fx.animate(fly, o);
-    await a.finished.catch(() => { });
-    w.el.getAnimations().forEach(x => x.cancel()); fx.remove();
+    const r = w.rect(), th = 42, T = rollT(r.h - th), t0 = (rollT(0) / T).toFixed(3), fx = rollLayer(w, r, w.def.color), rod = mkRod('.h.u', T); fx.append(rod);
+    const D = 380, o = { duration: D, easing: E_INK, fill: 'forwards' };
+    try {
+      fx.animate([{ opacity: 0 }, { opacity: 1, offset: .14 }, { opacity: 1 }], { duration: D, fill: 'forwards' });
+      rod.animate([{ transform: `translateY(${r.h}px)` }, { transform: `translateY(${th + T / 2}px)` }], o);
+      rod.children[2].animate([{ transform: `scaleY(${t0})` }, { transform: 'scaleY(1)' }], o);
+      await fin(w.el.animate([{ clipPath: 'inset(-20px -40px 0px -40px)' }, { clipPath: `inset(-20px -40px ${r.h - th}px -40px)` }], o), D);
+      const t = dockTarget(w), dx = t.x - (r.x + r.w / 2), dy = t.y - (r.y + th / 2);
+      const fly = [{ transform: 'none', opacity: 1 }, { transform: `translate(${dx}px, ${dy}px) scale(${Math.max(0.06, 44 / r.w)}, .5)`, opacity: 0 }];
+      const o2 = { duration: 320, easing: 'cubic-bezier(.5,0,.75,0)', fill: 'forwards' };
+      fx.animate(fly, o2);
+      await fin(w.el.animate(fly, o2), 320);
+    } finally { w.el.getAnimations().forEach(x => x.cancel()); fx.remove(); }
   }
   async function fxUnmin(w) {
-    const r = w.rect(), th = 42, t = dockTarget(w), dx = t.x - (r.x + r.w / 2), dy = t.y - (r.y + th / 2);
-    const fx = rollLayer(w, r, w.def.color), rod = h('i.rod.h', { style: { top: th + 'px' } }); fx.append(rod);
-    const fly = [{ transform: `translate(${dx}px, ${dy}px) scale(${Math.max(0.06, 44 / r.w)}, .5)`, opacity: 0 }, { transform: 'none', opacity: 1 }];
-    const o = { duration: 300, easing: 'cubic-bezier(.25,1,.5,1)' };
-    w.el.style.clipPath = `inset(0 0 ${r.h - th}px 0)`;
-    fx.animate(fly, o); await w.el.animate(fly, o).finished.catch(() => { });
-    const D = 420;
-    rod.animate([{ top: th + 'px' }, { top: r.h + 'px' }], { duration: D, easing: E_IN, fill: 'forwards' });
-    const a = w.el.animate([{ clipPath: `inset(0 0 ${r.h - th}px 0)` }, { clipPath: 'inset(-20px -40px -40px -40px)' }], { duration: D, easing: E_IN });
-    w.el.style.clipPath = '';
-    fx.animate([{ opacity: 1 }, { opacity: 1, offset: .8 }, { opacity: 0 }], { duration: D + 80, fill: 'forwards' });
-    await a.finished.catch(() => { }); fx.remove();
+    const r = w.rect(), th = 42, T = rollT(r.h - th), t1 = (rollT(0) / T).toFixed(3), t = dockTarget(w), dx = t.x - (r.x + r.w / 2), dy = t.y - (r.y + th / 2);
+    const fx = rollLayer(w, r, w.def.color), rod = mkRod('.h.u', T); fx.append(rod);
+    const shut = `inset(-20px -40px ${r.h - th}px -40px)`;
+    try {
+      rod.style.transform = `translateY(${th + T / 2}px)`;
+      const fly = [{ transform: `translate(${dx}px, ${dy}px) scale(${Math.max(0.06, 44 / r.w)}, .5)`, opacity: 0 }, { transform: 'none', opacity: 1 }];
+      const o = { duration: 300, easing: 'cubic-bezier(.25,1,.5,1)' };
+      w.el.style.clipPath = shut;
+      fx.animate(fly, o); await fin(w.el.animate(fly, o), 300);
+      const D = 440, X = 140, f = D / (D + X), o2 = { duration: D + X, fill: 'forwards' };
+      rod.animate([{ transform: `translateY(${th + T / 2}px)`, easing: E_IN }, { transform: `translateY(${r.h}px)`, offset: f }, { transform: `translateY(${r.h + 5}px)` }], o2);
+      rod.children[2].animate([{ transform: 'scaleY(1)', easing: E_IN }, { transform: `scaleY(${t1})`, offset: f }, { transform: `scaleY(${t1})` }], o2);
+      fx.animate([{ opacity: 1 }, { opacity: 1, offset: f }, { opacity: 0 }], o2);
+      const a = w.el.animate([{ clipPath: shut, easing: E_IN }, { clipPath: 'inset(-20px -40px 0px -40px)', offset: f }, { clipPath: CLIP_ALL }], { duration: D + X });
+      w.el.style.clipPath = '';
+      await fin(a, D + X);
+    } finally { w.el.style.clipPath = ''; fx.remove(); }
   }
   /** 位置变化：开（向外推）/ 收回（向内） */
   async function animatePlace(w, to, from, dir) {
     if (!animOn()) { w.place(to); return; }
     w.el.classList.add('anim'); w.place(to);
     if (fxOn() && dir) {
+      /* 放大、还原：左右两根轴跟着纸边走，到位撤下 */
       const big = { x: Math.min(from.x, to.x), y: Math.min(from.y, to.y), w: 0, h: 0 }; big.w = Math.max(from.x + from.w, to.x + to.w) - big.x; big.h = Math.max(from.y + from.h, to.y + to.h) - big.y;
-      const fx = rollLayer(w, big, 'var(--gold)'), L = h('i.rod'), R = h('i.rod'); fx.append(L, R);
+      const fx = rollLayer(w, big, 'var(--gold)'), L = mkRod('.l', 11), R = mkRod('.r', 11); fx.append(L, R); L.style.height = R.style.height = 'auto';
       const f0 = from.x - big.x, f1 = from.x + from.w - big.x, t0 = to.x - big.x, t1 = to.x + to.w - big.x;
       const o = { duration: 300, easing: E_IN, fill: 'forwards' };
       L.animate([{ left: f0 + 'px', top: (from.y - big.y) + 'px', bottom: (big.y + big.h - from.y - from.h) + 'px' }, { left: t0 + 'px', top: (to.y - big.y) + 'px', bottom: (big.y + big.h - to.y - to.h) + 'px' }], o);
       R.animate([{ left: f1 + 'px', top: (from.y - big.y) + 'px', bottom: (big.y + big.h - from.y - from.h) + 'px' }, { left: t1 + 'px', top: (to.y - big.y) + 'px', bottom: (big.y + big.h - to.y - to.h) + 'px' }], o);
-      fx.animate([{ opacity: 1 }, { opacity: 1, offset: .7 }, { opacity: 0 }], { duration: 380, fill: 'forwards' });
-      setTimeout(() => fx.remove(), 400);
+      fx.animate([{ opacity: 0 }, { opacity: 1, offset: .15 }, { opacity: 1, offset: .72 }, { opacity: 0 }], { duration: 390, fill: 'forwards' });
+      setTimeout(() => fx.remove(), 420);
       if (dir === 'out' && typeof Wallpaper !== 'undefined') Wallpaper.gust(0.6);
     }
     await sleep(310); w.el.classList.remove('anim');
