@@ -227,6 +227,12 @@ input[type=range]::-moz-range-thumb { width: 14px; height: 14px; border-radius: 
 .seal.file { --c: var(--paper3); color: var(--ink2); text-shadow: none; background: linear-gradient(160deg, var(--paper3), color-mix(in srgb, var(--paper2) 80%, var(--paper3))); box-shadow: inset 0 0 0 1px var(--line), 0 2px 5px rgba(40,25,10,.14); }
 .seal.file .k { position: absolute; right: 8%; bottom: 7%; font: 600 calc(var(--sz, 52px) * .15)/1 var(--font-sans); color: var(--k, var(--willow-deep)); letter-spacing: 0; text-transform: uppercase; }
 .seal.thumb { background-size: cover !important; background-position: center !important; }
+/* 图标方案（设阁 › 图标）：印换成当场画出的一枚图——原来的底、字、棱都撤下，图比印框略大一圈（留给投影与出框的部分） */
+.seal.ik:not(.thumb) { background: none !important; box-shadow: none !important; color: transparent !important; text-shadow: none !important; border-radius: 0; }
+.seal.ik:not(.thumb)::after { display: none; }
+.seal.ik:not(.thumb) > span { display: none; }
+.seal > img.ik-img { position: absolute; left: -16.667%; top: -16.667%; width: 133.333%; height: 133.333%; max-width: none; pointer-events: none; -webkit-user-drag: none; user-select: none; }
+.seal.thumb > img.ik-img { display: none; }
 
 /* ---------- 程序坞 ---------- */
 #dock {
@@ -237,8 +243,8 @@ input[type=range]::-moz-range-thumb { width: 14px; height: 14px; border-radius: 
 #dock.left { left: calc(10px + var(--safe-l)); bottom: auto; top: 50%; transform: translateY(-50%); flex-direction: column; align-items: flex-start; }
 #dock.hidden { transform: translate(-50%, calc(100% + 20px)); }
 #dock.left.hidden { transform: translate(calc(-100% - 20px), -50%); }
-.dock-item { position: relative; width: 48px; height: 48px; display: grid; place-items: center; border: 0; padding: 0; background: none; transform-origin: 50% 100%; transition: transform .18s var(--ease); }
-#dock.left .dock-item { transform-origin: 0 50%; }
+.dock-item { position: relative; width: 48px; height: 48px; display: grid; place-items: center; border: 0; padding: 0; background: none; }
+.dock-slip { display: none; }
 .dock-item .seal { --sz: 44px; transition: transform .25s var(--spring), filter .2s; }
 .dock-item:active .seal { transform: scale(.92); filter: brightness(.92); }
 .dock-item::after { content: ''; position: absolute; bottom: -5px; left: 50%; width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: var(--bar-ink); opacity: 0; transition: opacity .2s, width .2s, margin .2s; }
@@ -252,6 +258,37 @@ input[type=range]::-moz-range-thumb { width: 14px; height: 14px; border-radius: 
 .dock-item.min .minroll { opacity: 1; transform: none; }
 .dock-sep { width: 1px; height: 36px; margin: 0 3px 6px; background: rgba(255,255,255,.14); align-self: center; }
 #dock.left .dock-sep { width: 36px; height: 1px; margin: 3px 6px; }
+/* ——— 程序坞悬停 · 一：墨晕（默认）———
+   坞面：一团跟着指针走的淡墨泥金晕（#dock::before）；印：提起、微侧；印下：一摊印泥色的晕洇开（.dock-item::before）；按下：落印。 */
+#dock::before { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity .45s var(--ease);
+  background: radial-gradient(58px 38px at var(--mx, 50%) var(--my, 100%), color-mix(in srgb, var(--gold) 52%, transparent), transparent 74%),
+              radial-gradient(170px 80px at var(--mx, 50%) var(--my, 100%), rgba(255,255,255,.11), transparent 78%); }
+:root[data-dockfx=ink] #dock.hot::before { opacity: 1; }
+.dock-item::before { content: ''; position: absolute; left: 50%; bottom: 0; width: 42px; height: 12px; margin-left: -21px; border-radius: 50%; pointer-events: none; opacity: 0; transform: scale(.25); filter: blur(2.5px);
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--c, var(--accent)) 45%, var(--accent)) 0, color-mix(in srgb, var(--accent) 55%, transparent) 55%, transparent 100%); transition: opacity .3s var(--ease), transform .5s var(--ease-ink); }
+#dock.left .dock-item::before { left: 0; bottom: auto; top: 50%; width: 12px; height: 42px; margin: -21px 0 0; }
+@media (hover: hover) {
+  :root[data-dockfx=ink] .dock-item:hover .seal { transform: translateY(-6px) rotate(-3.5deg); filter: brightness(1.07) drop-shadow(0 7px 6px rgba(0,0,0,.34)); }
+  :root[data-dockfx=ink] #dock.left .dock-item:hover .seal { transform: translateX(6px) rotate(-3.5deg); }
+  :root[data-dockfx=ink] .dock-item:hover::before { opacity: .95; transform: scale(1); }
+  :root[data-dockfx=ink] .dock-item:hover:active .seal { transform: translateY(1px) scale(.95); filter: brightness(.94); transition-duration: .08s; }
+  :root[data-dockfx=ink] .dock-item:hover:active::before { transform: scale(1.25); opacity: 1; transition-duration: .1s; }
+}
+/* ——— 程序坞悬停 · 二：展签 ———
+   印不动；印旁展出一张小纸签（一头一根细木轴），写着程序名，邻印被推开。 */
+:root[data-dockfx=scroll] .dock-item { width: auto; min-width: 48px; display: flex; align-items: center; justify-content: flex-start; padding: 0 2px; }
+:root[data-dockfx=scroll] .dock-item::after { left: 24px; }
+:root[data-dockfx=scroll] .dock-item .minroll { left: 24px; }
+:root[data-dockfx=scroll] .dock-slip { display: block; position: relative; flex: none; max-width: 0; height: 28px; margin-left: 0; overflow: hidden; white-space: nowrap; font: normal 14px/28px var(--font-kai); letter-spacing: .14em; color: #2a251e; text-align: center;
+  background: linear-gradient(180deg, #f6efdf, #e9dfc8); border-radius: 1px; box-shadow: inset 0 0 0 .5px rgba(60,45,25,.35), 0 1px 3px rgba(0,0,0,.35); opacity: 0; padding: 0;
+  transition: max-width .42s var(--ease-ink), opacity .25s, margin .42s var(--ease-ink), padding .42s var(--ease-ink); }
+:root[data-dockfx=scroll] .dock-slip::after { content: ''; position: absolute; right: 0; top: -2px; bottom: -2px; width: 4px; border-radius: 2px; background: linear-gradient(90deg, #2c2118, #8a6d52 45%, #3a2b1f); }
+:root[data-dockfx=scroll] .dock-slip::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--c, var(--gold)); opacity: .85; }
+@media (hover: hover) and (min-width: 760px) {
+  :root[data-dockfx=scroll] .dock-item:hover .dock-slip, :root[data-dockfx=scroll] .dock-item:focus-visible .dock-slip { max-width: 9em; opacity: 1; margin-left: 5px; padding: 0 13px 0 11px; }
+  :root[data-dockfx=scroll] .dock-item:hover .seal { filter: brightness(1.06); }
+}
+@media (max-width: 759px) { :root[data-dockfx=scroll] .dock-item { display: grid; place-items: center; padding: 0; } :root[data-dockfx=scroll] .dock-slip { display: none; } :root[data-dockfx=scroll] .dock-item::after { left: 50%; } :root[data-dockfx=scroll] .dock-item .minroll { left: 50%; } }
 .dock-tip { position: fixed; z-index: 2000; padding: 3px 10px; border-radius: calc(6px * var(--rk)); background: var(--bar); color: var(--bar-ink); font-size: 12.5px; pointer-events: none; white-space: nowrap; box-shadow: var(--shadow-sm); animation: qs-fade-in .12s; }
 
 /* ---------- 窗口 ---------- */
@@ -313,6 +350,11 @@ body.dragging-win, body.dragging-win * { cursor: grabbing !important; }
 /* 未保存：合轴上悬一滴墨 */
 .win.dirty .scroll[data-act=close]::after { content: ''; position: absolute; top: 3px; right: -1px; width: 6px; height: 6px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: var(--accent); animation: qs-ink-pulse 2.4s ease-in-out infinite; }
 @media (pointer: coarse) { .scrolls { gap: 4px; } }
+/* 三轴靠右（设阁 › 窗口 › 三轴位置）：题名在左，工具居中偏右，三轴收在最右端 */
+:root[data-scpos=right] .win-title .scrolls { position: static; transform: none; flex: none; order: 3; margin-left: 6px; margin-right: 2px; }
+:root[data-scpos=right] .win-title .ta { order: 2; margin-left: auto; }
+:root[data-scpos=right] .win-title .tt { max-width: none; flex: 0 1 auto; }
+:root[data-scpos=right] .win.mobile .win-title .scrolls { margin-left: 6px; }
 
 /* 卷轴动效层：窗口开合时出现的两根轴 */
 
@@ -490,7 +532,11 @@ body.dragging-win, body.dragging-win * { cursor: grabbing !important; }
 :root.dark { --qs-hl: rgba(255,255,255,.07); --qs-sink: rgba(0,0,0,.55); }
 
 /* —— 窗：一张裱好的纸。边是墨线；题头纸感（宣纸纤维、一抹淡墨、下缘一笔飞白）默认不开，设阁 › 轴 · 窗口 可开（:root.qs-tpaper） —— */
+/* 纸质质感总开关：设阁 › 外观 › 纸质质感。关着时 --tex-paper / --tex-wash / --tex-stroke 一律无效，
+   所有 var(--tex-paper, none) 之处（窗、题头、工具条、菜单、立轴对话框与启封、书脊题签、长卷……）同时回到素面；开了就一起有。不许有哪一处单独藏着纸纹。 */
+:root.qs-paper { --tex-paper: var(--texraw-paper); --tex-wash: var(--texraw-wash); --tex-stroke: var(--texraw-stroke); }
 .win { background-image: var(--tex-paper, none); border-color: color-mix(in srgb, var(--ink) 24%, var(--line)); }
+:root.qs-paper.dark .win { background-image: var(--tex-paper, none), radial-gradient(120% 60% at 50% 0%, rgba(212,168,90,.035), transparent 70%); }
 :root.qs-tpaper .win-title {
   isolation: isolate; border-bottom-color: color-mix(in srgb, var(--line) 30%, transparent);
   background: var(--tex-paper, none), linear-gradient(180deg, color-mix(in srgb, var(--paper3) 90%, #fff), color-mix(in srgb, var(--paper3) 84%, var(--paper2)));
@@ -1317,6 +1363,15 @@ body.fm-dragging, body.fm-dragging * { cursor: grabbing !important; }
 .sg-app.on { color: var(--ink); border-color: var(--willow); background: color-mix(in srgb, var(--willow) 12%, var(--paper3)); }
 .sg-app.on .sg-ag { filter: none; }
 .sg-ai { position: absolute; top: -6px; right: -5px; min-width: 16px; height: 16px; padding: 0 3px; border-radius: calc(8px * var(--rk)); background: var(--gold); color: #fff; font: normal 10px/16px var(--font-kai); text-align: center; }
+/* 图标方案卡 */
+.sg-icons { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 8px; margin-top: 12px; }
+.sg-ic { display: grid; justify-items: center; gap: 5px; padding: 9px 4px 7px; border: 1px solid color-mix(in srgb, var(--line) 80%, transparent); border-radius: calc(12px * var(--rk)); background: color-mix(in srgb, var(--paper2) 30%, var(--paper3)); transition: transform .2s var(--spring), box-shadow .2s; }
+.sg-ic:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+.sg-ic.on { border-color: var(--willow-deep); box-shadow: 0 0 0 2px color-mix(in srgb, var(--willow) 45%, transparent); background: color-mix(in srgb, var(--willow) 10%, var(--paper3)); }
+.sg-icp { display: flex; align-items: center; justify-content: center; gap: 5px; height: 42px; }
+.sg-icp img { width: 46px; height: 46px; margin: -4px -5px; flex: none; }
+.sg-ic b { font: 600 14px var(--font-kai); letter-spacing: .1em; color: var(--ink); }
+.sg-icd { margin-top: 10px; font-size: 12.5px; line-height: 1.6; color: var(--ink3); }
 /* 主题卡 */
 .sg-themes { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-top: 12px; }
 .sg-th { border: 1px solid color-mix(in srgb, var(--line) 80%, transparent); border-radius: calc(12px * var(--rk)); padding: 6px 6px 8px; background: var(--paper3); text-align: left; transition: transform .2s var(--spring), box-shadow .2s; }
@@ -1457,7 +1512,9 @@ const uid = (n = 16) => { const a = new Uint8Array(n / 2); crypto.getRandomValue
 const IS_TOUCH = matchMedia('(pointer: coarse)').matches;
 const MQ_MOBILE = matchMedia('(max-width: 759px)');
 const isMobile = () => MQ_MOBILE.matches;
-const REDUCED_MOTION = matchMedia('(prefers-reduced-motion: reduce)');
+/* 系统的「减弱动态效果」一概不理：青丝的动效永远不因操作系统的设置而停（不少 Windows 机器、远程桌面默认就关着系统动画）。
+   要调只在青丝自己的设置里调。这里留一个恒为 false 的桩，免得各处判断改动。 */
+const REDUCED_MOTION = { matches: false, addEventListener() { } };
 
 /** h('div.cls#id', {attrs, on:{click}}, ...children) */
 function h(sel, attrs, ...kids) {
@@ -1705,6 +1762,11 @@ const PREF_DEFAULTS = {
   glyphStyle: 'ink',
   webScripts: true,       // 墨字 ink / 系统字体 font
   motion: 2,               // 0 静 1 简 2 全
+  paper: false,            // 纸质质感：全系统一个开关（窗、题头、工具条、菜单、立轴对话框、启封、书签、长卷、三卷轴）
+  scrollPos: 'center',     // 收开合三轴：center 居中 / right 靠右
+  openMode: 'single',      // 打开方式：single 单击 / double 双击（手机电脑一致）
+  dockFx: 'ink',           // 程序坞悬停：ink 墨晕钤印 / scroll 展签 / off 关
+  iconStyle: 'default', iconFiles: true,   // 图标方案
   wpTrees: 1, wpParticles: 1, wpMist: true, wpFps: 30, wpImage: '', wpDim: 0,
   winAnim: 1, scrollLabels: 'hover', snap: true, dockPos: 'bottom', dockAutoHide: false, dockMagnify: true,
   deskIconSize: 64, deskShowFiles: true,
@@ -1717,7 +1779,14 @@ const PREF_DEFAULTS = {
 };
 const Prefs = {
   _v: null,
-  load() { this._v = Object.assign({}, PREF_DEFAULTS, LS.get('prefs', {})); return this._v; },
+  load() {
+    const saved = LS.get('prefs', {}) || {};
+    this._v = Object.assign({}, PREF_DEFAULTS, saved);
+    /* 旧版分开的「菜单纸感 / 标题栏纸感」并成一个；旧版「程序坞放大」关着的，悬停效果也关 */
+    if (!('paper' in saved) && (saved.menuPaper || saved.titlePaper)) this._v.paper = true;
+    if (!('dockFx' in saved) && saved.dockMagnify === false) this._v.dockFx = 'off';
+    return this._v;
+  },
   get(k) { if (!this._v) this.load(); return this._v[k]; },
   set(k, v, silent) {
     if (!this._v) this.load();
@@ -4323,7 +4392,8 @@ const Theme = (() => {
     const root = document.documentElement;
     root.style.setProperty('--ui-scale', Prefs.get('uiScale'));
     root.style.setProperty('--rk', +Prefs.get('corner') || 0); root.dataset.mg = Prefs.get('menuGlyph');
-    root.classList.toggle('qs-mpaper', !!Prefs.get('menuPaper')); root.classList.toggle('qs-tpaper', !!Prefs.get('titlePaper'));
+    { const pp = !!Prefs.get('paper'); root.classList.toggle('qs-paper', pp); root.classList.toggle('qs-mpaper', pp); root.classList.toggle('qs-tpaper', pp); }
+    root.dataset.scpos = Prefs.get('scrollPos') === 'right' ? 'right' : 'center'; root.dataset.dockfx = Prefs.get('dockFx');
     root.dataset.glyph = Prefs.get('glyphStyle'); root.dataset.density = Prefs.get('density');
     root.dataset.motion = REDUCED_MOTION.matches ? 0 : Prefs.get('motion');
   }
@@ -4331,7 +4401,7 @@ const Theme = (() => {
     apply(true); applyUI();
     BUS.on('pref', k => {
       if (k === '*' || ['theme', 'accent', 'nightMode', 'seasonAuto'].includes(k)) apply(true);
-      if (k === '*' || ['uiScale', 'glyphStyle', 'density', 'motion', 'corner', 'menuGlyph', 'menuPaper', 'titlePaper'].includes(k)) applyUI();
+      if (k === '*' || ['uiScale', 'glyphStyle', 'density', 'motion', 'corner', 'menuGlyph', 'paper', 'scrollPos', 'dockFx'].includes(k)) applyUI();
     });
     matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => apply());
     REDUCED_MOTION.addEventListener('change', applyUI);
@@ -4479,7 +4549,8 @@ const Tex = (() => {
       const [kv, kvs] = knobTex(false), [kh, khs] = knobTex(true);
       const us = await Promise.all([paper(dark), wash(ink, dark), stroke(ink, dark), cloth(), shelf(dark), rodTex(false), rodTex(true), kv, kvs, kh, khs].map(blobUrl));
       if (key !== last) { us.forEach(u => u && URL.revokeObjectURL(u)); return; }
-      ['paper', 'wash', 'stroke', 'cloth', 'shelf', 'rodv', 'rodh', 'knobv', 'knobvs', 'knobh', 'knobhs'].forEach((k, i) => us[i] ? root.style.setProperty('--tex-' + k, `url(${us[i]})`) : root.style.removeProperty('--tex-' + k));
+      /* 纸的三样（纤维、淡墨、飞白）只存成 --texraw-*；用不用由 :root.qs-paper 一处决定（见 CSS），全系统同开同关 */
+      ['paper', 'wash', 'stroke', 'cloth', 'shelf', 'rodv', 'rodh', 'knobv', 'knobvs', 'knobh', 'knobhs'].forEach((k, i) => { const nm = (i < 3 ? '--texraw-' : '--tex-') + k; us[i] ? root.style.setProperty(nm, `url(${us[i]})`) : root.style.removeProperty(nm); });
       const old = urls; urls = us; setTimeout(() => old.forEach(u => u && URL.revokeObjectURL(u)), 4000);
     } catch (e) { console.warn('[Tex]', e); }
   }
@@ -4558,6 +4629,7 @@ const Wallpaper = (() => {
       g = c.createLinearGradient(0, base - amp * 0.35, 0, wy); g.addColorStop(0, rgba(sc.sky[2], 0)); g.addColorStop(1, sc.mist);
       c.fillStyle = g; c.fillRect(0, base - amp * 0.35, W, wy - base + amp * 0.35);
     });
+    drawFarWillows(c, wy);
     // 水面与倒影
     g = c.createLinearGradient(0, wy, 0, H); g.addColorStop(0, sc.water); g.addColorStop(1, mixHex(sc.water, sc.sky[0], 0.4));
     c.fillStyle = g; c.fillRect(0, wy, W, H - wy);
@@ -4631,6 +4703,94 @@ const Wallpaper = (() => {
     c.save(); c.globalCompositeOperation = THEMES[T].dark ? 'screen' : 'multiply'; c.fillStyle = c.createPattern(grain, 'repeat'); c.fillRect(0, 0, W, H); c.restore();
   }
 
+  /* ---------- 远柳：对岸汀洲上的几株，没骨湿染 ----------
+     近处那株是工笔：干有皴、枝有节、叶叶可数。远处的若也照样勾一遍再缩小，只会像贴上去的小模型——
+     所以远景另是一种画法：不勾线，淡墨一笔成干，枝条是一缕缕拖下来的湿笔，树冠先罩一层水色；
+     整株画在单独一层上再晕开（越远越虚、越淡、越偏天色），脚下擦掉、让江雾漫上来；底下一抹汀洲把它们托住。
+     水面的倒影取自这一层之后，所以倒影里也有它们。 */
+  function drawFarWillows(c, wy) {
+    const dens = Prefs.get('wpTrees'); if (!dens || isPortrait()) return;
+    const sc = S, dark = !!THEMES[T].dark, canBlur = 'filter' in c;
+    const air = sc.hills[1] || sc.sky[1];
+    // 一组三株：主、次、远，疏密高低错落（不等距、不等高）
+    const specs = [
+      { x: W * 0.205, h: H * 0.27, a: dark ? 0.8 : 0.78, blur: 0.75, mix: 0.2, seed: 8, lean: -1 },
+      { x: W * 0.128, h: H * 0.165, a: dark ? 0.6 : 0.56, blur: 1.1, mix: 0.36, seed: 21, lean: 1 },
+      { x: W * 0.268, h: H * 0.115, a: dark ? 0.46 : 0.42, blur: 1.5, mix: 0.48, seed: 34, lean: -1 }
+    ];
+    // 汀洲：一抹横卧的淡墨，中间浓、两头散
+    c.save();
+    { const cx = W * 0.19, rx = W * 0.17, ry = Math.max(5, H * 0.012), tone = mixHex(sc.trunk, air, 0.5);
+      c.translate(cx, wy - ry * 0.35); c.scale(1, ry / rx);
+      const g = c.createRadialGradient(0, 0, 0, 0, 0, rx); g.addColorStop(0, rgba(tone, 0.34)); g.addColorStop(0.55, rgba(tone, 0.16)); g.addColorStop(1, rgba(tone, 0));
+      c.fillStyle = g; c.beginPath(); c.arc(0, 0, rx, 0, 7); c.fill(); }
+    c.restore();
+    for (const sp of specs) {
+      const hh = sp.h, bw = hh * 1.7, bh = hh * 1.18, r = rng(sp.seed * 613 + 5);
+      const L = document.createElement('canvas'); L.width = Math.max(2, Math.round(bw * DPR)); L.height = Math.max(2, Math.round(bh * DPR));
+      const lc = L.getContext('2d'); lc.setTransform(DPR, 0, 0, DPR, bw / 2 * DPR, (bh - hh * 0.04) * DPR);   // 原点在树脚，向上为负
+      lc.lineCap = 'round'; lc.lineJoin = 'round';
+      const inkC = mixHex(sc.trunk, air, sp.mix), leafC = mixHex(mixHex(sc.trunk, sc.leaves && sc.leaves[1] ? sc.leaves[1] : sc.trunk, 0.5), air, sp.mix + 0.08);
+      // —— 干：一笔侧锋，自下而上由粗到细，略带 S 弯 ——
+      const ln = sp.lean, top = [ln * hh * 0.07, -hh * 0.6];
+      const trunkAt = t => { const x = ln * hh * (0.05 * Math.sin(t * 2.6) + 0.07 * t * t) , y = -hh * 0.6 * t; return [x, y]; };
+      lc.fillStyle = rgba(inkC, 0.9); lc.beginPath();
+      const Lp = [], Rp = []; for (let i = 0; i <= 14; i++) { const t = i / 14, [x, y] = trunkAt(t), w = hh * (0.026 * Math.pow(1 - t, 1.3) + 0.0075) * (1 + 0.5 * Math.exp(-t * 9)); Lp.push([x - w, y]); Rp.push([x + w * (0.85 + 0.3 * noise1(i * 0.7, sp.seed)), y]); }
+      Lp.forEach((p, i) => i ? lc.lineTo(p[0], p[1]) : lc.moveTo(p[0], p[1])); for (let i = Rp.length - 1; i >= 0; i--) lc.lineTo(Rp[i][0], Rp[i][1]); lc.closePath(); lc.fill();
+      // —— 枝：自干的上半段分出，先扬后垂 ——
+      const limbs = [], nL = hh > H * 0.2 ? 8 : hh > H * 0.13 ? 6 : 5;
+      for (let k = 0; k < nL; k++) {
+        const t0 = 0.46 + 0.54 * (k / (nL - 1)) * (0.88 + r() * 0.12), [x0, y0] = trunkAt(Math.min(1, t0));
+        const side = (k % 2 ? 1 : -1) * ln, reach = hh * (0.13 + r() * 0.23) * (side === -ln ? 1.12 : 0.92), rise = hh * (0.2 + r() * 0.24);
+        const P0 = [x0, y0], P1 = [x0 + side * reach * 0.45, y0 - rise], P2 = [x0 + side * reach, y0 - rise * (0.55 + r() * 0.35)];
+        limbs.push({ P0, P1, P2, side, w: hh * (0.011 - k * 0.0008) });
+      }
+      const qb = (l, t) => { const u = 1 - t; return [u * u * l.P0[0] + 2 * u * t * l.P1[0] + t * t * l.P2[0], u * u * l.P0[1] + 2 * u * t * l.P1[1] + t * t * l.P2[1]]; };
+      for (const l of limbs) for (let i = 0; i < 10; i++) { const a = qb(l, i / 10), b = qb(l, (i + 1) / 10); lc.strokeStyle = rgba(inkC, 0.85 * (1 - Math.pow(i / 10, 1.6) * 0.8)); lc.lineWidth = Math.max(0.45, l.w * (1 - i / 10 * 0.85) * 1.15); lc.beginPath(); lc.moveTo(a[0], a[1]); lc.lineTo(b[0], b[1]); lc.stroke(); }
+      // —— 冠：先罩一层水色（每根枝下一片竖长的淡晕），柳的「一团烟」就有了 ——
+      for (const l of limbs) for (const t of [0.45, 0.75, 1]) {
+        const [x, y] = qb(l, t), rx = hh * (0.07 + r() * 0.035), ry = hh * (0.2 + r() * 0.1);
+        lc.save(); lc.translate(x, y + ry * 0.62); lc.scale(rx / ry, 1);
+        const g = lc.createRadialGradient(0, 0, 0, 0, 0, ry); g.addColorStop(0, rgba(leafC, 0.1)); g.addColorStop(0.6, rgba(leafC, 0.05)); g.addColorStop(1, rgba(leafC, 0));
+        lc.fillStyle = g; lc.beginPath(); lc.arc(0, 0, ry, 0, 7); lc.fill(); lc.restore();
+      }
+      // —— 丝：一缕缕拖下来的湿笔，起笔略向外拱，随即垂直；长短参差，梢头收细；间以碎点作叶 ——
+      const nS = Math.round((hh > H * 0.2 ? 170 : hh > H * 0.13 ? 96 : 60) * Math.min(1.5, Math.max(0.6, dens)) * (sc.sparse ? 0.6 : 1));
+      for (let i = 0; i < nS; i++) {
+        const l = limbs[Math.floor(r() * limbs.length)], t = 0.2 + 0.8 * Math.sqrt(r()), [x, y] = qb(l, Math.min(1, t * 1.03));
+        const room = -hh * 0.03 - y, len = Math.min(room, hh * (0.1 + r() * 0.5) * (0.75 + t * 0.4)) * (sc.sparse ? 0.7 : 1); if (len < hh * 0.05) continue;
+        const out = l.side * (0.4 + r() * 0.9) * hh * 0.03, drift = (r() - 0.5) * hh * 0.02 - hh * 0.012, n = 9;
+        let px = x, py = y; const al = 0.5 + r() * 0.4;
+        for (let k = 1; k <= n; k++) {
+          const f = k / n, nx = x + out * (1 - Math.exp(-f * 5)) + drift * f * f, ny = y + len * f;
+          lc.strokeStyle = rgba(leafC, al * (1 - f * 0.45)); lc.lineWidth = Math.max(0.5, hh * 0.0042 * (1 - f * 0.5));
+          lc.beginPath(); lc.moveTo(px, py); lc.lineTo(nx, ny); lc.stroke();
+          if (k > 1 && r() < 0.75) { const s = (k % 2 ? 1 : -1) * hh * 0.011, dl = hh * 0.016; lc.lineWidth = Math.max(0.5, hh * 0.006); lc.strokeStyle = rgba(leafC, al * 0.62 * (1 - f * 0.3)); lc.beginPath(); lc.moveTo(nx, ny); lc.lineTo(nx + s, ny + dl); lc.stroke(); }
+          px = nx; py = ny;
+        }
+      }
+      // —— 脚下擦去：树根没入雾里 ——
+      lc.globalCompositeOperation = 'destination-out';
+      { const g = lc.createLinearGradient(0, -hh * 0.2, 0, hh * 0.03); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(0.7, 'rgba(0,0,0,.6)'); g.addColorStop(1, 'rgba(0,0,0,.92)'); lc.fillStyle = g; lc.fillRect(-bw, -hh * 0.2, bw * 2, hh * 0.3); }
+      lc.globalCompositeOperation = 'source-over';
+      // —— 晕开，落到画上 ——
+      c.save(); c.globalAlpha = sp.a;
+      const dx = sp.x - bw / 2, dy = wy - bh + hh * 0.04 + 1;
+      if (canBlur) { c.filter = `blur(${(sp.blur * DPR).toFixed(2)}px)`; c.drawImage(L, dx, dy, bw, bh); c.filter = 'none'; }
+      else {   // 不支持滤镜的浏览器：缩小再放大，自然就虚了
+        const k = 1 / (1.6 + sp.blur), M = document.createElement('canvas'); M.width = Math.max(2, Math.round(L.width * k)); M.height = Math.max(2, Math.round(L.height * k));
+        const mc = M.getContext('2d'); mc.imageSmoothingQuality = 'high'; mc.drawImage(L, 0, 0, M.width, M.height); c.imageSmoothingEnabled = true; c.imageSmoothingQuality = 'high'; c.drawImage(M, dx, dy, bw, bh);
+      }
+      c.restore();
+    }
+    // 江雾漫过树脚
+    c.save();
+    { const cx = W * 0.19, rx = W * 0.22, ry = H * 0.034; c.translate(cx, wy); c.scale(1, ry / rx);
+      const g = c.createRadialGradient(0, 0, 0, 0, 0, rx); g.addColorStop(0, rgba(sc.sky[2], dark ? 0.3 : 0.42)); g.addColorStop(0.6, rgba(sc.sky[2], dark ? 0.14 : 0.2)); g.addColorStop(1, rgba(sc.sky[2], 0));
+      c.fillStyle = g; c.beginPath(); c.arc(0, 0, rx, Math.PI, Math.PI * 2); c.fill(); }
+    c.restore();
+  }
+
   /* ---------- 日月：不是一枚圆片，是几层淡墨染出来的 ----------
      月：偏心的亮面 + 边缘晕开 + 用噪声长出来的月海（不是圆坑）+ 边缘略暗（球感）+ 月晕一圈 + 一缕云从下沿拖过。
      日：朱砂一团，边缘化开，中间略深，像印泥按在纸上。 */
@@ -4695,7 +4855,7 @@ const Wallpaper = (() => {
     const port = isPortrait(), wy = waterY();
     const mx0 = W * (port ? 0.88 : 0.86); const main = { x: mx0, y: bankYAt(mx0) + 13, s: port ? clamp(W / 400, 0.8, 1.15) : clamp(W / 1400, 0.7, 1.3), alpha: 1, seed: 3 };
     trees.push(main);
-    if (!port) trees.push({ x: W * 0.2, y: wy + 2, s: 0.36, alpha: 0.42, seed: 8, far: true });
+    /* 对岸的远柳不再是一棵缩小的硬边「假树」：改在静层里用没骨法染出来（drawFarWillows），虚、淡、脚下没入江雾。 */
     for (const tr of trees) growTree(tr, dens * (S.sparse ? 0.55 : 1));
   }
   function growTree(tr, dens) {
@@ -5394,6 +5554,362 @@ const Wallpaper = (() => {
   };
 })();
 
+/* ── 21b-icons.js ── */
+/* ================= 图标方案 =================
+   默认：青丝原本的一方印（.seal，纯 CSS）。
+   另有二十二种当场画出来的做法（印蜕、石章、墨锭、瓷片、玉牌、水墨团、珐琅、竹牌、线装册、纸笺、立轴、拓片、瓦当、青铜、
+   漆器、木匾、火漆、青花、团扇、灯笼、洒金笺、剪纸）——没有图片素材，全是画布现画，按（方案、字、色、类别、后缀）缓存。
+   设阁 › 图标 里一点，桌面、程序坞、寻、书阁里所有的印一起换；点「默认」一起换回。 */
+const Icons = (() => {
+  let kit = null;
+  function build() {
+const FONT = '"STKaiti","KaiTi","Kaiti SC","BiauKai","AR PL UKai CN","Noto Serif CJK SC","Source Han Serif SC","Songti SC","SimSun",serif';
+const K = Math.max(2, Math.min(3, Math.round(window.devicePixelRatio || 2))), B = 96, P = B * K;
+const rng = seed => { let s = seed >>> 0 || 1; return () => { s ^= s << 13; s ^= s >>> 17; s ^= s << 5; return ((s >>> 0) % 1e9) / 1e9; }; };
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const h2r = hx => { const n = parseInt(hx.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; };
+const r2h = a => '#' + a.map(v => clamp(Math.round(v), 0, 255).toString(16).padStart(2, '0')).join('');
+const mixc = (a, b, t) => { const x = h2r(a), y = h2r(b); return r2h(x.map((v, i) => v + (y[i] - v) * t)); };
+const shade = (hx, t) => t >= 0 ? mixc(hx, '#ffffff', t) : mixc(hx, '#000000', -t);
+const rgba = (hx, a) => { const [r, g, b] = h2r(hx); return `rgba(${r},${g},${b},${a})`; };
+const cv = (w, h = w) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; };
+const SB = v => v * K;
+
+/* ---------- 肌理：云斑、细粒、碎点、开片 ---------- */
+function fbm(size, seed, cells, oct) {
+  const c = cv(size), g = c.getContext('2d'), im = g.createImageData(size, size), d = im.data, r = rng(seed), lat = [];
+  for (let o = 0; o < oct; o++) { const n = cells << o, a = new Float32Array(n * n); for (let i = 0; i < a.length; i++) a[i] = r(); lat.push([n, a]); }
+  for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
+    let v = 0, amp = .5, tot = 0;
+    for (const [n, a] of lat) { const fx = x / size * n, fy = y / size * n, xi = Math.floor(fx), yi = Math.floor(fy), u = fx - xi, w = fy - yi, su = u * u * (3 - 2 * u), sw = w * w * (3 - 2 * w), x1 = (xi + 1) % n, y1 = (yi + 1) % n;
+      const p = a[yi * n + xi], q = a[yi * n + x1], s = a[y1 * n + xi], t = a[y1 * n + x1]; v += amp * (p + (q - p) * su + (s - p) * sw + (p - q - s + t) * su * sw); tot += amp; amp *= .5; }
+    const i = (y * size + x) * 4, k = clamp((v / tot - .5) * 1.9 + .5, 0, 1) * 255; d[i] = d[i + 1] = d[i + 2] = k; d[i + 3] = 255;
+  }
+  g.putImageData(im, 0, 0); return c;
+}
+const CLOUD = fbm(192, 5, 3, 5), GRAIN = fbm(128, 9, 32, 2);
+const SPECK = (() => { const c = cv(128), g = c.getContext('2d'), s = GRAIN.getContext('2d').getImageData(0, 0, 128, 128).data, im = g.createImageData(128, 128), d = im.data; for (let i = 0; i < s.length; i += 4) d[i + 3] = clamp((s[i] / 255 - .76) * 10, 0, 1) * 255; g.putImageData(im, 0, 0); return c; })();
+const CRACK = (() => { const S = 160, G = 6, c = cv(S), g = c.getContext('2d'), im = g.createImageData(S, S), d = im.data, r = rng(77), pts = []; for (let i = 0; i < G * G; i++) pts.push([r(), r()]);
+  for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) { const gx = x / S * G, gy = y / S * G, cx = Math.floor(gx), cy = Math.floor(gy); let f1 = 9, f2 = 9;
+    for (let j = -1; j <= 1; j++) for (let i = -1; i <= 1; i++) { const p = pts[((cy + j + G) % G) * G + (cx + i + G) % G], dx = cx + i + p[0] - gx, dy = cy + j + p[1] - gy, q = Math.hypot(dx, dy); if (q < f1) { f2 = f1; f1 = q; } else if (q < f2) f2 = q; }
+    const k = clamp((f2 - f1) / .06, 0, 1) * 255, o = (y * S + x) * 4; d[o] = d[o + 1] = d[o + 2] = k; d[o + 3] = 255; }
+  g.putImageData(im, 0, 0); return c; })();
+function pat(g, src, mode, alpha, sc = 1, ox = 0, oy = 0) { g.save(); g.globalCompositeOperation = mode; g.globalAlpha = alpha; g.translate(ox, oy); g.scale(sc / K * 2, sc / K * 2); g.fillStyle = g.createPattern(src, 'repeat'); g.fillRect(-400, -400, 1200, 1200); g.restore(); }
+
+/* ---------- 形：超椭圆 + 起伏 ---------- */
+function shape(cx, cy, rx, ry, p, jit = 0, seed = 1, hf = 0) {
+  const r = rng(seed), ph = [r() * 6.28, r() * 6.28, r() * 6.28, r() * 6.28], path = new Path2D(), n = 160;
+  for (let i = 0; i <= n; i++) { const t = i / n * Math.PI * 2, c = Math.cos(t), s = Math.sin(t), k = Math.pow(Math.pow(Math.abs(c), p) + Math.pow(Math.abs(s), p), -1 / p);
+    const j = 1 + jit * (Math.sin(t * 2 + ph[0]) * .5 + Math.sin(t * 3 + ph[1]) * .3 + Math.sin(t * 5 + ph[2]) * .2) + hf * Math.sin(t * 19 + ph[3]) * Math.sin(t * 7 + ph[0]);
+    const x = cx + c * k * rx * j, y = cy + s * k * ry * j; i ? path.lineTo(x, y) : path.moveTo(x, y); }
+  path.closePath(); return path;
+}
+function rr(x, y, w, h, r) { const p = new Path2D(); p.moveTo(x + r, y); p.arcTo(x + w, y, x + w, y + h, r); p.arcTo(x + w, y + h, x, y + h, r); p.arcTo(x, y + h, x, y, r); p.arcTo(x, y, x + w, y, r); p.closePath(); return p; }
+/* 内棱：左上受光、右下背光（light/dark 对调就是凹下去） */
+function bevel(g, path, d, light, dark, blur = d) {
+  g.save(); g.clip(path); g.lineWidth = d * 2;
+  g.save(); g.translate(d, d); g.shadowColor = light; g.shadowBlur = SB(blur); g.strokeStyle = light; g.stroke(path); g.restore();
+  g.save(); g.translate(-d, -d); g.shadowColor = dark; g.shadowBlur = SB(blur); g.strokeStyle = dark; g.stroke(path); g.restore();
+  g.restore();
+}
+/* ---------- 字 ---------- */
+const GC = new Map();
+function glyph(ch, px, w = 700, rough = 0, cx = 48, cy = 48) {
+  const key = [ch, px, w, rough, cx, cy].join('|'); let c = GC.get(key); if (c) return c;
+  c = cv(P); const g = c.getContext('2d'); g.scale(K, K); g.font = `${w} ${px}px ${FONT}`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(ch, cx, cy + px * .045);
+  if (rough) pat(g, SPECK, 'destination-out', rough, .55, 7, 3);
+  GC.set(key, c); return c;
+}
+const TMP = cv(P), TG = TMP.getContext('2d');
+function put(g, gl, fill, dx = 0, dy = 0, a = 1) {
+  TG.setTransform(1, 0, 0, 1, 0, 0); TG.globalCompositeOperation = 'source-over'; TG.clearRect(0, 0, P, P); TG.drawImage(gl, 0, 0);
+  TG.globalCompositeOperation = 'source-in'; TG.setTransform(K, 0, 0, K, 0, 0); TG.fillStyle = typeof fill === 'function' ? fill(TG) : fill; TG.fillRect(0, 0, B, B);
+  g.save(); g.globalAlpha *= a; g.drawImage(TMP, dx, dy, B, B); g.restore();
+}
+const gold = c => { const q = c.createLinearGradient(0, 24, 0, 74); q.addColorStop(0, '#fbeab4'); q.addColorStop(.5, '#dcb55c'); q.addColorStop(1, '#94702a'); return q; };
+function ext(g, o, col, x = 70, y = 72, a = .9) { if (!o.ext) return; g.save(); g.font = `800 9.5px ${FONT}`; g.textAlign = 'right'; g.textBaseline = 'alphabetic'; g.globalAlpha = a; g.fillStyle = col; g.fillText(o.ext, x, y); g.restore(); }
+function gloss(g, path, x, y, rx, ry, a) { g.save(); g.clip(path); g.translate(x, y); g.rotate(-.5); g.scale(1, ry / rx); const q = g.createRadialGradient(0, 0, 0, 0, 0, rx); q.addColorStop(0, `rgba(255,255,255,${a})`); q.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = q; g.fillRect(-rx, -rx, rx * 2, rx * 2); g.restore(); }
+
+/* ---------- 第二批用到的小工具 ---------- */
+const tile = (src, thr, gain, rgb) => { const n = src.width, c = cv(n), g = c.getContext('2d'), s = src.getContext('2d').getImageData(0, 0, n, n).data, im = g.createImageData(n, n), d = im.data; for (let i = 0; i < s.length; i += 4) { d[i] = rgb[0]; d[i + 1] = rgb[1]; d[i + 2] = rgb[2]; d[i + 3] = clamp((s[i] / 255 - thr) * gain, 0, 1) * 255; } g.putImageData(im, 0, 0); return c; };
+const SPECKW = tile(GRAIN, .74, 10, [246, 240, 226]), PATINA = tile(CLOUD, .52, 6, [92, 150, 128]), FLECK = tile(GRAIN, .8, 14, [226, 186, 96]);
+const lin = (g, x0, y0, x1, y1, stops) => { const q = g.createLinearGradient(x0, y0, x1, y1); stops.forEach((s, i) => q.addColorStop(i / (stops.length - 1), s)); return q; };
+const cyl = (g, path, x0, y0, x1, y1, base) => { g.fillStyle = base; g.fill(path); g.fillStyle = lin(g, x0, y0, x1, y1, ['rgba(0,0,0,.5)', 'rgba(255,255,255,.1)', 'rgba(255,255,255,.5)', 'rgba(0,0,0,.05)', 'rgba(0,0,0,.4)', 'rgba(0,0,0,.6)']); g.fill(path); };
+const raise = (g, gl, fill, d = .8) => { put(g, gl, 'rgba(0,0,0,.55)', d, d * 1.15); put(g, gl, 'rgba(255,250,225,.55)', -d * .6, -d * .7); put(g, gl, fill); };
+const carve = (g, gl, fill) => { put(g, gl, 'rgba(255,255,255,.5)', .7, .8); put(g, gl, 'rgba(0,0,0,.5)', -.5, -.6); put(g, gl, fill); };
+
+/* ================= 各种做法 ================= */
+const STYLES = [
+  { id: 'yin', name: '印蜕', desc: '钤在纸上的一方印：边有残破、印泥不匀、字是留白。最「平」，但是有机的平——像真盖上去的。无投影。', draw(g, o) {
+    const f = o.kind === 'file', paper = '#f6f0e2', path = shape(48, 48, 35, 35, 7, .012, o.seed, .006);
+    if (f) { g.save(); g.globalAlpha = .9; g.fillStyle = paper; g.fill(path); g.restore(); g.save(); g.clip(path); pat(g, CLOUD, 'multiply', .1, .6, o.seed % 50); g.restore();
+      g.save(); g.strokeStyle = o.col; g.lineWidth = 3.4; g.stroke(shape(48, 48, 32.5, 32.5, 8, .012, o.seed + 3, .006)); g.restore(); put(g, glyph(o.ch, 40, 800), o.col); ext(g, o, o.col, 76, 77); }
+    else { g.save(); g.shadowColor = rgba(o.col, .4); g.shadowBlur = SB(2.5); g.fillStyle = o.col; g.fill(path); g.restore();
+      g.save(); g.clip(path); pat(g, CLOUD, 'multiply', .34, .7, o.seed % 97, 13); pat(g, CLOUD, 'screen', .12, 1.1, 40, o.seed % 61); g.restore(); put(g, glyph(o.ch, 46, 800), paper, 0, 0, .96); }
+    pat(g, SPECK, 'destination-out', f ? .4 : .75, .45, o.seed % 53, o.seed % 31);
+    const r = rng(o.seed + 11); g.save(); g.globalCompositeOperation = 'destination-out'; for (let i = 0; i < 7; i++) { const t = r() * 6.28, c = Math.cos(t), s = Math.sin(t), k = Math.pow(Math.pow(Math.abs(c), 7) + Math.pow(Math.abs(s), 7), -1 / 7); g.beginPath(); g.ellipse(48 + c * k * 35.5, 48 + s * k * 35.5, 1 + r() * 2.6, .8 + r() * 1.8, r() * 3, 0, 7); g.fill(); } g.restore();
+    return null; } },
+  { id: 'shi', name: '石章', desc: '一方寿山石章的印面：石有纹理、四边起棱、受光背光分明；字阴刻填金。厚重、有分量。', draw(g, o) {
+    const f = o.kind === 'file', base = f ? mixc('#e6dfd0', o.col, .1) : mixc(o.col, '#b3a088', .22), path = shape(48, 47, 35, 35, 6, .005, o.seed);
+    let q = g.createLinearGradient(14, 12, 82, 84); q.addColorStop(0, shade(base, .3)); q.addColorStop(.5, base); q.addColorStop(1, shade(base, -.34)); g.fillStyle = q; g.fill(path);
+    g.save(); g.clip(path); pat(g, CLOUD, 'soft-light', .6, .8, o.seed % 83, 7); pat(g, GRAIN, 'overlay', .16, .4);
+    const r = rng(o.seed + 5); for (let i = 0; i < 3; i++) { g.beginPath(); const y = 14 + r() * 68; g.moveTo(8, y); g.bezierCurveTo(30, y + (r() - .5) * 40, 62, y + (r() - .5) * 40, 90, y + (r() - .5) * 30); g.lineWidth = .6 + r() * 1.6; g.strokeStyle = r() < .5 ? 'rgba(255,255,255,.2)' : 'rgba(40,20,10,.16)'; g.shadowColor = g.strokeStyle; g.shadowBlur = SB(1.5); g.stroke(); } g.restore();
+    bevel(g, path, 2.2, 'rgba(255,255,255,.36)', 'rgba(0,0,0,.5)', 2.6);
+    const face = shape(48, 47, 28, 28, 7, .004, o.seed + 1); g.save(); g.clip(face); g.fillStyle = f ? 'rgba(255,255,255,.16)' : 'rgba(0,0,0,.13)'; g.fillRect(0, 0, B, B); g.restore(); bevel(g, face, 1, 'rgba(0,0,0,.36)', 'rgba(255,255,255,.2)', 1.2);
+    const gl = glyph(o.ch, 38, 800); put(g, gl, 'rgba(255,255,255,.55)', .7, .8); put(g, gl, 'rgba(0,0,0,.5)', -.5, -.6); put(g, gl, f ? shade(o.col, -.15) : gold); ext(g, o, shade(o.col, -.2), 72, 72);
+    gloss(g, path, 30, 24, 30, 16, .16); return [7, 4, .45]; } },
+  { id: 'mo', name: '墨锭', desc: '一锭徽墨：乌黑（或彩墨）带细裂、缎光；描金边框，字是凸起的泥金，金有磨损。夜色壁纸上尤其好看。', draw(g, o) {
+    const f = o.kind === 'file', base = f ? mixc('#2a2622', o.col, .18) : mixc(o.col, '#0b0a09', .6), path = rr(13, 12, 70, 70, 7);
+    let q = g.createLinearGradient(14, 12, 82, 84); q.addColorStop(0, shade(base, .24)); q.addColorStop(.45, base); q.addColorStop(1, shade(base, -.5)); g.fillStyle = q; g.fill(path);
+    g.save(); g.clip(path); pat(g, CRACK, 'multiply', .3, .62, o.seed % 71, o.seed % 37); pat(g, GRAIN, 'overlay', .18, .35); g.restore(); gloss(g, path, 32, 26, 44, 22, .2);
+    bevel(g, path, 1.9, 'rgba(255,255,255,.34)', 'rgba(0,0,0,.65)', 2);
+    const fr = rr(19.5, 18.5, 57, 57, 3.5); g.save(); g.lineWidth = 1.2; g.translate(.6, .7); g.strokeStyle = 'rgba(0,0,0,.6)'; g.stroke(fr); g.translate(-.6, -.7); g.strokeStyle = gold(g); g.stroke(fr); g.restore();
+    const gl = glyph(o.ch, 37, 800, .2); put(g, gl, 'rgba(0,0,0,.65)', .9, 1.1); put(g, gl, 'rgba(255,244,200,.5)', -.5, -.6); put(g, gl, f ? c => { const z = c.createLinearGradient(0, 24, 0, 74); z.addColorStop(0, shade(o.col, .62)); z.addColorStop(1, shade(o.col, .2)); return z; } : gold);
+    ext(g, o, '#e2c172', 73, 73, .85); return [6, 4, .5]; } },
+  { id: 'ci', name: '瓷片', desc: '一枚上了釉的圆瓷：釉色随程序而变，有开片、有积釉、有高光；字是釉下彩。清润、亮。', draw(g, o) {
+    const f = o.kind === 'file', glaze = f ? '#f1f0e8' : mixc(o.col, '#eef3ee', .6), path = shape(48, 47, 35, 35, 2, 0, 1);
+    let q = g.createRadialGradient(40, 36, 3, 48, 47, 37); q.addColorStop(0, shade(glaze, .3)); q.addColorStop(.62, glaze); q.addColorStop(1, shade(glaze, -.26)); g.fillStyle = q; g.fill(path);
+    g.save(); g.clip(path); pat(g, CRACK, 'multiply', .12, .5, o.seed % 61, o.seed % 43); g.restore();
+    g.save(); g.lineWidth = 1.3; g.strokeStyle = rgba(shade(glaze, -.45), .45); g.beginPath(); g.arc(48, 47, 30.5, 0, 7); g.stroke(); g.lineWidth = .8; g.strokeStyle = 'rgba(255,255,255,.55)'; g.beginPath(); g.arc(48, 47, 32, 0, 7); g.stroke(); g.restore();
+    bevel(g, path, 2.4, 'rgba(255,255,255,.8)', rgba(shade(glaze, -.7), .45), 3);
+    const ink = f ? shade(o.col, -.1) : shade(o.col, -.5); g.save(); g.shadowColor = rgba(ink, .6); g.shadowBlur = SB(1.1); put(g, glyph(o.ch, 35, 800), ink, 0, 0, .93); g.restore(); ext(g, o, ink, 64, 70, .8);
+    gloss(g, path, 33, 27, 27, 15, .55); g.save(); g.clip(path); g.shadowColor = '#fff'; g.shadowBlur = SB(1.5); g.fillStyle = 'rgba(255,255,255,.92)'; g.beginPath(); g.ellipse(29, 25, 6, 2.6, -.7, 0, 7); g.fill(); g.restore();
+    g.save(); g.lineWidth = 1.6; g.strokeStyle = 'rgba(255,255,255,.3)'; g.beginPath(); g.arc(48, 47, 33, .5, 1.6); g.stroke(); g.restore(); return [7, 4, .4]; } },
+  { id: 'yu', name: '玉牌', desc: '一块和田玉牌：半透、里头有絮、边厚处色深、底边透光；字浅浅阴刻。温润、安静。', draw(g, o) {
+    const f = o.kind === 'file', jade = f ? '#eef0e4' : mixc(o.col, '#e9f1e4', .42), path = shape(48, 47, 34, 35, 4.2, .004, o.seed);
+    let q = g.createLinearGradient(0, 12, 0, 84); q.addColorStop(0, shade(jade, .32)); q.addColorStop(.45, jade); q.addColorStop(.8, shade(jade, -.14)); q.addColorStop(1, shade(jade, .16)); g.fillStyle = q; g.fill(path);
+    g.save(); g.clip(path); pat(g, CLOUD, 'soft-light', .9, .6, o.seed % 91, o.seed % 47); pat(g, CLOUD, 'screen', .22, .95, 31, o.seed % 29);
+    q = g.createRadialGradient(48, 64, 2, 48, 64, 30); q.addColorStop(0, 'rgba(255,255,255,.34)'); q.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = q; g.fillRect(0, 0, B, B); g.restore();
+    bevel(g, path, 3.4, 'rgba(255,255,255,.5)', rgba(shade(jade, -.62), .5), 5);
+    const gl = glyph(o.ch, 38, 700); put(g, gl, 'rgba(255,255,255,.75)', .6, .75); put(g, gl, rgba(f ? shade(o.col, -.1) : shade(jade, -.72), .86)); ext(g, o, shade(o.col, -.2), 71, 73, .8);
+    gloss(g, path, 34, 24, 30, 13, .6); return [8, 5, .3]; } },
+  { id: 'tuan', name: '水墨团', desc: '一团晕开的墨（或花青、赭石、胭脂）：边沿湿、中间浓淡不匀，字是留白。最「水墨」，没有硬边，没有投影。', draw(g, o) {
+    const f = o.kind === 'file', col = o.col, path = shape(48, 48, 34, 33, 2.4, .05, o.seed, .012), outer = shape(49, 49, 39, 38, 2.3, .07, o.seed + 9, .02);
+    g.save(); g.globalAlpha = .2; g.shadowColor = rgba(col, .55); g.shadowBlur = SB(5); g.fillStyle = col; g.fill(outer); g.restore();
+    g.save(); g.globalAlpha = f ? .22 : .9; g.fillStyle = col; g.fill(path); g.restore();
+    g.save(); g.clip(path); pat(g, CLOUD, 'multiply', f ? .2 : .5, .8, o.seed % 89, o.seed % 41); pat(g, CLOUD, 'screen', .2, 1.2, 17, o.seed % 23);
+    g.lineWidth = 5; g.strokeStyle = rgba(shade(col, -.5), f ? .35 : .5); g.shadowColor = g.strokeStyle; g.shadowBlur = SB(4); g.stroke(path); g.restore();
+    put(g, glyph(o.ch, 40, 800, .12), f ? shade(col, -.25) : '#f7f1e3', 0, 0, .97); ext(g, o, shade(col, -.3), 72, 74, .85);
+    pat(g, SPECK, 'destination-out', .22, .5, o.seed % 43, o.seed % 59);
+    const r = rng(o.seed + 3); g.save(); g.fillStyle = col; for (let i = 0; i < 4; i++) { const t = r() * 6.28, d = 38 + r() * 6; g.globalAlpha = .35 + r() * .45; g.beginPath(); g.arc(48 + Math.cos(t) * d, 48 + Math.sin(t) * d, .7 + r() * 1.5, 0, 7); g.fill(); } g.restore();
+    return null; } },
+  { id: 'fa', name: '珐琅', desc: '掐丝珐琅：一圈铜胎鎏金的边，里头是烧出来的釉料，字是金丝。颜色最饱满，华贵。', draw(g, o) {
+    const f = o.kind === 'file', en = f ? '#efeadb' : o.col, rim = shape(48, 47, 36, 36, 2, 0, 1), inner = shape(48, 47, 30, 30, 2, 0, 1);
+    let q = g.createLinearGradient(14, 10, 82, 86); q.addColorStop(0, '#f8e6a8'); q.addColorStop(.45, '#c69a45'); q.addColorStop(1, '#6a4e1c'); g.fillStyle = q; g.fill(rim);
+    g.save(); g.clip(rim); pat(g, GRAIN, 'overlay', .16, .35); g.restore(); bevel(g, rim, 1.6, 'rgba(255,250,220,.75)', 'rgba(40,24,4,.6)', 1.6);
+    q = g.createRadialGradient(40, 36, 2, 48, 47, 32); q.addColorStop(0, shade(en, .3)); q.addColorStop(.55, en); q.addColorStop(1, shade(en, -.4)); g.fillStyle = q; g.fill(inner);
+    g.save(); g.clip(inner); pat(g, CLOUD, 'soft-light', .55, .5, o.seed % 73, o.seed % 31); pat(g, SPECK, 'source-atop', .1, .5, 9); g.restore(); bevel(g, inner, 1.5, 'rgba(0,0,0,.5)', 'rgba(255,255,255,.28)', 1.6);
+    const gl = glyph(o.ch, 34, 800); put(g, gl, 'rgba(0,0,0,.5)', .8, 1); put(g, gl, 'rgba(255,248,210,.55)', -.5, -.55); put(g, gl, f ? shade(o.col, -.1) : gold); ext(g, o, shade(o.col, -.15), 64, 69, .85);
+    gloss(g, inner, 36, 30, 24, 12, .5); return [7, 4, .44]; } },
+  { id: 'zhu', name: '竹牌', desc: '一枚竹牌：有竹丝、竹节、圆弧的面，穿一根色绳，底下一道色漆；字是墨写的。和仓廪里的竹简是一家。', draw(g, o) {
+    const f = o.kind === 'file', path = rr(27, 10, 42, 76, 6);
+    let q = g.createLinearGradient(27, 0, 69, 0); q.addColorStop(0, '#7b5c2c'); q.addColorStop(.12, '#b9995a'); q.addColorStop(.34, f ? '#efdcaa' : '#e6cd90'); q.addColorStop(.66, f ? '#dcc68e' : '#cfb173'); q.addColorStop(.9, '#a5854a'); q.addColorStop(1, '#6e5126'); g.fillStyle = q; g.fill(path);
+    g.save(); g.clip(path); const r = rng(o.seed + 2); for (let i = 0; i < 46; i++) { const x = 27 + r() * 42; g.fillStyle = r() < .6 ? `rgba(90,60,20,${.05 + r() * .12})` : `rgba(255,244,205,${.06 + r() * .12})`; g.fillRect(x, 10 + r() * 30, .4 + r() * .6, 20 + r() * 60); }
+    g.fillStyle = 'rgba(70,45,15,.5)'; g.fillRect(27, 27.2, 42, .9); g.fillStyle = 'rgba(255,246,214,.5)'; g.fillRect(27, 28.1, 42, .8); g.fillStyle = 'rgba(70,45,15,.18)'; g.fillRect(27, 25.6, 42, 1.6);
+    q = g.createLinearGradient(0, 75, 0, 86); q.addColorStop(0, shade(o.col, .15)); q.addColorStop(1, shade(o.col, -.3)); g.fillStyle = q; g.fillRect(27, 76, 42, 10); g.fillStyle = 'rgba(255,255,255,.3)'; g.fillRect(27, 76, 42, .8);
+    q = g.createLinearGradient(27, 0, 69, 0); q.addColorStop(0, 'rgba(0,0,0,.4)'); q.addColorStop(.3, 'rgba(255,255,255,.18)'); q.addColorStop(.6, 'rgba(0,0,0,0)'); q.addColorStop(1, 'rgba(0,0,0,.42)'); g.fillStyle = q; g.fillRect(27, 76, 42, 10); g.restore();
+    bevel(g, path, 1.3, 'rgba(255,250,225,.6)', 'rgba(50,30,8,.55)', 1.3);
+    g.save(); g.lineCap = 'round'; g.lineWidth = 2; g.shadowColor = 'rgba(0,0,0,.4)'; g.shadowBlur = SB(1); g.shadowOffsetY = SB(.6); g.strokeStyle = shade(o.col, -.05); g.beginPath(); g.moveTo(48, 17.5); g.bezierCurveTo(41, 9, 43, 2.5, 48, 2.5); g.bezierCurveTo(53, 2.5, 55, 9, 48, 17.5); g.stroke(); g.restore();
+    g.fillStyle = '#2a1c0c'; g.beginPath(); g.arc(48, 17.5, 2.5, 0, 7); g.fill(); g.strokeStyle = 'rgba(255,244,210,.6)'; g.lineWidth = .7; g.beginPath(); g.arc(48, 17.5, 2.8, .4, 2.6); g.stroke();
+    const gl = glyph(o.ch, 30, 800, .12, 48, 52); put(g, gl, 'rgba(255,246,214,.5)', .5, .6); put(g, gl, f ? shade(o.col, -.3) : '#1d1711', 0, 0, .94);
+    if (o.ext) { g.save(); g.font = `800 7.5px ${FONT}`; g.textAlign = 'center'; g.fillStyle = 'rgba(255,246,225,.95)'; g.fillText(o.ext, 48, 83.8); g.restore(); }
+    return [6, 4, .45]; } },
+  { id: 'ce', name: '线装册', desc: '一本线装书的封面：布面、右侧四眼订线和包角、左上贴一枚题签。和书架上的书是一家。', draw(g, o) {
+    const f = o.kind === 'file', col = f ? '#e7dcc2' : o.col, x = 18, y = 10, w = 60, h = 76, pages = rr(x - 1.6, y + 1.8, w, h, 1.2), cover = rr(x, y, w, h, 1.2);
+    g.fillStyle = '#e9dfc8'; g.fill(pages); g.save(); g.clip(pages); g.fillStyle = 'rgba(90,70,40,.3)'; for (let i = 0; i < 5; i++) g.fillRect(x - 1.6, y + h - .2 + i * .42, w, .18); g.restore();
+    let q = g.createLinearGradient(x, y, x + w, y + h); q.addColorStop(0, shade(col, .16)); q.addColorStop(.5, col); q.addColorStop(1, shade(col, -.24)); g.fillStyle = q; g.fill(cover);
+    g.save(); g.clip(cover); pat(g, CLOUD, 'multiply', .14, .9, o.seed % 67); g.fillStyle = 'rgba(255,255,255,.07)'; for (let i = 0; i < 76; i++) g.fillRect(x, y + i + .1, w, .32); g.fillStyle = 'rgba(0,0,0,.07)'; for (let i = 0; i < 60; i++) g.fillRect(x + i + .1, y, .32, h);
+    g.fillStyle = rgba(shade(col, -.55), .55); g.fillRect(x + w - 9, y, 9, 8); g.fillRect(x + w - 9, y + h - 8, 9, 8);
+    g.fillStyle = 'rgba(0,0,0,.2)'; g.fillRect(x + w - 9.4, y, .7, h); g.restore();
+    g.save(); g.strokeStyle = '#f4eedd'; g.lineWidth = 1; g.shadowColor = 'rgba(0,0,0,.5)'; g.shadowBlur = SB(.6); g.shadowOffsetY = SB(.4); g.beginPath(); g.moveTo(x + w - 7, y + 1); g.lineTo(x + w - 7, y + h - 1); for (const t of [.1, .36, .64, .9]) { g.moveTo(x + w - 7, y + h * t); g.lineTo(x + w, y + h * t); } g.moveTo(x + w - 7, y + h * .1); g.lineTo(x + w - 7 + 0, y); g.stroke(); g.restore();
+    const lab = rr(x + 6, y + 7, 31, 47, .8); g.save(); g.shadowColor = 'rgba(0,0,0,.4)'; g.shadowBlur = SB(1.2); g.shadowOffsetY = SB(.6); g.fillStyle = '#f8f2e3'; g.fill(lab); g.restore(); g.save(); g.clip(lab); pat(g, CLOUD, 'multiply', .1, .5, 11); g.restore();
+    g.save(); g.strokeStyle = 'rgba(70,50,25,.4)'; g.lineWidth = .6; g.stroke(rr(x + 8, y + 9, 27, 43, .5)); g.restore();
+    put(g, glyph(o.ch, 26, 800, .08, x + 21.5, y + 30), f ? shade(o.col, -.2) : '#1d1812', 0, 0, .95); ext(g, o, shade(o.col, -.2), x + w - 12, y + h - 6, .85);
+    bevel(g, cover, .9, 'rgba(255,255,255,.4)', 'rgba(0,0,0,.4)', 1); return [6, 4, .42]; } },
+  { id: 'jian', name: '纸笺', desc: '一小张宣纸：字是墨写的，底下一抹淡彩，角上钤一枚小印。素净，像一幅小品。', draw(g, o) {
+    const f = o.kind === 'file', path = shape(48, 47, 34, 35, 9, .005, o.seed, .004);
+    g.save(); g.translate(48, 48); g.rotate(((o.seed % 7) - 3) * .012); g.translate(-48, -48);
+    let q = g.createLinearGradient(14, 12, 82, 84); q.addColorStop(0, '#fbf7ec'); q.addColorStop(1, '#eadfc7'); g.fillStyle = q; g.fill(path);
+    g.save(); g.clip(path); pat(g, CLOUD, 'multiply', .12, .6, o.seed % 57); const r = rng(o.seed + 8); g.lineWidth = .4; for (let i = 0; i < 16; i++) { const a = r() * 3.14, px = 14 + r() * 68, py = 12 + r() * 70, L = 4 + r() * 14; g.strokeStyle = r() < .5 ? 'rgba(120,95,60,.1)' : 'rgba(255,255,255,.3)'; g.beginPath(); g.moveTo(px, py); g.quadraticCurveTo(px + Math.cos(a) * L * .5 + (r() - .5) * 5, py + Math.sin(a) * L * .5 + (r() - .5) * 5, px + Math.cos(a) * L, py + Math.sin(a) * L); g.stroke(); }
+    g.globalAlpha = f ? .16 : .28; g.shadowColor = rgba(o.col, .8); g.shadowBlur = SB(7); g.fillStyle = o.col; g.fill(shape(47, 50, 22, 19, 2.3, .09, o.seed + 4, .02)); g.restore();
+    const gl = glyph(o.ch, 40, 800, .12); g.save(); g.shadowColor = 'rgba(20,16,10,.35)'; g.shadowBlur = SB(.8); put(g, gl, f ? shade(o.col, -.35) : '#191613', 0, 0, .95); g.restore();
+    const sl = rr(63.5, 64, 10.5, 10.5, 1.4); g.fillStyle = f ? o.col : '#c2412f'; g.fill(sl); g.save(); g.clip(sl); pat(g, SPECK, 'destination-out', .5, .4, 3); g.restore(); g.fillStyle = '#f8f2e3'; g.fillRect(66, 66.6, 5.5, 1.2); g.fillRect(66, 69, 5.5, 1.2); g.fillRect(68.1, 66.6, 1.2, 5.6);
+    if (o.ext) { g.save(); g.font = `800 8.5px ${FONT}`; g.textAlign = 'left'; g.fillStyle = shade(o.col, -.3); g.globalAlpha = .85; g.fillText(o.ext, 19, 75); g.restore(); }
+    g.save(); g.lineWidth = .6; g.strokeStyle = 'rgba(120,98,64,.28)'; g.stroke(path); g.restore(); g.restore(); return [3.2, 1.6, .3]; } },
+  { id: 'zhou', neu: 1, name: '立轴', desc: '一幅挂起来的小立轴：天杆、挂绳、绫裱（颜色随程序）、纸心写字、地杆两头出轴头。和系统里的卷轴按钮、卷轴动效是一家。', draw(g, o) {
+    const f = o.kind === 'file', silk = f ? mixc('#d8d0bb', o.col, .12) : mixc(o.col, '#9a9480', .2);
+    g.save(); g.strokeStyle = '#6b4a2c'; g.lineWidth = 1; g.beginPath(); g.moveTo(33, 14); g.lineTo(48, 5.5); g.lineTo(63, 14); g.stroke(); g.fillStyle = '#2f2014'; g.beginPath(); g.arc(48, 5.5, 1.4, 0, 7); g.fill(); g.restore();
+    const body = rr(23, 14, 50, 65, .6); g.fillStyle = lin(g, 23, 0, 73, 0, [shade(silk, -.14), shade(silk, .1), shade(silk, -.18)]); g.fill(body);
+    g.save(); g.clip(body); pat(g, GRAIN, 'overlay', .1, .3); pat(g, CLOUD, 'soft-light', .35, .7, o.seed % 31); g.fillStyle = 'rgba(255,255,255,.06)'; for (let i = 0; i < 65; i++) g.fillRect(23, 14 + i, 50, .3); g.fillStyle = 'rgba(0,0,0,.16)'; g.fillRect(23, 14, 50, 3.5); g.restore();
+    const pp = rr(28.5, 24, 39, 45, .4); g.fillStyle = lin(g, 0, 24, 0, 69, ['#fbf6ea', '#efe6d2']); g.fill(pp); g.save(); g.clip(pp); pat(g, CLOUD, 'multiply', .1, .6, o.seed % 40); g.restore();
+    g.save(); g.lineWidth = .5; g.strokeStyle = 'rgba(70,50,25,.4)'; g.stroke(pp); g.strokeStyle = 'rgba(224,190,110,.85)'; g.stroke(rr(27.3, 22.8, 41.4, 47.4, .5)); g.restore();
+    put(g, glyph(o.ch, 30, 800, .1, 48, 45.5), f ? shade(o.col, -.25) : '#1b1713', 0, 0, .95);
+    if (o.ext) ext(g, o, shade(o.col, -.2), 66, 67.5, .85); else { g.fillStyle = '#c2412f'; g.fillRect(60.5, 61.5, 5, 5); }
+    cyl(g, rr(21, 12, 54, 4.6, 1.6), 0, 12, 0, 16.6, '#6e4a30'); cyl(g, rr(21, 77, 54, 7.4, 2.6), 0, 77, 0, 84.4, '#6e4a30');
+    const kc = f ? o.col : '#c9a257'; cyl(g, rr(15, 76, 7, 9.4, 3), 0, 76, 0, 85.4, kc); cyl(g, rr(74, 76, 7, 9.4, 3), 0, 76, 0, 85.4, kc);
+    return [5, 3, .4]; } },
+  { id: 'ta', neu: 1, name: '拓片', desc: '从碑上拓下来的一张墨拓：墨色斑驳，字是白的，纸边留白，钤一枚小红印。文件用彩色的朱拓。黑白分明，最有金石气。', draw(g, o) {
+    const f = o.kind === 'file', ink = f ? shade(o.col, -.12) : mixc(o.col, '#12100e', .8), paper = rr(13, 12, 70, 70, 1.2);
+    g.fillStyle = lin(g, 13, 12, 83, 82, ['#f8f3e6', '#e9dfc9']); g.fill(paper); g.save(); g.clip(paper); pat(g, CLOUD, 'multiply', .1, .6, o.seed % 37); g.restore();
+    const rub = shape(48, 47, 29.5, 29.5, 7, .01, o.seed, .007);
+    g.save(); g.shadowColor = rgba(ink, .5); g.shadowBlur = SB(1.2); g.fillStyle = ink; g.fill(rub); g.restore();
+    g.save(); g.clip(rub); pat(g, CLOUD, 'screen', .16, .5, o.seed % 61, 9); pat(g, SPECKW, 'source-over', .3, .4, o.seed % 31, o.seed % 17); pat(g, SPECKW, 'source-over', .16, 1, 5, o.seed % 23); pat(g, CLOUD, 'multiply', .3, .9, 11, o.seed % 13); g.restore();
+    put(g, glyph(o.ch, 42, 800, .12), '#f6f0e2', 0, 0, .97);
+    if (o.ext) ext(g, o, '#f6f0e2', 74, 73.5, .9); else { g.fillStyle = '#c2412f'; g.fill(rr(70, 68, 8, 8, 1)); g.fillStyle = '#f6f0e2'; g.fillRect(72, 70.3, 4, 1); g.fillRect(72, 73, 4, 1); }
+    g.save(); g.lineWidth = .5; g.strokeStyle = 'rgba(110,90,60,.3)'; g.stroke(paper); g.restore(); return [3.5, 2, .32]; } },
+  { id: 'wa', neu: 1, name: '瓦当', desc: '屋檐上的一枚瓦当：灰陶，外一圈宽边，里一道弦纹，字是凸起的；有砂眼、有土沁。朴素、古。', draw(g, o) {
+    const f = o.kind === 'file', base = f ? mixc('#cfc8b8', o.col, .14) : mixc('#8f8b83', o.col, .26), disc = shape(48, 47, 36, 36, 2, .006, o.seed);
+    g.fillStyle = lin(g, 14, 12, 82, 84, [shade(base, .2), base, shade(base, -.3)]); g.fill(disc);
+    g.save(); g.clip(disc); pat(g, CLOUD, 'multiply', .3, .7, o.seed % 71, 3); pat(g, GRAIN, 'overlay', .14, .4); pat(g, SPECK, 'source-over', .13, .5, o.seed % 29, 7); pat(g, CLOUD, 'soft-light', .5, 1.2, 9, o.seed % 43); g.restore();
+    bevel(g, disc, 2.2, 'rgba(255,255,255,.4)', 'rgba(0,0,0,.5)', 2.4);
+    const well = shape(48, 47, 28, 28, 2, .006, o.seed + 1); g.save(); g.clip(well); g.fillStyle = 'rgba(0,0,0,.16)'; g.fillRect(0, 0, B, B); g.restore(); bevel(g, well, 1.5, 'rgba(0,0,0,.5)', 'rgba(255,255,255,.3)', 1.6);
+    g.save(); g.lineWidth = 1.3; g.translate(.5, .6); g.strokeStyle = 'rgba(0,0,0,.4)'; g.beginPath(); g.arc(48, 47, 24, 0, 7); g.stroke(); g.translate(-.9, -1.1); g.strokeStyle = 'rgba(255,255,255,.3)'; g.beginPath(); g.arc(48, 47, 24, 0, 7); g.stroke(); g.restore();
+    raise(g, glyph(o.ch, 32, 800, .2), f ? shade(o.col, -.05) : shade(base, .2), .9); ext(g, o, shade(o.col, -.2), 62, 66, .8); return [6, 4, .42]; } },
+  { id: 'tong', neu: 1, name: '青铜', desc: '青铜器上的一块铭文：铜色沉着，生了铜绿，字是鎏金的凸铭，四周一线边框。厚重、有年头。', draw(g, o) {
+    const f = o.kind === 'file', base = f ? mixc('#b9a678', o.col, .18) : mixc('#6f5a34', o.col, .38), path = shape(48, 47, 35, 35, 5, .006, o.seed);
+    g.fillStyle = lin(g, 14, 12, 82, 84, [shade(base, .28), base, shade(base, -.4)]); g.fill(path);
+    g.save(); g.clip(path); pat(g, GRAIN, 'overlay', .13, .4); pat(g, CLOUD, 'multiply', .3, .6, o.seed % 59); pat(g, PATINA, 'source-over', f ? .5 : .75, .62, o.seed % 97, o.seed % 53); pat(g, SPECK, 'source-over', .09, .5, 3, o.seed % 19); g.restore();
+    bevel(g, path, 2.2, 'rgba(255,240,200,.45)', 'rgba(0,0,0,.55)', 2.4);
+    g.save(); g.lineWidth = 1; for (const [dx, dy, c] of [[.6, .7, 'rgba(0,0,0,.5)'], [0, 0, rgba(shade(base, .5), .8)]]) { g.save(); g.translate(dx, dy); g.strokeStyle = c; g.stroke(rr(19.5, 18.5, 57, 57, 2)); for (const [x, y] of [[23.5, 22.5], [72.5, 22.5], [23.5, 71.5], [72.5, 71.5]]) g.strokeRect(x - 2, y - 2, 4, 4); g.restore(); } g.restore();
+    raise(g, glyph(o.ch, 36, 800, .2), f ? shade(o.col, -.1) : gold, .9); ext(g, o, shade(o.col, -.25), 72, 72.5, .85); gloss(g, path, 30, 25, 28, 14, .16); return [7, 4, .46]; } },
+  { id: 'qi', neu: 1, name: '漆器', desc: '一方推光漆盒的盖面：漆色深而亮，映着一道窗光；字是描金，四边一线金。润、亮、正。', draw(g, o) {
+    const f = o.kind === 'file', base = f ? mixc('#efe6d2', o.col, .1) : mixc(o.col, '#150806', .28), path = shape(48, 47, 35, 35, 5.5, 0, 1);
+    g.fillStyle = lin(g, 14, 12, 82, 84, [shade(base, .2), base, shade(base, -.45)]); g.fill(path);
+    g.save(); g.clip(path); g.fillStyle = lin(g, 0, 12, 0, 44, ['rgba(255,255,255,.36)', 'rgba(255,255,255,.1)', 'rgba(255,255,255,0)']); g.beginPath(); g.moveTo(10, 10); g.lineTo(86, 10); g.lineTo(86, 25); g.quadraticCurveTo(48, 44, 10, 34); g.closePath(); g.fill();
+    g.fillStyle = lin(g, 0, 68, 0, 84, ['rgba(255,255,255,0)', 'rgba(255,255,255,.13)']); g.fillRect(10, 68, 76, 16); g.restore();
+    bevel(g, path, 1.8, 'rgba(255,255,255,.3)', 'rgba(0,0,0,.6)', 2.2);
+    g.save(); g.lineWidth = .9; g.strokeStyle = f ? rgba(shade(o.col, -.1), .8) : gold(g); g.stroke(shape(48, 47, 29.5, 29.5, 6, 0, 1)); g.restore();
+    const gl = glyph(o.ch, 36, 800); put(g, gl, 'rgba(0,0,0,.45)', .5, .7); put(g, gl, f ? shade(o.col, -.15) : gold); ext(g, o, f ? shade(o.col, -.2) : '#e2c172', 71, 72, .85); return [8, 5, .46]; } },
+  { id: 'bian', neu: 1, name: '木匾', desc: '一块小木匾：实木边框有木纹、四角铜钉，匾心刷一层色漆（随程序），字刻进去填金。像铺子门楣上的招牌。', draw(g, o) {
+    const f = o.kind === 'file', wood = '#5d4028', path = rr(12, 12, 72, 70, 3), field = rr(19.5, 19.5, 57, 55, 1.5), fc = f ? '#eee5d0' : mixc(o.col, '#1a1410', .12);
+    g.fillStyle = lin(g, 12, 12, 84, 82, [shade(wood, .22), wood, shade(wood, -.3)]); g.fill(path);
+    g.save(); g.clip(path); const r = rng(o.seed + 6); for (let i = 0; i < 80; i++) { const y = 12 + r() * 70, x = 6 + r() * 60; g.fillStyle = r() < .6 ? `rgba(30,15,4,${.08 + r() * .2})` : `rgba(255,225,170,${.05 + r() * .12})`; g.fillRect(x, y, 14 + r() * 50, .4 + r() * .7); } g.restore();
+    bevel(g, path, 1.8, 'rgba(255,235,200,.45)', 'rgba(0,0,0,.55)', 2);
+    g.fillStyle = lin(g, 19, 19, 77, 75, [shade(fc, .12), fc, shade(fc, -.2)]); g.fill(field);
+    g.save(); g.clip(field); pat(g, GRAIN, 'overlay', .1, .4); pat(g, CLOUD, 'multiply', .2, .8, o.seed % 47); g.restore(); bevel(g, field, 1.3, 'rgba(0,0,0,.5)', 'rgba(255,255,255,.25)', 1.5);
+    carve(g, glyph(o.ch, 36, 800), f ? shade(o.col, -.15) : gold); ext(g, o, shade(o.col, -.2), 73, 71.5, .85);
+    for (const [x, y] of [[15.7, 15.7], [80.3, 15.7], [15.7, 78.3], [80.3, 78.3]]) { g.fillStyle = '#2a1c10'; g.beginPath(); g.arc(x + .3, y + .4, 1.5, 0, 7); g.fill(); g.fillStyle = '#d2ad62'; g.beginPath(); g.arc(x, y, 1.3, 0, 7); g.fill(); g.fillStyle = 'rgba(255,255,255,.6)'; g.beginPath(); g.arc(x - .4, y - .4, .45, 0, 7); g.fill(); }
+    return [6, 4, .45]; } },
+  { id: 'la', neu: 1, name: '火漆', desc: '滴在封口上的一坨火漆，趁热按了一枚印：边沿鼓、不规则，中间一圈压痕，字是凸的。颜色随程序。', draw(g, o) {
+    const f = o.kind === 'file', col = f ? mixc(o.col, '#f1e8d6', .5) : mixc(o.col, '#701812', .12), blob = shape(48, 48, 36, 35, 2.2, .05, o.seed, .016);
+    const q = g.createRadialGradient(38, 34, 4, 48, 48, 40); q.addColorStop(0, shade(col, .28)); q.addColorStop(.6, col); q.addColorStop(1, shade(col, -.4)); g.fillStyle = q; g.fill(blob);
+    bevel(g, blob, 3.4, 'rgba(255,255,255,.55)', 'rgba(0,0,0,.5)', 4);
+    const well = shape(48, 48, 25.5, 25.5, 2, .008, o.seed + 2); g.save(); g.clip(well); g.fillStyle = 'rgba(0,0,0,.14)'; g.fillRect(0, 0, B, B); g.restore(); bevel(g, well, 1.8, 'rgba(0,0,0,.5)', 'rgba(255,255,255,.4)', 2);
+    g.save(); g.lineWidth = .8; g.strokeStyle = 'rgba(0,0,0,.25)'; g.beginPath(); g.arc(48, 48, 21.5, 0, 7); g.stroke(); g.restore();
+    raise(g, glyph(o.ch, 31, 900), f ? shade(o.col, -.05) : shade(col, .34), 1); ext(g, o, shade(o.col, -.25), 60, 65, .8);
+    g.save(); g.clip(blob); g.fillStyle = 'rgba(255,255,255,.7)'; g.shadowColor = '#fff'; g.shadowBlur = SB(1.4); g.beginPath(); g.ellipse(26, 28, 5.5, 2, -.8, 0, 7); g.fill(); g.globalAlpha = .5; g.beginPath(); g.ellipse(69, 70, 3, 1.2, -.8, 0, 7); g.fill(); g.restore();
+    return [5, 3, .42]; } },
+  { id: 'qh', neu: 1, name: '青花', desc: '青花瓷盘：白釉、钴蓝，一圈边饰，字是蓝料写的，有浓淡。全套只用一个蓝色，靠字分辨；程序是圆盘，文件是方盘。', draw(g, o) {
+    const f = o.kind === 'file', blue = '#1f428f', p2 = f ? 4.6 : 2, R = f ? 34 : 36, path = shape(48, 47, R, R, p2, 0, 1);
+    const q = g.createRadialGradient(40, 36, 3, 48, 47, 38); q.addColorStop(0, '#ffffff'); q.addColorStop(.65, '#f1f3f1'); q.addColorStop(1, '#cfd6d8'); g.fillStyle = q; g.fill(path);
+    g.save(); g.strokeStyle = rgba(blue, .9); g.lineWidth = 1.6; g.stroke(shape(48, 47, R - 3, R - 3, p2, 0, 1)); g.lineWidth = .8; g.stroke(shape(48, 47, R - 10.5, R - 10.5, p2, 0, 1));
+    g.fillStyle = rgba(blue, .85); const n = 16, rad = R - 6.8; for (let i = 0; i < n; i++) { const t = i / n * Math.PI * 2, c = Math.cos(t), s = Math.sin(t), k = Math.pow(Math.pow(Math.abs(c), p2) + Math.pow(Math.abs(s), p2), -1 / p2); g.beginPath(); g.ellipse(48 + c * k * rad, 47 + s * k * rad, 2.3, 1.1, t + 1.2, 0, 7); g.fill(); } g.restore();
+    g.save(); g.shadowColor = rgba(blue, .6); g.shadowBlur = SB(1); put(g, glyph(o.ch, 31, 800, .1), c => lin(c, 0, 28, 0, 68, ['#2a55ad', '#16306e']), 0, 0, .95); g.restore(); ext(g, o, blue, 66, 67.5, .8);
+    g.save(); g.clip(path); pat(g, CLOUD, 'soft-light', .3, .8, o.seed % 67); g.restore();
+    bevel(g, path, 2.4, 'rgba(255,255,255,.85)', 'rgba(60,80,100,.4)', 3); gloss(g, path, 33, 27, 27, 15, .6); return [7, 4, .4]; } },
+  { id: 'shan', neu: 1, name: '团扇', desc: '一把绢面团扇：细竹圈、薄绢、一抹淡彩，字写在扇面上；竹柄旁坠一缕流苏（颜色随程序）。轮廓最特别。', draw(g, o) {
+    const f = o.kind === 'file', face = shape(48, 42, 31.5, 31, 2.15, 0, 1);
+    cyl(g, rr(46, 70, 4, 21, 1.6), 46, 0, 50, 0, '#b8975a');
+    g.save(); g.strokeStyle = o.col; g.lineWidth = 1; g.lineCap = 'round'; for (let i = -2; i <= 2; i++) { g.beginPath(); g.moveTo(52.5, 84); g.quadraticCurveTo(55 + i * .6, 88, 55.5 + i * 1.1, 93); g.stroke(); } g.fillStyle = shade(o.col, -.2); g.beginPath(); g.arc(52.5, 84, 1.6, 0, 7); g.fill(); g.restore();
+    g.save(); g.globalAlpha = .94; g.fillStyle = lin(g, 16, 11, 80, 73, ['#fdf9ee', '#eee5d0']); g.fill(face); g.restore();
+    g.save(); g.clip(face); g.fillStyle = 'rgba(120,100,70,.07)'; for (let i = 0; i < 64; i += 1.5) { g.fillRect(16, 11 + i, 64, .35); g.fillRect(16 + i, 11, .35, 64); }
+    g.globalAlpha = f ? .2 : .36; g.shadowColor = rgba(o.col, .8); g.shadowBlur = SB(6); g.fillStyle = o.col; g.fill(shape(50, 47, 20, 16, 2.3, .09, o.seed + 4, .02)); g.restore();
+    g.save(); g.lineWidth = 2; g.strokeStyle = lin(g, 16, 11, 80, 73, ['#d9bd80', '#8e6e38']); g.stroke(face); g.lineWidth = .5; g.strokeStyle = 'rgba(60,40,15,.5)'; g.stroke(shape(48, 42, 32.5, 32, 2.15, 0, 1)); g.restore();
+    put(g, glyph(o.ch, 34, 800, .12, 48, 41), f ? shade(o.col, -.3) : '#1b1713', 0, 0, .95);
+    if (o.ext) ext(g, o, shade(o.col, -.25), 63, 61, .85); else { g.fillStyle = '#c2412f'; g.fillRect(62, 55, 4.5, 4.5); }
+    return [5, 3, .34]; } },
+  { id: 'deng', neu: 1, name: '灯笼', desc: '一盏点着的纸灯笼：里头有光，竹骨一道道，上下木盖，底下流苏；字透着光。夜色壁纸上像真的亮着。', draw(g, o) {
+    const f = o.kind === 'file', col = f ? mixc(o.col, '#f3ead6', .55) : o.col, body = shape(48, 46, 31, 26.5, 2.4, 0, 1);
+    g.save(); g.strokeStyle = '#4a3220'; g.lineWidth = 1.1; g.beginPath(); g.moveTo(48, 6); g.lineTo(48, 17); g.stroke(); g.restore();
+    g.save(); g.shadowColor = rgba(shade(col, .35), .65); g.shadowBlur = SB(7); const q = g.createRadialGradient(48, 46, 3, 48, 46, 32); q.addColorStop(0, mixc(shade(col, .55), '#fff0c0', .5)); q.addColorStop(.55, shade(col, .12)); q.addColorStop(1, shade(col, -.38)); g.fillStyle = q; g.fill(body); g.restore();
+    g.save(); g.clip(body); g.lineWidth = .7; for (const rx of [8, 17, 25]) { g.strokeStyle = 'rgba(40,15,5,.3)'; g.beginPath(); g.ellipse(48, 46, rx, 27, 0, 0, 7); g.stroke(); g.strokeStyle = 'rgba(255,240,200,.16)'; g.beginPath(); g.ellipse(48.8, 46, rx, 27, 0, 0, 7); g.stroke(); } pat(g, GRAIN, 'overlay', .09, .4); g.restore();
+    cyl(g, rr(35, 16, 26, 5.5, 1.5), 0, 16, 0, 21.5, '#3c2a1a'); cyl(g, rr(36, 70.5, 24, 5.5, 1.5), 0, 70.5, 0, 76, '#3c2a1a');
+    g.fillStyle = '#d2ad62'; g.fillRect(35, 20.6, 26, .9); g.fillRect(36, 70.5, 24, .9);
+    g.save(); g.strokeStyle = f ? shade(o.col, -.1) : '#c9a257'; g.lineWidth = .9; g.lineCap = 'round'; for (let i = -2; i <= 2; i++) { g.beginPath(); g.moveTo(48, 76); g.quadraticCurveTo(48 + i * .5, 84, 48 + i * 1.5, 91.5); g.stroke(); } g.restore();
+    g.save(); g.shadowColor = 'rgba(255,236,170,.8)'; g.shadowBlur = SB(2.5); put(g, glyph(o.ch, 31, 800), f ? shade(o.col, -.35) : '#fff3c8', 0, -1, .96); g.restore(); ext(g, o, shade(o.col, -.35), 66, 62, .85);
+    return [6, 4, .3]; } },
+  { id: 'sa', neu: 1, name: '洒金笺', desc: '一张染了色的笺纸，上面洒了碎金箔；字是浓墨。颜色随程序，淡而不艳。比素纸笺华丽一点。', draw(g, o) {
+    const f = o.kind === 'file', pc = f ? mixc('#f3ecdb', o.col, .1) : mixc(o.col, '#eadfc6', .5), path = shape(48, 47, 34, 35, 10, .004, o.seed, .003);
+    g.save(); g.translate(48, 48); g.rotate(((o.seed % 5) - 2) * .014); g.translate(-48, -48);
+    g.fillStyle = lin(g, 14, 12, 82, 84, [shade(pc, .14), pc, shade(pc, -.1)]); g.fill(path);
+    g.save(); g.clip(path); pat(g, CLOUD, 'multiply', .14, .6, o.seed % 57); pat(g, FLECK, 'source-over', .5, .45, o.seed % 41, o.seed % 23);
+    const r = rng(o.seed + 12); for (let i = 0; i < 16; i++) { const x = 15 + r() * 66, y = 13 + r() * 68, s = .8 + r() * 2; g.save(); g.translate(x, y); g.rotate(r() * 3); g.fillStyle = r() < .5 ? '#e8c468' : '#c79a3e'; g.globalAlpha = .75 + r() * .25; g.fillRect(-s / 2, -s / 2, s, s * (.5 + r() * .7)); g.restore(); } g.restore();
+    g.save(); g.shadowColor = 'rgba(20,16,10,.3)'; g.shadowBlur = SB(.7); put(g, glyph(o.ch, 40, 800, .1), f ? shade(o.col, -.35) : '#171411', 0, 0, .96); g.restore();
+    if (o.ext) ext(g, o, shade(o.col, -.3), 77, 77, .85); else { g.fillStyle = '#c2412f'; g.fill(rr(66.5, 66.5, 8.5, 8.5, 1.2)); }
+    g.save(); g.lineWidth = .6; g.strokeStyle = 'rgba(100,80,50,.3)'; g.stroke(path); g.restore(); g.restore(); return [3.2, 1.6, .3]; } },
+  { id: 'jz', neu: 1, name: '剪纸', desc: '一张剪纸贴在衬纸上：花瓣形的边、一圈镂空的小孔，字留在纸上；纸薄，微微翘起一点影子。喜庆、民间。', draw(g, o) {
+    const f = o.kind === 'file', col = o.col, back = f ? rr(12, 11, 72, 72, 5) : shape(48, 47, 36, 36, 2, 0, 1);
+    g.fillStyle = lin(g, 14, 12, 82, 84, ['#fbf7ec', '#e9dfc9']); g.fill(back); g.save(); g.clip(back); pat(g, CLOUD, 'multiply', .1, .6, o.seed % 33); g.restore();
+    const L = cv(P), lg = L.getContext('2d'), N = 14, pth = new Path2D(); lg.scale(K, K);
+    for (let i = 0; i <= 280; i++) { const t = i / 280 * Math.PI * 2, rad = 30.5 + 2.4 * Math.abs(Math.sin(t * N / 2)), x = 48 + Math.cos(t) * rad, y = 47 + Math.sin(t) * rad; i ? pth.lineTo(x, y) : pth.moveTo(x, y); } pth.closePath();
+    lg.fillStyle = col; lg.fill(pth); lg.globalCompositeOperation = 'destination-out'; lg.beginPath(); lg.arc(48, 47, 22.5, 0, 7); lg.fill();
+    for (let i = 0; i < N; i++) { const t = (i + .5) / N * Math.PI * 2; lg.beginPath(); lg.ellipse(48 + Math.cos(t) * 26.6, 47 + Math.sin(t) * 26.6, 2.6, 1.3, t + 1.57, 0, 7); lg.fill(); }
+    lg.globalCompositeOperation = 'source-over'; { const gl = glyph(o.ch, 35, 900, 0, 48, 47); for (const [dx, dy] of [[-.4, 0], [.4, 0], [0, -.4], [0, .4]]) put(lg, gl, col, dx, dy); }
+    g.save(); g.shadowColor = 'rgba(40,20,10,.5)'; g.shadowBlur = SB(.9); g.shadowOffsetX = SB(.6); g.shadowOffsetY = SB(.9); g.drawImage(L, 0, 0, B, B); g.restore();
+    ext(g, o, shade(o.col, -.2), 81, 80.5, .85); g.save(); g.lineWidth = .5; g.strokeStyle = 'rgba(110,90,60,.3)'; g.stroke(back); g.restore(); return [4, 2.5, .34]; } },
+];
+function render(st, ic, idx) {
+  const L = cv(P), g = L.getContext('2d'); g.scale(K, K); g.lineJoin = 'round';
+  const sh = st.draw(g, { ch: ic[0], col: ic[2], kind: ic[3] || 'app', ext: ic[4] || '', seed: 101 + idx * 37 });
+  const F = cv(P), fg = F.getContext('2d');
+  if (sh) { fg.shadowColor = `rgba(22,14,6,${sh[2]})`; fg.shadowBlur = sh[0] * K; fg.shadowOffsetY = sh[1] * K; fg.drawImage(L, 0, 0); fg.shadowColor = 'rgba(22,14,6,.4)'; fg.shadowBlur = 1.4 * K; fg.shadowOffsetY = 1 * K; fg.globalCompositeOperation = 'destination-over'; fg.drawImage(L, 0, 0); fg.globalCompositeOperation = 'source-over'; fg.shadowColor = 'transparent'; fg.drawImage(L, 0, 0); }
+  else fg.drawImage(L, 0, 0);
+  return F.toDataURL('image/png');
+}
+    return { STYLES, render, K };
+  }
+  const getKit = () => kit || (kit = build());
+  /* 方案名录（不必先把画具备好就能列出来） */
+  const LIST = [['default', '印', '青丝原本的一方印：朱文白文，随程序着色。素净、最快。']];
+  const meta = () => { if (LIST.length === 1) for (const s of getKit().STYLES) LIST.push([s.id, s.name, s.desc]); return LIST; };
+  const cache = new Map(), colCache = new Map();
+  let probe = null;
+  /** 任意 CSS 颜色（var()、color-mix()…）→ #rrggbb */
+  function hex(col) {
+    if (/^#[0-9a-f]{6}$/i.test(col)) return col;
+    let v = colCache.get(col); if (v) return v;
+    try {
+      if (!probe) { probe = document.createElement('i'); probe.style.cssText = 'position:absolute;width:0;height:0;visibility:hidden;pointer-events:none'; document.body.append(probe); }
+      probe.style.color = ''; probe.style.color = col;
+      const cs = getComputedStyle(probe).color, nums = (cs.match(/-?[\d.]+(e-?\d+)?/g) || []).map(Number);
+      let rgb = /^color\(/.test(cs) ? nums.slice(0, 3).map(x => x * 255) : nums.slice(0, 3);
+      if (rgb.length < 3 || rgb.some(x => !isFinite(x))) rgb = [90, 96, 80];
+      v = '#' + rgb.map(x => Math.max(0, Math.min(255, Math.round(x))).toString(16).padStart(2, '0')).join('');
+    } catch (e) { v = '#5a6050'; }
+    colCache.set(col, v); return v;
+  }
+  const hash = s => { let x = 7; for (const ch of s) x = (x * 31 + ch.codePointAt(0)) >>> 0; return x; };
+  function urlFor(style, o) {
+    const col = hex(o.col || '#5a6050'), key = [style, o.ch, col, o.kind, o.ext || ''].join('|');
+    let u = cache.get(key); if (u !== undefined) return u;
+    try {
+      const k = getKit(), st = k.STYLES.find(s => s.id === style); if (!st) { cache.set(key, null); return null; }
+      u = k.render(st, [o.ch, '', col, o.kind === 'app' ? '' : o.kind, o.ext || ''], hash(o.ch + '|' + o.kind + '|' + (o.ext || '')) % 23);
+    } catch (e) { console.warn('[Icons]', e); u = null; }
+    cache.set(key, u); return u;
+  }
+  const active = o => { const st = Prefs.get('iconStyle'); return st && st !== 'default' && (o.kind === 'app' || Prefs.get('iconFiles')) ? st : null; };
+  function apply(el) {
+    const o = el._ik; if (!o) return;
+    const st = active(o), url = st && !el.classList.contains('thumb') ? urlFor(st, o) : null;
+    let img = el.querySelector(':scope > img.ik-img');
+    if (!url) { el.classList.remove('ik'); if (img) img.remove(); return; }
+    if (!img) { img = document.createElement('img'); img.className = 'ik-img'; img.alt = ''; img.draggable = false; el.prepend(img); }
+    if (img.getAttribute('src') !== url) img.src = url;
+    el.classList.add('ik');
+  }
+  /** 给一方印挂上图标信息：{ ch 字, col 色, kind: app / dir / file, ext 后缀 } */
+  function decorate(el, o) { el._ik = o; apply(el); return el; }
+  function refresh() { for (const el of document.querySelectorAll('.seal')) if (el._ik) apply(el); }
+  function init() {
+    BUS.on('pref', k => { if (k === 'iconStyle' || k === 'iconFiles' || k === '*') refresh(); });
+    BUS.on('theme', () => { colCache.clear(); requestAnimationFrame(refresh); });
+  }
+  /** 设阁里的小样：某方案的一枚图标 */
+  function sample(style, o) { return style === 'default' ? null : urlFor(style, o); }
+  return { init, decorate, refresh, sample, get list() { return meta(); } };
+})();
+
 /* ── 22-ui.js ── */
 /* ================= 界面组件：图标 / 菜单 / 提示 / 立轴对话框 / 进度 / 气泡 ================= */
 const ICONS = {
@@ -6027,7 +6543,7 @@ const ScrollArt = (() => {
           col = col.map(v => v * (.86 + .14 * (rho / G.Rp)));
         } else if (typ === 20) {   // 卷身侧面：包首绫 / 画心宣纸 + 上下绫边；签条、系带、别子
           const th = Math.atan2(nx, nz), u = th * G.Rp;
-          const fib = pt(PT.fib, u * .8, hy * .8);
+          const fib = Prefs.get('paper') ? pt(PT.fib, u * .8, hy * .8) : .5;
           const paper = paperC.map(v => v * (.955 + .07 * (fib - .5)));
           const edge = hy < y1 + 1.5 || hy > y2 - 1.5;
           col = mix3(edge ? silkAt(u, hy, R.silk) : paper, silkAt(u, hy, R.silk), silkMix);
@@ -6046,7 +6562,7 @@ const ScrollArt = (() => {
             if (Math.abs(pd) < 1.25 && Math.abs(dy) < .55) { const q = pd / 1.25, ey = dy / .55; col = mix3(col, [228, 230, 214], tieA); nx = nx * .4 + q * q * q * .5; ny = ey * .6; nz = Math.sqrt(Math.max(.05, 1 - nx * nx - ny * ny)); gloss = 1.1 * tieA; shin = 70; glow = .14 * tieA; }
           }
         } else if (typ === 50) {   // 画心：宣纸，上下绫边，近天杆一段是包首绫，中间一道隔水
-          const fib = pt(PT.fib, sx * .8, hy * .8);
+          const fib = Prefs.get('paper') ? pt(PT.fib, sx * .8, hy * .8) : .5;
           col = paperC.map(v => v * (.96 + .07 * (fib - .5)));
           const bao = sx > G.xe - 3.3, edge = hy < y1 + 1.5 || hy > y2 - 1.5;
           if (bao || edge) { col = silkAt(sx, hy, R.silk); sheen = .35; gloss = .2; }
@@ -6149,6 +6665,7 @@ const ScrollArt = (() => {
   /* 切走再回来：浏览器可能已收走缓存帧与按钮画布的内存（表现为三卷消失）。全部作废重烘 */
   function flush() { cache.clear(); refreshAll(); }
   if (typeof BUS !== 'undefined') BUS.on('canvas-wake', () => requestAnimationFrame(flush));
+  if (typeof BUS !== 'undefined') BUS.on('pref', k => { if (k === 'paper' || k === '*') requestAnimationFrame(flush); });
   return { mount, bind, refreshAll, frame, warm, geom, flush };
 })();
 
@@ -6752,7 +7269,7 @@ const Shell = (() => {
     const sz = Prefs.get('deskIconSize'); icons.style.setProperty('--icon', sz + 'px');
     const items = deskItems(), g = grid(), at = layout(items, g); icons.style.setProperty('--cw', (g.w - 6) + 'px');
     icons.replaceChildren(...items.map(it => {
-      const ico = it.type === 'node' ? fileSeal(it.node, sz - 10) : h('div.seal', { text: it.glyph, style: { '--c': it.color, '--sz': (sz - 10) + 'px' } });
+      const ico = it.type === 'node' ? fileSeal(it.node, sz - 10) : Icons.decorate(h('div.seal', { text: it.glyph, style: { '--c': it.color, '--sz': (sz - 10) + 'px' } }), { ch: it.glyph, col: it.color, kind: 'app' });
       if (it.type === 'trash' && FS.list(FS.TRASH).length) ico.append(h('i.dot-gold'));
       const [c, r] = at.get(it.id);
       return h('div.dicon' + (deskSel.has(it.id) ? '.sel' : ''), { tabindex: '0', dataset: { id: it.id, type: it.type, c, r }, title: it.name, style: { left: c * g.w + 'px', top: r * g.hh + 'px' } }, ico, h('div.lbl', { text: it.name }));
@@ -6785,8 +7302,20 @@ const Shell = (() => {
     };
     let moved = false;
     const OUT = '.win, #dock, #topbar, .menu, .pop';
-    icons.addEventListener('dblclick', e => { const el = e.target.closest('.dicon'); if (el && !IS_TOUCH) openIt(el); });
-    icons.addEventListener('click', e => { const el = e.target.closest('.dicon'); if (el && IS_TOUCH && !moved && !Pick.swallowNative()) openIt(el); });
+    /* 打开方式（设阁 › 桌面与坞 › 打开方式）：默认单击即开，手机电脑一样；可改成双击。
+       单击模式下：按住 Ctrl / Shift 点是多选，拖动是挪位置，都不会误开。双击模式下：点一下只是选中。 */
+    const single = () => Prefs.get('openMode') !== 'double';
+    let dnX = 0, dnY = 0, lastOpen = 0;
+    icons.addEventListener('pointerdown', e => { dnX = e.clientX; dnY = e.clientY; }, true);
+    const fire = el => { const now = performance.now(); if (now - lastOpen < 450) return; lastOpen = now; openIt(el); };
+    icons.addEventListener('dblclick', e => { const el = e.target.closest('.dicon'); if (el && !single()) fire(el); });
+    icons.addEventListener('click', e => {
+      const el = e.target.closest('.dicon'); if (!el) return;
+      if (moved || Math.hypot(e.clientX - dnX, e.clientY - dnY) > 6 || (IS_TOUCH && Pick.swallowNative())) return;
+      if (e.shiftKey || e.ctrlKey || e.metaKey) return;
+      if (single()) fire(el);
+      else if (!deskSel.has(el.dataset.id) || deskSel.size > 1) { deskSel = new Set([el.dataset.id]); markSel(); }
+    });
     icons.addEventListener('keydown', e => { const el = e.target.closest('.dicon'); if (!el) return; if (e.key === 'Enter') openIt(el); if (e.key === 'Delete' && el.dataset.type === 'node') delNodes([...deskSel].filter(i => FS.get(i))); if (e.key === 'F2' && el.dataset.type === 'node') renameNode(FS.get(el.dataset.id)); });
     const bandAt = (x, y, keep) => Pick.marquee(x, y, {
       scroller: icons, base: keep ? deskSel : new Set(), mode: 'add',
@@ -6931,9 +7460,10 @@ const Shell = (() => {
   const KIND_COLOR = { dir: 'var(--gold)', text: 'var(--willow-deep)', sheet: 'var(--jade)', web: 'var(--rust)', image: 'var(--jade)', audio: 'var(--plum)', video: 'var(--rust)', pdf: 'var(--accent)', zip: 'var(--ink3)', ink: 'var(--ink)', bin: 'var(--ink3)' };
   function fileSeal(n, sz = 52) {
     const k = kindOf(n);
-    if (k === 'dir') return h('div.seal', { text: '册', style: { '--c': 'var(--gold)', '--sz': sz + 'px' } });
+    if (k === 'dir') return Icons.decorate(h('div.seal', { text: '册', style: { '--c': 'var(--gold)', '--sz': sz + 'px' } }), { ch: '册', col: 'var(--gold)', kind: 'dir' });
     const el = h('div.seal.file', { style: { '--sz': sz + 'px', '--k': KIND_COLOR[k] } }, h('span', { text: KIND_GLYPH[k], style: { color: KIND_COLOR[k] } }), h('span.k', { text: (extOf(n.name) || '').slice(0, 4) }));
-    if (Thumbs.can(n)) Thumbs.get(n).then(u => { if (u) { el.classList.add('thumb'); el.style.background = `url("${u}")`; el.replaceChildren(); } });
+    Icons.decorate(el, { ch: KIND_GLYPH[k] || '笺', col: KIND_COLOR[k] || 'var(--willow-deep)', kind: 'file', ext: (extOf(n.name) || '').slice(0, 4).toUpperCase() });
+    if (Thumbs.can(n)) Thumbs.get(n).then(u => { if (u) { el.classList.add('thumb'); el.classList.remove('ik'); el.style.background = `url("${u}")`; el.replaceChildren(); } });
     return el;
   }
 
@@ -6944,7 +7474,7 @@ const Shell = (() => {
     const extra = running.filter(id => !pinned.includes(id));
     const item = id => {
       const ws = WM.byApp(id), def = APPS[id];
-      const it = h('button.dock-item', { dataset: { app: id }, 'aria-label': def.name, style: { '--c': def.color } }, h('div.seal', { text: def.glyph, style: { '--c': def.color } }), h('i.minroll'));
+      const it = h('button.dock-item', { dataset: { app: id }, 'aria-label': def.name, style: { '--c': def.color } }, Icons.decorate(h('div.seal', { text: def.glyph, style: { '--c': def.color } }), { ch: def.glyph, col: def.color, kind: 'app' }), h('i.dock-slip', { text: def.name }), h('i.minroll'));
       it.classList.toggle('run', ws.length > 0); it.classList.toggle('focus', !!WM.focused && WM.focused.app === id);
       it.classList.toggle('min', ws.length > 0 && ws.every(w => w.state === 'min'));
       return it;
@@ -6968,22 +7498,24 @@ const Shell = (() => {
     dock.addEventListener('contextmenu', e => { const it = e.target.closest('.dock-item'); if (!it) return; e.preventDefault(); hideTip(); UI.menuAt(it, dockMenu(it.dataset.app)); });
     dock.addEventListener('pointerover', e => {
       const it = e.target.closest('.dock-item'); if (!it || e.pointerType === 'touch' || UI.menuOpen) return; hideTip();
+      if (Prefs.get('dockFx') === 'scroll' && !isMobile()) return;   // 展签自己就写着名字
       const r = it.getBoundingClientRect(); const ws = WM.byApp(it.dataset.app);
       tip = h('div.dock-tip', { text: APPS[it.dataset.app].name + (ws.length > 1 ? ` · ${ws.length} 卷` : '') }); document.body.append(tip);
       if (dock.classList.contains('left')) { tip.style.left = r.right + 10 + 'px'; tip.style.top = r.top + r.height / 2 - tip.offsetHeight / 2 + 'px'; }
       else { tip.style.left = r.left + r.width / 2 - tip.offsetWidth / 2 + 'px'; tip.style.top = r.top - tip.offsetHeight - 12 + 'px'; }
     });
-    dock.addEventListener('pointerleave', () => { hideTip(); $$('.dock-item', dock).forEach(i => i.style.transform = ''); });
+    dock.addEventListener('pointerleave', () => { hideTip(); dock.classList.remove('hot'); });
     dock.addEventListener('pointerout', e => { if (!e.relatedTarget || !e.relatedTarget.closest?.('.dock-item')) hideTip(); });
-    // 放大
+    /* 悬停效果（设阁 › 桌面与坞 › 程序坞悬停）——不再是仿 macOS 的鱼眼放大：
+       墨晕（默认）：指针所到之处，坞面上洇开一团随手移动的淡墨泥金；指下那方印被提起、微微一侧，印下留一摊印泥色的晕，按下即「钤」。
+       展签：印不动，从印旁展出一张小签，写着程序名，邻印被轻轻推开（此时不再另出提示）。
+       关：什么都不做。样式全在 CSS 里按 :root[data-dockfx] 分，这里只喂指针位置。 */
     dock.addEventListener('pointermove', e => {
-      if (!Prefs.get('dockMagnify') || e.pointerType === 'touch' || isMobile()) return;
-      const left = dock.classList.contains('left');
-      for (const it of $$('.dock-item', dock)) {
-        const r = it.getBoundingClientRect(), c = left ? r.top + r.height / 2 : r.left + r.width / 2, d = Math.abs((left ? e.clientY : e.clientX) - c);
-        const s = 1 + 0.38 * Math.max(0, 1 - d / 120) ** 2; it.style.transform = `scale(${s.toFixed(3)})`;
-      }
-    });
+      if (e.pointerType === 'touch' || Prefs.get('dockFx') !== 'ink') return;
+      const r = dock.getBoundingClientRect();
+      dock.style.setProperty('--mx', (e.clientX - r.left).toFixed(1) + 'px'); dock.style.setProperty('--my', (e.clientY - r.top).toFixed(1) + 'px');
+      dock.classList.add('hot');
+    }, { passive: true });
     // 自动隐藏
     let hideT;
     const autoHide = () => { if (!Prefs.get('dockAutoHide')) { dock.classList.remove('hidden'); return; } dock.classList.add('hidden'); };
@@ -7093,7 +7625,7 @@ const Launcher = (() => {
         res.append(h('div.lsec', { text: name }));
         for (const it of items) {
           const i = flat.length; flat.push(it);
-          const ico = it.node ? Shell.fileSeal(it.node, 30) : h('div.seal', { text: it.g, style: { '--c': it.c || 'var(--willow-deep)' } });
+          const ico = it.node ? Shell.fileSeal(it.node, 30) : Icons.decorate(h('div.seal', { text: it.g, style: { '--c': it.c || 'var(--willow-deep)' } }), { ch: it.g, col: it.c || 'var(--willow-deep)', kind: 'app' });
           const row = h('div.lit', { dataset: { i } }, ico, h('div.li-t', {}, h('div', { html: mark(it.t, q.trim()) }), it.s ? h('div.li-s', { text: it.s }) : null));
           row.addEventListener('pointermove', e => { if (e.pointerType === 'mouse' && hl !== i) setHl(i, false); }); row.addEventListener('click', () => run(i));
           res.append(row);
@@ -7994,6 +8526,7 @@ class FileManager {
   }
 
   /* ---------- 交互 ---------- */
+  _openOnce(id) { const now = performance.now(); if (now - (this._openAt || 0) < 450) return; this._openAt = now; const n = FS.get(id); if (n) this.open(n); }
   /** 文件元素（只认 main 里面的；窗口本身也有 data-id，不能被误认） */
   itemOf(t) { const m = this.main, it = t && t.closest ? t.closest('[data-id]') : null; return it && it !== m && m.contains(it) ? it : null; }
   /** 鼠标按在哪里算“拿起文件”：列表里只有图标与文件名；其余各看法是整个文件块 */
@@ -8042,12 +8575,17 @@ class FileManager {
       const it = this.itemOf(e.target); if (!it) return;
       if (this._clickNarrow === it.dataset.id && !this._dragged && !e.ctrlKey && !e.metaKey && !e.shiftKey && !this.selMode) { this.sel = new Set([it.dataset.id]); this.anchor = it.dataset.id; this.markSel(); this.selChanged(); }
       this._clickNarrow = null;
-      if (IS_TOUCH && !this._dragged && !Pick.swallowNative()) {
-        if (this.selMode) { const id = it.dataset.id; this.sel.has(id) ? this.sel.delete(id) : this.sel.add(id); this.anchor = id; this.markSel(); this.selChanged(); }
-        else this.open(FS.get(it.dataset.id));
-      }
+      /* 打开方式与桌面一致：默认单击即开（Ctrl / Shift 点选、拖动、选择模式都不算），可在设阁改回双击 */
+      const single = Prefs.get('openMode') !== 'double', mods = e.ctrlKey || e.metaKey || e.shiftKey;
+      if (IS_TOUCH) {
+        if (this._dragged || Pick.swallowNative()) return;
+        const id = it.dataset.id;
+        if (this.selMode) { this.sel.has(id) ? this.sel.delete(id) : this.sel.add(id); this.anchor = id; this.markSel(); this.selChanged(); }
+        else if (single) this._openOnce(id);
+        else { this.sel = new Set([id]); this.anchor = id; this.markSel(); this.selChanged(); }
+      } else if (single && !this._dragged && !mods && !this.selMode && e.button === 0 && this.handleOf(e.target)) this._openOnce(it.dataset.id);
     });
-    m.addEventListener('dblclick', e => { const it = this.handleOf(e.target) || this.itemOf(e.target); if (it && !IS_TOUCH) this.open(FS.get(it.dataset.id)); });
+    m.addEventListener('dblclick', e => { const it = this.handleOf(e.target) || this.itemOf(e.target); if (it && Prefs.get('openMode') === 'double') this._openOnce(it.dataset.id); });
     m.addEventListener('contextmenu', e => {
       e.preventDefault(); if (e.target.closest('.fm-head')) return;
       const it = this.itemOf(e.target);
@@ -10609,10 +11147,15 @@ const SETTINGS = [
     { k: 'corner', label: '棱角', desc: '窗口、图标与按钮的转角：直角硬朗，圆角温和', type: 'range', min: 0, max: 1, step: 0.05, fmt: v => +v === 0 ? '直角' : Math.round(v * 100) + '%', kw: '圆角 直角 转角 radius' },
     { k: 'glyphStyle', label: '花字', desc: '本机字体当场写成的毛笔字。正文不加：只有标题、印、菜单用花字', type: 'seg', opts: [['ink', '通篇'], ['display', '正文不加'], ['font', '不用']], kw: '字体 墨字 书法 毛笔 楷书 font' },
     { k: 'fontBase', label: '字底', desc: '花字照哪种字写：有楷用楷，无楷用宋', type: 'seg', opts: [['auto', '自择'], ['kai', '楷'], ['song', '宋']], kw: '字体 楷体 宋体 font' },
-    { k: 'menuPaper', label: '菜单纸感', desc: '右键菜单与各处小单：默认是半透的薄纸，透出底下的东西；开了换成有纤维的宣纸', type: 'switch', kw: '菜单 右键 透明 纸 宣纸 质感' },
+    { k: 'paper', label: '纸质质感', desc: '全系统一个开关：窗口、标题栏、工具条、右键菜单、立轴对话框（含启封）、书脊题签、长卷、三卷轴的纸面，一起铺上宣纸纤维（题头另有一抹淡墨、一笔飞白）；关了就一起回到素面。没有哪一处单独藏着', type: 'switch', kw: '纸 宣纸 质感 纤维 纹理 菜单 标题栏 淡墨 飞白 启封 texture' },
     { k: 'menuGlyph', label: '菜单字头', desc: '右键菜单左侧那一列', type: 'seg', opts: [['kai', '楷字'], ['seal', '小印'], ['none', '不显示']], kw: '菜单 图标 右键' },
     { k: 'density', label: '疏密', type: 'seg', opts: [['comfy', '舒展'], ['compact', '紧凑']], kw: '间距' },
     { k: 'motion', label: '动效', desc: '静：几乎不动；简：只留必要的过渡；全：卷轴、风吹、墨晕', type: 'seg', opts: [[0, '静'], [1, '简'], [2, '全']], kw: '动画 animation' }
+  ] },
+  { id: 'icons', name: '图标', g: '印', items: [
+    { k: 'iconStyle', label: '图标方案', desc: '点一种，桌面、程序坞、寻、书阁里所有的图标一起换；点「默认」一起换回。都是当场画出来的，没有图片素材', type: 'icons', kw: '图标 icon 印 样式 方案 印蜕 石章 墨锭 瓷片 玉牌 水墨团 珐琅 竹牌 线装册 纸笺 立轴 拓片 瓦当 青铜 漆器 木匾 火漆 青花 团扇 灯笼 洒金笺 剪纸' },
+    { k: 'iconFiles', label: '文件与书册也换', desc: '关掉则只换程序图标，文件、文件夹仍用原来的纸签', when: () => Prefs.get('iconStyle') !== 'default', type: 'switch', kw: '图标 文件 文件夹' },
+    { k: 'deskIconSize', label: '桌面图标大小', type: 'range', min: 48, max: 88, step: 4, fmt: v => v + 'px', kw: '图标 尺寸' }
   ] },
   { id: 'wall', name: '壁纸', g: '柳', items: [
     { k: 'wpTrees', label: '柳', desc: '岸边柳树的繁密', type: 'seg', opts: [[0, '无'], [0.6, '疏'], [1, '中'], [1.5, '密']], kw: '树 柳树 willow' },
@@ -10627,9 +11170,9 @@ const SETTINGS = [
     { k: 'wpDim', label: '暗化', desc: '让桌面图标更清楚', type: 'range', min: 0, max: 0.6, step: 0.05, fmt: v => Math.round(v * 100) + '%', kw: '亮度 遮罩' }
   ] },
   { id: 'win', name: '窗口', g: '轴', items: [
-    { k: 'titlePaper', label: '标题栏纸感', desc: '窗口题头与工具条铺一层宣纸纤维、一抹淡墨、下缘一笔飞白。默认不开，素净一条', type: 'switch', kw: '标题栏 纸 宣纸 质感 淡墨 飞白' },
+    { k: 'scrollPos', label: '三轴位置', desc: '「收 · 开 · 合」三根卷轴放在标题栏正中，还是收到右端', type: 'seg', opts: [['center', '居中'], ['right', '靠右']], kw: '按钮 关闭 最小化 最大化 右侧 右边 位置 标题栏' },
     { k: 'winAnim', label: '卷轴开合', desc: '窗口打开、收起时的卷轴动画', type: 'switch', kw: '动画 窗口' },
-    { k: 'scrollLabels', label: '三轴题字', desc: '标题栏正中的「收 · 开 · 合」三根卷轴上的字', type: 'seg', opts: [['hover', '悬停时写出'], ['always', '常显'], ['never', '不显']], kw: '按钮 关闭 最小化 最大化' },
+    { k: 'scrollLabels', label: '三轴题字', desc: '标题栏上「收 · 开 · 合」三根卷轴上的字', type: 'seg', opts: [['hover', '悬停时写出'], ['always', '常显'], ['never', '不显']], kw: '按钮 关闭 最小化 最大化' },
     { k: 'scrollOrient', label: '卷轴方向', desc: '横展：轴竖立，纸向两旁展开；竖展：轴横卧，纸上下展开（旧版样式）', type: 'seg', opts: [['h', '横展'], ['v', '竖展']], kw: '卷轴 按钮 旧版 方向 标题栏' },
     { k: 'restoreSession', label: '重开时还原窗口', desc: '下次打开青丝时，把上次开着的窗口原样摆回', type: 'switch', kw: '会话 恢复 session' },
     { k: 'snap', label: '贴边分屏', desc: '把窗口拖到屏幕边缘时半屏或全屏', type: 'switch', kw: '吸附 分屏 snap' }
@@ -10638,8 +11181,8 @@ const SETTINGS = [
     { k: 'dockPos', label: '程序坞位置', type: 'seg', opts: [['bottom', '底部'], ['left', '左侧']], kw: 'dock 任务栏' },
     { k: 'dockApps', label: '坞中印章', desc: '点选要放在程序坞里的程序，顺序即点选的先后', type: 'apps', kw: 'dock 固定 程序' },
     { k: 'dockAutoHide', label: '自动隐藏程序坞', type: 'switch', kw: 'dock 隐藏' },
-    { k: 'dockMagnify', label: '程序坞放大', desc: '指针经过时印章放大', type: 'switch', kw: 'dock 放大' },
-    { k: 'deskIconSize', label: '桌面图标大小', type: 'range', min: 48, max: 88, step: 4, fmt: v => v + 'px', kw: '图标 尺寸' },
+    { k: 'dockFx', label: '程序坞悬停', desc: '墨晕：坞面洇开一团随指针走的淡墨泥金，指下的印被提起、印下留一摊印泥，按下即钤；展签：印不动，从旁展出一张写着名字的小签；关：不作反应', type: 'seg', opts: [['ink', '墨晕'], ['scroll', '展签'], ['off', '关']], kw: 'dock 任务栏 放大 悬停 鼠标 经过 效果 hover' },
+    { k: 'openMode', label: '打开方式', desc: '桌面与书阁里的图标：点一下就开，还是点两下才开。手机、电脑一样。单击时按住 Ctrl / Shift 点是多选', type: 'seg', opts: [['single', '单击'], ['double', '双击']], kw: '单击 双击 打开 点击 click 图标 文件' },
     { k: 'deskApps', label: '桌面程序', type: 'apps', kw: '桌面 图标 程序' },
     { k: 'deskTrash', get label() { return `桌面显示${TN()}`; }, when: () => Prefs.get('useTrash'), type: 'switch', kw: '回收站 拾遗 弃物阁 桌面' },
     { k: 'deskShowFiles', label: '桌面显示文件', desc: '在桌面上显示 /桌面 文件夹里的内容', type: 'switch', kw: '桌面 文件' }
@@ -10793,6 +11336,7 @@ class SettingsPavilion {
       case 'colw': ctl = h('button.btn.sm', { text: '复原列宽', disabled: !Prefs.get('fmCols') && !Prefs.get('fmColsM'), on: { click: () => { this.editing = true; Prefs.set('fmColsM', null); Prefs.set('fmCols', null); this.editing = false; this.render(true); UI.toast('列宽 · 已复原'); } } }); break;
       case 'link': ctl = h('button.btn.sm', { text: '打开', on: { click: it.act } }); break;
       case 'theme': ctl = null; break;
+      case 'icons': ctl = null; break;
       case 'accent': {
         const pick = h('input.sg-color', { type: 'color', value: v || '#c44a3a', 'aria-label': '自选颜色' });
         pick.addEventListener('change', () => set(pick.value));
@@ -10806,12 +11350,30 @@ class SettingsPavilion {
       }
     }
     const reset = this.changed(k) && it.type !== 'link' && it.type !== 'colw' ? h('button.sg-reset', { dataset: { tip: '复原为默认' }, 'aria-label': '复原', on: { click: () => set(PREF_DEFAULTS[k]) } }, Ink.glyph('原', 15), h('span', { text: '复原' })) : null;
-    const row = h('div.sg-row' + (it.type === 'theme' || it.type === 'apps' ? '.wide' : '') + (it.small ? '.small' : '') + (this.changed(k) ? '.mod' : ''), { dataset: { key: k || it.type } },
+    const row = h('div.sg-row' + (it.type === 'theme' || it.type === 'apps' || it.type === 'icons' ? '.wide' : '') + (it.small ? '.small' : '') + (this.changed(k) ? '.mod' : ''), { dataset: { key: k || it.type } },
       h('div.sg-l', {}, h('div.sg-lab', {}, h('span', { text: it.label }), reset), it.desc ? h('div.sg-desc', { text: it.desc }) : null, it.note ? h('div.sg-note', { html: it.note }) : null),
       ctl ? h('div.sg-c', {}, ctl) : null);
     if (it.type === 'theme') row.append(this.themeCards());
+    if (it.type === 'icons') row.append(this.iconCards());
     if (it.type === 'apps') { const c = row.querySelector('.sg-c'); row.append(c); }
     return row;
+  }
+  /** 图标方案：默认 + 二十二种，每张卡三枚小样（两枚程序、一枚文件）；小样一种一种地画，不卡界面 */
+  iconCards() {
+    const cur = Prefs.get('iconStyle') || 'default', list = Icons.list;
+    const SAMPLES = [{ ch: '册', col: '#9a7a44', kind: 'app' }, { ch: '墨', col: '#4f5e48', kind: 'app' }, { ch: '笺', col: '#4f5e48', kind: 'file', ext: 'MD' }];
+    const todo = [];
+    const grid = h('div.sg-icons', {}, ...list.map(([id, name, desc]) => {
+      const pics = h('div.sg-icp');
+      if (id === 'default') pics.append(h('div.seal', { text: '册', style: { '--c': '#9a7a44', '--sz': '34px' } }), h('div.seal', { text: '墨', style: { '--c': '#4f5e48', '--sz': '34px' } }), h('div.seal.file', { style: { '--sz': '34px', '--k': '#4f5e48' } }, h('span', { text: '笺', style: { color: '#4f5e48' } }), h('span.k', { text: 'md' })));
+      else { const ims = SAMPLES.map(() => h('img', { alt: '' })); pics.append(...ims); todo.push([id, ims]); }
+      return h('button.sg-ic' + (id === cur ? '.on' : ''), { 'aria-label': name, 'aria-pressed': String(id === cur), dataset: { tip: desc }, on: { click: () => { this.editing = true; Prefs.set('iconStyle', id); this.editing = false; this.render(true); } } }, pics, h('b', { text: id === 'default' ? '默认 · 印' : name }));
+    }));
+    const me = list.find(x => x[0] === cur);
+    const note = h('div.sg-icd', { text: me ? `当前：${cur === 'default' ? '默认 · 印' : me[1]}——${me[2]}` : '' });
+    let first = true;
+    (function next() { const job = todo.shift(); if (!job || (!first && !grid.isConnected)) return; first = false; job[1].forEach((im, i) => { const u = Icons.sample(job[0], SAMPLES[i]); if (u) im.src = u; }); setTimeout(next, 0); })();
+    return h('div', {}, grid, note);
   }
   themeCards() {
     const cur = Prefs.get('theme');
@@ -11456,7 +12018,7 @@ function setFavicon() {
 }
 
 async function boot() {
-  Ink.pickBase(); Sync.init(); Theme.init(); Tex.apply(); BUS.on('theme', () => Tex.apply());
+  Ink.pickBase(); Sync.init(); Theme.init(); Icons.init(); Tex.apply(); BUS.on('theme', () => Tex.apply());
   const { cv, winLayer } = Shell.init();
   UI.initTips(); WM.init(winLayer);
   try { await FS.init({ seed: seedFiles }); }
